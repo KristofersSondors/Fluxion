@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Lumen — Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    html, body { margin: 0; background: #0E0E10; min-height: 100%; }
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      display: grid; place-items: center; padding: 32px 12px;
+    }
+    * { -webkit-font-smoothing: antialiased; }
+    /* Tweaks panel */
+    .tweaks {
+      position: fixed; right: 20px; bottom: 20px; z-index: 50;
+      background: #17181C; color: #fff; border-radius: 14px;
+      padding: 14px 16px; font-family: Inter, sans-serif; font-size: 13px;
+      border: 1px solid #2A2B31; width: 240px;
+      display: none;
+    }
+    .tweaks.open { display: block; }
+    .tweaks h3 { margin: 0 0 10px; font-size: 12px; letter-spacing: 1.5px;
+                 text-transform: uppercase; color: #9A9BA3; font-weight: 600; }
+    .tweaks label { display: block; margin-top: 10px; color: #C7C8CF; }
+    .tweaks select, .tweaks input[type="color"] {
+      width: 100%; margin-top: 4px; background: #0E0E10; color: #fff;
+      border: 1px solid #2A2B31; border-radius: 8px; padding: 6px 8px;
+      font: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <div id="tweaksPanel" class="tweaks">
+    <h3>Tweaks</h3>
+    <label>Promo card
+      <select id="tw-promo">
+        <option value="auto">Auto (carousel)</option>
+        <option value="indigo">Round-ups · indigo</option>
+        <option value="cashback">Cashback · ink</option>
+        <option value="goal">Savings goal · lilac</option>
+      </select>
+    </label>
+    <label>Accent color
+      <input id="tw-accent" type="color" value="#F2D23A"/>
+    </label>
+  </div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel" src="home.jsx"></script>
+
+  <script type="text/babel">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "promo": "auto",
+      "accent": "#F2D23A"
+    }/*EDITMODE-END*/;
+
+    function App() {
+      const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
+
+      // Apply accent
+      React.useEffect(() => {
+        // not strictly needed — Home reads a constant — but allow live override via CSS var
+        document.documentElement.style.setProperty('--brand-accent', tweaks.accent);
+      }, [tweaks.accent]);
+
+      // Edit-mode protocol
+      React.useEffect(() => {
+        const onMsg = (e) => {
+          const d = e.data || {};
+          if (d.type === '__activate_edit_mode') {
+            document.getElementById('tweaksPanel').classList.add('open');
+          } else if (d.type === '__deactivate_edit_mode') {
+            document.getElementById('tweaksPanel').classList.remove('open');
+          }
+        };
+        window.addEventListener('message', onMsg);
+        window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+
+        // Wire tweak controls
+        const promoSel = document.getElementById('tw-promo');
+        const accentIn = document.getElementById('tw-accent');
+        promoSel.value = tweaks.promo;
+        accentIn.value = tweaks.accent;
+        const onPromo = () => {
+          setTweaks(t => ({ ...t, promo: promoSel.value }));
+          window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { promo: promoSel.value }}, '*');
+        };
+        const onAccent = () => {
+          setTweaks(t => ({ ...t, accent: accentIn.value }));
+          window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { accent: accentIn.value }}, '*');
+        };
+        promoSel.addEventListener('change', onPromo);
+        accentIn.addEventListener('change', onAccent);
+        return () => {
+          window.removeEventListener('message', onMsg);
+          promoSel.removeEventListener('change', onPromo);
+          accentIn.removeEventListener('change', onAccent);
+        };
+      }, []);
+
+      return (
+        <div data-screen-label="Home" style={{ '--brand-accent': tweaks.accent }}>
+          <IOSDevice width={402} height={874}>
+            <Home tweaks={tweaks}/>
+          </IOSDevice>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>
