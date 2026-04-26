@@ -635,6 +635,109 @@ const BRAND = {
   minTouch: 44,
   tapTransition: 'background-color 0.18s ease-out, color 0.18s ease-out, transform 0.18s ease-out'
 };
+const LanguageContext = React.createContext({
+  language: 'lv',
+  setLanguage: () => {},
+  L: (lv, en) => lv,
+  monthLabel: label => label,
+  shortMonthLabel: label => label.slice(0, 3),
+  scenarioLabel: key => key,
+  scenarioNote: key => key
+});
+function useLanguage() {
+  return React.useContext(LanguageContext);
+}
+const MONTH_COPY = {
+  Maijs: {
+    lv: 'Maijs',
+    en: 'May'
+  },
+  Jūnijs: {
+    lv: 'Jūnijs',
+    en: 'Jun'
+  },
+  Jūlijs: {
+    lv: 'Jūlijs',
+    en: 'Jul'
+  },
+  Augusts: {
+    lv: 'Augusts',
+    en: 'Aug'
+  },
+  Septembris: {
+    lv: 'Septembris',
+    en: 'Sep'
+  },
+  Oktobris: {
+    lv: 'Oktobris',
+    en: 'Oct'
+  },
+  Novembris: {
+    lv: 'Novembris',
+    en: 'Nov'
+  },
+  Decembris: {
+    lv: 'Decembris',
+    en: 'Dec'
+  },
+  Janvāris: {
+    lv: 'Janvāris',
+    en: 'Jan'
+  },
+  Februāris: {
+    lv: 'Februāris',
+    en: 'Feb'
+  },
+  Marts: {
+    lv: 'Marts',
+    en: 'Mar'
+  },
+  Aprīlis: {
+    lv: 'Aprīlis',
+    en: 'Apr'
+  }
+};
+const SCENARIO_COPY = {
+  cautious: {
+    lv: {
+      label: 'Piesardzīgs',
+      note: '2.8% gada ienesīgums'
+    },
+    en: {
+      label: 'Cautious',
+      note: '2.8% annual return'
+    }
+  },
+  balanced: {
+    lv: {
+      label: 'Bāzes',
+      note: '4.1% gada ienesīgums'
+    },
+    en: {
+      label: 'Balanced',
+      note: '4.1% annual return'
+    }
+  },
+  dynamic: {
+    lv: {
+      label: 'Dinamiskais',
+      note: '5.3% gada ienesīgums'
+    },
+    en: {
+      label: 'Dynamic',
+      note: '5.3% annual return'
+    }
+  }
+};
+function translateMonth(label, language) {
+  return MONTH_COPY[label]?.[language] || label;
+}
+function translateScenarioLabel(key, language) {
+  return SCENARIO_COPY[key]?.[language]?.label || FUTURE_SCENARIOS[key]?.label || key;
+}
+function translateScenarioNote(key, language) {
+  return SCENARIO_COPY[key]?.[language]?.note || FUTURE_SCENARIOS[key]?.note || key;
+}
 const Icon = {
   chat: (s = 22, c = BRAND.ink) => React.createElement("svg", {
     width: s,
@@ -961,6 +1064,9 @@ function Tab({
 function PromoIndigo({
   onClose
 }) {
+  const {
+    L
+  } = useLanguage();
   return React.createElement("div", {
     style: {
       background: BRAND.promo,
@@ -975,7 +1081,7 @@ function PromoIndigo({
     }
   }, React.createElement("button", {
     type: "button",
-    "aria-label": "Aizv\u0113rt pied\u0101v\u0101jumu",
+    "aria-label": L('Aizvērt piedāvājumu', 'Close offer'),
     onClick: onClose,
     style: {
       position: 'absolute',
@@ -996,14 +1102,14 @@ function PromoIndigo({
       fontWeight: 700,
       letterSpacing: 0
     }
-  }, "Ieguldi 50%"), React.createElement("div", {
+  }, L('Ieguldi 50%', 'Invest 50%')), React.createElement("div", {
     style: {
       fontSize: 13,
       lineHeight: '18px',
       marginTop: 6,
       color: 'rgba(255,255,255,0.85)'
     }
-  }, "no atg\u016Bt\u0101s nodok\u013Cu atmaksas sav\u0101 pensiju 3. l\u012Bmen\u012B"), React.createElement("button", {
+  }, L('no atgūtās nodokļu atmaksas savā pensiju 3. līmenī', 'of your recovered tax refund into your 3rd pension pillar')), React.createElement("button", {
     type: "button",
     style: {
       marginTop: 22,
@@ -1019,7 +1125,7 @@ function PromoIndigo({
       width: '100%',
       maxWidth: 220
     }
-  }, "Ieguld\u012Bt")), React.createElement("div", {
+  }, L('Ieguldīt', 'Invest'))), React.createElement("div", {
     style: {
       position: 'absolute',
       right: 14,
@@ -1046,6 +1152,9 @@ function PromoIndigo({
 function PromoCashback({
   onClose
 }) {
+  const {
+    L
+  } = useLanguage();
   return React.createElement("div", {
     style: {
       background: '#1B1C22',
@@ -1060,7 +1169,7 @@ function PromoCashback({
     }
   }, React.createElement("button", {
     type: "button",
-    "aria-label": "Aizv\u0113rt pied\u0101v\u0101jumu",
+    "aria-label": L('Aizvērt piedāvājumu', 'Close offer'),
     onClick: onClose,
     style: {
       position: 'absolute',
@@ -1078,7 +1187,7 @@ function PromoCashback({
       color: BRAND.accent,
       fontWeight: 600
     }
-  }, "\u0160OM\u0112NES"), React.createElement("div", {
+  }, L('ŠOMĒNES', 'THIS MONTH')), React.createElement("div", {
     style: {
       fontSize: 22,
       fontWeight: 600,
@@ -1086,13 +1195,13 @@ function PromoCashback({
       letterSpacing: 0,
       maxWidth: 220
     }
-  }, "\u20AC14.20 atgriezts naud\u0101"), React.createElement("div", {
+  }, L('€14.20 atgriezts naudā', '€14.20 cashback')), React.createElement("div", {
     style: {
       fontSize: 13,
       color: 'rgba(255,255,255,0.7)',
       marginTop: 6
     }
-  }, "P\u0101rtika, transports un straum\u0113\u0161ana \u2014 izmaksa 30.\xA0apr."), React.createElement("button", {
+  }, L('Pārtika, transports un straumēšana — izmaksa 30. apr.', 'Groceries, transport and streaming — payout Apr 30')), React.createElement("button", {
     type: "button",
     style: {
       marginTop: 16,
@@ -1105,7 +1214,7 @@ function PromoCashback({
       fontSize: 14,
       cursor: 'pointer'
     }
-  }, "Apskat\u012Bt sadal\u012Bjumu"), React.createElement("div", {
+  }, L('Apskatīt sadalījumu', 'View breakdown')), React.createElement("div", {
     style: {
       position: 'absolute',
       right: -40,
@@ -1121,6 +1230,9 @@ function PromoCashback({
 function PromoGoal({
   onClose
 }) {
+  const {
+    L
+  } = useLanguage();
   return React.createElement("div", {
     style: {
       background: '#E8E2F7',
@@ -1135,7 +1247,7 @@ function PromoGoal({
     }
   }, React.createElement("button", {
     type: "button",
-    "aria-label": "Aizv\u0113rt pied\u0101v\u0101jumu",
+    "aria-label": L('Aizvērt piedāvājumu', 'Close offer'),
     onClick: onClose,
     style: {
       position: 'absolute',
@@ -1152,14 +1264,14 @@ function PromoGoal({
       color: BRAND.promo,
       fontWeight: 600
     }
-  }, "Vasaras ce\u013Cojums \xB7 M\u0113r\u0137is"), React.createElement("div", {
+  }, L('Vasaras ceļojums · Mērķis', 'Summer trip · Goal')), React.createElement("div", {
     style: {
       fontSize: 20,
       fontWeight: 600,
       marginTop: 4,
       letterSpacing: 0
     }
-  }, "Esi sasniedzis 62% no m\u0113r\u0137a"), React.createElement("div", {
+  }, L('Esi sasniedzis 62% no mērķa', 'You have reached 62% of the goal')), React.createElement("div", {
     style: {
       marginTop: 14,
       height: 8,
@@ -1182,7 +1294,7 @@ function PromoGoal({
       fontSize: 12,
       color: BRAND.mute
     }
-  }, React.createElement("span", null, "\u20AC930 uzkr\u0101ts"), React.createElement("span", null, "\u20AC1,500 m\u0113r\u0137is")), React.createElement("button", {
+  }, React.createElement("span", null, L('€930 uzkrāts', '€930 saved')), React.createElement("span", null, L('€1,500 mērķis', '€1,500 goal'))), React.createElement("button", {
     type: "button",
     style: {
       marginTop: 14,
@@ -1195,7 +1307,7 @@ function PromoGoal({
       fontSize: 13,
       cursor: 'pointer'
     }
-  }, "Pievienot m\u0113r\u0137im"));
+  }, L('Pievienot mērķim', 'Add to goal')));
 }
 function TierIllustration2() {
   return React.createElement("svg", {
@@ -2286,7 +2398,7 @@ function ModeButton({
       borderRadius: 12,
       cursor: 'pointer',
       background: active ? BRAND.accent : '#F1ECDD',
-      color: active ? BRAND.promo : BRAND.ink,
+      color: BRAND.ink,
       fontSize: 13,
       fontWeight: active ? 700 : 500
     }
@@ -2504,6 +2616,9 @@ function LifestyleCard({
   cost,
   income
 }) {
+  const {
+    L
+  } = useLanguage();
   return React.createElement("div", {
     style: {
       flex: 1,
@@ -2543,7 +2658,7 @@ function LifestyleCard({
       fontSize: 11.5,
       color: BRAND.mute
     }
-  }, "\u0161odienas naud\u0101"));
+  }, L('šodienas naudā', 'in today’s money')));
 }
 function StepRow({
   number,
@@ -2591,6 +2706,9 @@ function SubPageHeader({
   title,
   onBack
 }) {
+  const {
+    L
+  } = useLanguage();
   return React.createElement("div", {
     style: {
       display: 'flex',
@@ -2623,7 +2741,7 @@ function SubPageHeader({
     strokeWidth: "1.8",
     strokeLinecap: "round",
     strokeLinejoin: "round"
-  })), "Atpaka\u013C"), React.createElement("div", {
+  })), L('Atpakaļ', 'Back')), React.createElement("div", {
     style: {
       flex: 1,
       fontSize: 16,
@@ -2713,11 +2831,15 @@ function PensionMain({
   reversed,
   onReverse
 }) {
+  const {
+    L,
+    scenarioNote
+  } = useLanguage();
   const selectedScenario = FUTURE_SCENARIOS[scenario];
   const totalMonthly = selectedScenario.tier1Monthly + selectedScenario.tier2Monthly + selectedScenario.tier3Monthly;
   const preview = model.preview;
   const nextContribution = reversed || config.paused ? 0 : preview.contribution;
-  const modeLabel = config.mode === 'dynamic' ? 'Dinamiskais' : 'Fiksēts';
+  const modeLabel = config.mode === 'dynamic' ? L('Dinamiskais', 'Dynamic') : L('Fiksēts', 'Fixed');
   return React.createElement("div", {
     style: {
       padding: '4px 16px 24px'
@@ -2756,7 +2878,7 @@ function PensionMain({
       padding: 0,
       letterSpacing: 0
     }
-  }, "Anal\u012Bze \u2192")), React.createElement("div", {
+  }, L('Analīze →', 'Analysis →'))), React.createElement("div", {
     style: {
       fontSize: 30,
       fontWeight: 700,
@@ -2771,7 +2893,7 @@ function PensionMain({
       marginTop: 4,
       lineHeight: '18px'
     }
-  }, activated ? reversed ? 'Pēdējā iemaksa atgriezta 24h logā · nākamā izpilde netiek dublēta' : config.paused ? 'Pauze darbojas līdz brīdim, kad to atjauno' : `${modeLabel} · automātiski ${config.payday}. datumā · droši pieejams ${formatMoney(preview.safeToInvest)}` : `${formatMoney(model.dynamicAdvantage)} vairāk nekā ar fiksētu ${formatMoney(config.fixedContribution)}/mēn.`), activated ? React.createElement(React.Fragment, null, React.createElement("div", {
+  }, activated ? reversed ? L('Pēdējā iemaksa atgriezta 24h logā · nākamā izpilde netiek dublēta', 'Last contribution reversed in the 24h window · next execution will not be duplicated') : config.paused ? L('Pauze darbojas līdz brīdim, kad to atjauno', 'Pause remains active until you resume it') : L(`${modeLabel} · automātiski ${config.payday}. datumā · droši pieejams ${formatMoney(preview.safeToInvest)}`, `${modeLabel} · automatic on the ${config.payday}th · safely available ${formatMoney(preview.safeToInvest)}`) : L(`${formatMoney(model.dynamicAdvantage)} vairāk nekā ar fiksētu ${formatMoney(config.fixedContribution)}/mēn.`, `${formatMoney(model.dynamicAdvantage)} more than a fixed ${formatMoney(config.fixedContribution)}/mo.`)), activated ? React.createElement(React.Fragment, null, React.createElement("div", {
     style: {
       display: 'flex',
       gap: 8,
@@ -2779,11 +2901,11 @@ function PensionMain({
     }
   }, React.createElement(ConfigPill, {
     icon: React.createElement(TrendIcon, null),
-    label: "Gr\u012Bda/griesti",
+    label: L('Grīda/griesti', 'Floor/ceiling'),
     value: `${formatPercent(config.minRate)}-${formatPercent(config.maxRate)}`
   }), React.createElement(ConfigPill, {
     icon: React.createElement(ShieldIcon, null),
-    label: "Buferis",
+    label: L('Buferis', 'Buffer'),
     value: formatMoney(config.safetyBuffer)
   })), React.createElement("div", {
     style: {
@@ -2792,13 +2914,13 @@ function PensionMain({
       marginTop: 12
     }
   }, React.createElement(ModeButton, {
-    label: "Fiks\u0113ts",
+    label: L('Fiksēts', 'Fixed'),
     active: config.mode === 'fixed',
     onClick: () => onConfigChange({
       mode: 'fixed'
     })
   }), React.createElement(ModeButton, {
-    label: "Dinamiskais",
+    label: L('Dinamiskais', 'Dynamic'),
     active: config.mode === 'dynamic',
     onClick: () => onConfigChange({
       mode: 'dynamic'
@@ -2814,16 +2936,16 @@ function PensionMain({
       gap: 8
     }
   }, React.createElement(MiniSetting, {
-    label: "Nodok\u013Cu optimiz\u0101cija",
-    value: config.taxOptimization ? `${formatMoney(model.taxRefund)} atmaksa` : 'Izslēgta'
+    label: L('Nodokļu optimizācija', 'Tax optimization'),
+    value: config.taxOptimization ? L(`${formatMoney(model.taxRefund)} atmaksa`, `${formatMoney(model.taxRefund)} refund`) : L('Izslēgta', 'Off')
   }), React.createElement(MiniSetting, {
-    label: "Pazi\u0146ojums",
-    value: "2 dienas pirms"
+    label: L('Paziņojums', 'Notification'),
+    value: L('2 dienas pirms', '2 days before')
   }), React.createElement(MiniSetting, {
-    label: "Stabilit\u0101tes limits",
-    value: `${formatMoney(config.stabilityCap)}/mēn.`
+    label: L('Stabilitātes limits', 'Stability cap'),
+    value: `${formatMoney(config.stabilityCap)}/${L('mēn.', 'mo.')}`
   }), React.createElement(MiniSetting, {
-    label: "Atk\u0101rtotie maks\u0101jumi",
+    label: L('Atkārtotie maksājumi', 'Recurring payments'),
     value: formatMoney(model.obligationsTotal)
   }), React.createElement("div", {
     style: {
@@ -2848,7 +2970,7 @@ function PensionMain({
       fontWeight: 700,
       cursor: 'pointer'
     }
-  }, config.paused ? 'Atjaunot' : 'Pauzēt'), React.createElement("button", {
+  }, config.paused ? L('Atjaunot', 'Resume') : L('Pauzēt', 'Pause')), React.createElement("button", {
     type: "button",
     onClick: onReverse,
     disabled: reversed || config.paused,
@@ -2863,7 +2985,7 @@ function PensionMain({
       fontWeight: 700,
       cursor: reversed || config.paused ? 'not-allowed' : 'pointer'
     }
-  }, reversed ? 'Atgriezta' : 'Atgriezt 24h'), React.createElement("button", {
+  }, reversed ? L('Atgriezta', 'Reversed') : L('Atgriezt 24h', 'Reverse 24h')), React.createElement("button", {
     type: "button",
     "aria-pressed": config.taxOptimization,
     onClick: () => onConfigChange({
@@ -2880,7 +3002,7 @@ function PensionMain({
       fontWeight: 700,
       cursor: 'pointer'
     }
-  }, config.taxOptimization ? 'Nodokļi' : 'Bez nod.')))) : React.createElement("button", {
+  }, config.taxOptimization ? L('Nodokļi', 'Tax') : L('Bez nod.', 'No tax'))))) : React.createElement("button", {
     type: "button",
     onClick: () => onNav('onboarding3'),
     style: {
@@ -2896,7 +3018,7 @@ function PensionMain({
       cursor: 'pointer',
       letterSpacing: 0
     }
-  }, "Set up 3rd pillar pension")), React.createElement("div", {
+  }, L('Iestatīt pensiju 3. līmeni', 'Set up 3rd pillar pension'))), React.createElement("div", {
     style: {
       marginTop: 24,
       marginBottom: 12,
@@ -2904,7 +3026,7 @@ function PensionMain({
       fontWeight: 700,
       letterSpacing: 0
     }
-  }, "Tavi pensiju l\u012Bme\u0146i"), React.createElement("div", {
+  }, L('Tavi pensiju līmeņi', 'Your pension pillars')), React.createElement("div", {
     style: {
       background: BRAND.card,
       borderRadius: 12,
@@ -2946,7 +3068,7 @@ function PensionMain({
       fontSize: 15,
       fontWeight: 600
     }
-  }, "Valsts pensija")), React.createElement("div", {
+  }, L('Valsts pensija', 'State pension'))), React.createElement("div", {
     style: {
       marginTop: 10,
       fontSize: 26,
@@ -2960,7 +3082,7 @@ function PensionMain({
       fontWeight: 500,
       color: BRAND.mute
     }
-  }, "/m\u0113n.")), React.createElement("div", {
+  }, "/", L('mēn.', 'mo.'))), React.createElement("div", {
     style: {
       marginTop: 10,
       height: 4,
@@ -2982,7 +3104,7 @@ function PensionMain({
       fontSize: 12,
       color: BRAND.mute
     }
-  }, TIER1_SERVICE_YEARS, " / ", TIER1_TARGET_YEARS, " darba gadi")), React.createElement("div", {
+  }, TIER1_SERVICE_YEARS, " / ", TIER1_TARGET_YEARS, " ", L('darba gadi', 'work years'))), React.createElement("div", {
     style: {
       flexShrink: 0
     }
@@ -2995,17 +3117,17 @@ function PensionMain({
   }, React.createElement(CompactTierCard, {
     tier: "2",
     illustration: React.createElement(TierIllustration2, null),
-    title: "2. l\u012Bmenis",
+    title: L('2. līmenis', '2nd pillar'),
     balance: formatMoney(TIER2_BALANCE),
-    monthly: `${formatMoney(selectedScenario.tier2Monthly)}/mēn.`,
-    note: "Fonda uzkr\u0101jums"
+    monthly: `${formatMoney(selectedScenario.tier2Monthly)}/${L('mēn.', 'mo.')}`,
+    note: L('Fonda uzkrājums', 'Fund balance')
   }), React.createElement(CompactTierCard, {
     tier: "3",
     illustration: React.createElement(TierIllustration3, null),
-    title: "3. l\u012Bmenis",
+    title: L('3. līmenis', '3rd pillar'),
     balance: formatMoney(TIER3_BALANCE),
-    monthly: `${formatMoney(selectedScenario.tier3Monthly)}/mēn.`,
-    note: "Dinamiskais"
+    monthly: `${formatMoney(selectedScenario.tier3Monthly)}/${L('mēn.', 'mo.')}`,
+    note: L('Dinamiskais', 'Dynamic')
   })), React.createElement("div", {
     style: {
       marginTop: 10,
@@ -3020,7 +3142,7 @@ function PensionMain({
       color: BRAND.mute,
       letterSpacing: 0
     }
-  }, "Kop\u0101 prognoz\u0113t\u0101 pensija"), React.createElement("div", {
+  }, L('Kopā prognozētā pensija', 'Total projected pension')), React.createElement("div", {
     style: {
       display: 'flex',
       alignItems: 'baseline',
@@ -3039,13 +3161,13 @@ function PensionMain({
       fontSize: 14,
       color: BRAND.mute
     }
-  }, "/m\u0113nes\u012B \u0161odienas naud\u0101")), React.createElement("div", {
+  }, L('/mēnesī šodienas naudā', '/month in today’s money'))), React.createElement("div", {
     style: {
       fontSize: 12.5,
       color: BRAND.mute,
       marginTop: 2
     }
-  }, selectedScenario.note)), React.createElement("div", {
+  }, scenarioNote(scenario))), React.createElement("div", {
     style: {
       height: 1,
       background: BRAND.line,
@@ -3053,8 +3175,8 @@ function PensionMain({
     }
   }), React.createElement(PensionNavRow, {
     icon: React.createElement(TrendIcon, null),
-    title: "Ikm\u0113ne\u0161a anal\u012Bze",
-    subtitle: "Simul\u0101cija un sal\u012Bdzin\u0101jums",
+    title: L('Ikmēneša analīze', 'Monthly analysis'),
+    subtitle: L('Simulācija un salīdzinājums', 'Simulation and comparison'),
     onClick: () => onNav('analysis')
   }), React.createElement("div", {
     style: {
@@ -3063,9 +3185,9 @@ function PensionMain({
     }
   }), React.createElement(PensionNavRow, {
     icon: Icon.goal(),
-    title: "N\u0101kotnes projekcija",
-    subtitle: "Scen\u0101riji un pensijas grafiks",
-    value: `${formatMoney(selectedScenario.todayMoneyMonthly)}/mēn.`,
+    title: L('Nākotnes projekcija', 'Future projection'),
+    subtitle: L('Scenāriji un pensijas grafiks', 'Scenarios and pension chart'),
+    value: `${formatMoney(selectedScenario.todayMoneyMonthly)}/${L('mēn.', 'mo.')}`,
     onClick: () => onNav('projection')
   }), React.createElement("div", {
     style: {
@@ -3074,8 +3196,8 @@ function PensionMain({
     }
   }), React.createElement(PensionNavRow, {
     icon: React.createElement(TrophyIcon, null),
-    title: "M\u0113r\u0137i un sasniegumi",
-    subtitle: `Streak: ${model.streak} mēn. · Nākamais milestone: ${formatMoney(NEXT_MILESTONE - TIER3_BALANCE)}`,
+    title: L('Mērķi un sasniegumi', 'Goals and milestones'),
+    subtitle: L(`Streak: ${model.streak} mēn. · Nākamais milestone: ${formatMoney(NEXT_MILESTONE - TIER3_BALANCE)}`, `Streak: ${model.streak} mo. · Next milestone: ${formatMoney(NEXT_MILESTONE - TIER3_BALANCE)}`),
     onClick: () => onNav('goals')
   }));
 }
@@ -3084,6 +3206,11 @@ function MonthlyBarChart({
   selectedIndex,
   onSelect
 }) {
+  const {
+    L,
+    monthLabel,
+    shortMonthLabel
+  } = useLanguage();
   const maxVal = Math.max(...months.flatMap(m => [m.income, m.spending])) || 1;
   const H = 80;
   return React.createElement("div", {
@@ -3097,7 +3224,7 @@ function MonthlyBarChart({
       gap: 14,
       marginBottom: 12
     }
-  }, [['#B8B0A4', 'Ienākumi'], ['#DDD7CE', 'Tēriņi'], [BRAND.accent, 'Iemaksa']].map(([col, lbl]) => React.createElement("div", {
+  }, [['#B8B0A4', L('Ienākumi', 'Income')], ['#DDD7CE', L('Tēriņi', 'Spending')], [BRAND.accent, L('Iemaksa', 'Contribution')]].map(([col, lbl]) => React.createElement("div", {
     key: lbl,
     style: {
       display: 'flex',
@@ -3130,7 +3257,7 @@ function MonthlyBarChart({
     return React.createElement("button", {
       type: "button",
       key: month.month,
-      "aria-label": `${month.month}: ienākumi ${formatMoney(month.income)}, tēriņi ${formatMoney(month.spending)}, iemaksa ${formatMoney(month.contribution)}`,
+      "aria-label": L(`${monthLabel(month.month)}: ienākumi ${formatMoney(month.income)}, tēriņi ${formatMoney(month.spending)}, iemaksa ${formatMoney(month.contribution)}`, `${monthLabel(month.month)}: income ${formatMoney(month.income)}, spending ${formatMoney(month.spending)}, contribution ${formatMoney(month.contribution)}`),
       "aria-pressed": active,
       onClick: () => onSelect(index),
       style: {
@@ -3179,7 +3306,7 @@ function MonthlyBarChart({
         color: active ? BRAND.ink : BRAND.mute,
         fontWeight: active ? 700 : 400
       }
-    }, month.month.slice(0, 3)), React.createElement("div", {
+    }, shortMonthLabel(month.month)), React.createElement("div", {
       style: {
         marginTop: 2,
         width: 14,
@@ -3197,10 +3324,14 @@ function PensionAnalysis({
   model,
   config
 }) {
+  const {
+    L,
+    monthLabel
+  } = useLanguage();
   const selectedMonth = model.lastSix[selectedMonthIndex];
   const diff = selectedMonth.contribution - selectedMonth.fixedContribution;
   return React.createElement("div", null, React.createElement(SubPageHeader, {
-    title: "Ikm\u0113ne\u0161a anal\u012Bze",
+    title: L('Ikmēneša analīze', 'Monthly analysis'),
     onBack: onBack
   }), React.createElement("div", {
     style: {
@@ -3215,7 +3346,7 @@ function PensionAnalysis({
       fontWeight: 700,
       letterSpacing: 0
     }
-  }, "P\u0113d\u0113jie 6 m\u0113ne\u0161i"), React.createElement(MonthlyBarChart, {
+  }, L('Pēdējie 6 mēneši', 'Last 6 months')), React.createElement(MonthlyBarChart, {
     months: model.lastSix,
     selectedIndex: selectedMonthIndex,
     onSelect: setSelectedMonthIndex
@@ -3238,7 +3369,7 @@ function PensionAnalysis({
       fontWeight: 600,
       color: BRAND.ink
     }
-  }, selectedMonth.month), React.createElement("div", {
+  }, monthLabel(selectedMonth.month)), React.createElement("div", {
     style: {
       fontSize: 26,
       fontWeight: 700,
@@ -3251,7 +3382,7 @@ function PensionAnalysis({
       display: 'flex',
       justifyContent: 'space-between'
     }
-  }, [['Ienākumi', selectedMonth.income, BRAND.ink], ['Tēriņi', selectedMonth.spending, BRAND.ink], ['Droši', selectedMonth.safeToInvest, BRAND.ok]].map(([lbl, val, col]) => React.createElement("div", {
+  }, [[L('Ienākumi', 'Income'), selectedMonth.income, BRAND.ink], [L('Tēriņi', 'Spending'), selectedMonth.spending, BRAND.ink], [L('Droši', 'Safe'), selectedMonth.safeToInvest, BRAND.ok]].map(([lbl, val, col]) => React.createElement("div", {
     key: lbl
   }, React.createElement("div", {
     style: {
@@ -3274,13 +3405,13 @@ function PensionAnalysis({
       color: BRAND.mute,
       lineHeight: '17px'
     }
-  }, selectedMonth.fixedBreaksBuffer ? 'Fiksēta iemaksa aizskartu rezervi — dinamiskā apstājās automātiski' : diff >= 0 ? `+${formatMoney(diff)} vairāk nekā ar fiksētu iemaksu` : `${formatMoney(Math.abs(diff))} mazāk — mēnesis bija finansiāli stingrs`))), React.createElement("div", null, React.createElement("div", {
+  }, selectedMonth.fixedBreaksBuffer ? L('Fiksēta iemaksa aizskartu rezervi — dinamiskā apstājās automātiski', 'A fixed contribution would cut into the buffer — the dynamic one stopped automatically') : diff >= 0 ? L(`+${formatMoney(diff)} vairāk nekā ar fiksētu iemaksu`, `+${formatMoney(diff)} more than a fixed contribution`) : L(`${formatMoney(Math.abs(diff))} mazāk — mēnesis bija finansiāli stingrs`, `${formatMoney(Math.abs(diff))} less — the month was financially tight`)))), React.createElement("div", null, React.createElement("div", {
     style: {
       fontSize: 18,
       fontWeight: 700,
       letterSpacing: 0
     }
-  }, "Dinamiskais vs fiks\u0113tais"), React.createElement("div", {
+  }, L('Dinamiskais vs fiksētais', 'Dynamic vs fixed')), React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',
@@ -3288,17 +3419,17 @@ function PensionAnalysis({
       marginTop: 16
     }
   }, React.createElement(ComparisonBar, {
-    label: "Dinamiskais",
+    label: L('Dinamiskais', 'Dynamic'),
     value: model.totalDynamic,
     max: model.totalDynamic,
     tone: BRAND.promo,
-    detail: `${model.boostedMonths} mēnešos iemaksa pārsniedza mērķi`
+    detail: L(`${model.boostedMonths} mēnešos iemaksa pārsniedza mērķi`, `Contribution exceeded the target in ${model.boostedMonths} months`)
   }), React.createElement(ComparisonBar, {
-    label: "Fiks\u0113ta iemaksa",
+    label: L('Fiksēta iemaksa', 'Fixed contribution'),
     value: model.totalFixed,
     max: model.totalDynamic,
     tone: "#C8C1B4",
-    detail: `${formatMoney(config.fixedContribution)}/mēn. ar ienākumiem`
+    detail: `${formatMoney(config.fixedContribution)}/${L('mēn. ar ienākumiem', 'mo. with income')}`
   })), React.createElement("div", {
     style: {
       marginTop: 12,
@@ -3306,20 +3437,25 @@ function PensionAnalysis({
       color: BRAND.mute,
       lineHeight: '18px'
     }
-  }, formatMoney(model.dynamicAdvantage), " papildu \xB7 ", model.pausedMonths, " m\u0113nes\u012B apst\u0101j\u0101s autom\u0101tiski \xB7 ", model.cappedMonths, " stabiliz\u0113ti"))));
+  }, L(`${formatMoney(model.dynamicAdvantage)} papildu · ${model.pausedMonths} mēnesī apstājās automātiski · ${model.cappedMonths} stabilizēti`, `${formatMoney(model.dynamicAdvantage)} extra · auto-stopped in ${model.pausedMonths} months · ${model.cappedMonths} stabilized`)))));
 }
 function PensionProjection({
   onBack,
   scenario,
   setScenario
 }) {
+  const {
+    L,
+    scenarioLabel,
+    scenarioNote
+  } = useLanguage();
   const s = FUTURE_SCENARIOS[scenario];
   const total = s.tier1Monthly + s.tier2Monthly + s.tier3Monthly;
   const t1w = Math.round(s.tier1Monthly / total * 100);
   const t2w = Math.round(s.tier2Monthly / total * 100);
   const t3w = 100 - t1w - t2w;
   return React.createElement("div", null, React.createElement(SubPageHeader, {
-    title: "N\u0101kotnes projekcija",
+    title: L('Nākotnes projekcija', 'Future projection'),
     onBack: onBack
   }), React.createElement("div", {
     style: {
@@ -3333,7 +3469,7 @@ function PensionProjection({
       fontSize: 12.5,
       color: BRAND.mute
     }
-  }, "Prognoz\u0113t\u0101 pensija 67 gados"), React.createElement("div", {
+  }, L('Prognozētā pensija 67 gados', 'Projected pension at age 67')), React.createElement("div", {
     style: {
       fontSize: 34,
       fontWeight: 700,
@@ -3347,13 +3483,13 @@ function PensionProjection({
       fontWeight: 500,
       color: BRAND.mute
     }
-  }, "/m\u0113n.")), React.createElement("div", {
+  }, "/", L('mēn.', 'mo.'))), React.createElement("div", {
     style: {
       fontSize: 12.5,
       color: BRAND.mute,
       marginTop: 3
     }
-  }, "\u0161odienas naud\u0101 \xB7 ", s.note), React.createElement("div", {
+  }, L('šodienas naudā', 'in today’s money'), " \xB7 ", scenarioNote(scenario)), React.createElement("div", {
     style: {
       display: 'flex',
       gap: 8,
@@ -3376,7 +3512,7 @@ function PensionProjection({
       fontWeight: 700,
       color: BRAND.ink
     }
-  }, FUTURE_SCENARIOS[key].label))), React.createElement(ProjectionChart, {
+  }, scenarioLabel(key)))), React.createElement(ProjectionChart, {
     selectedScenario: scenario
   })), React.createElement("div", null, React.createElement("div", {
     style: {
@@ -3385,7 +3521,7 @@ function PensionProjection({
       letterSpacing: 0,
       marginBottom: 14
     }
-  }, "Sadal\u012Bjums"), React.createElement("div", {
+  }, L('Sadalījums', 'Breakdown')), React.createElement("div", {
     style: {
       display: 'flex',
       height: 8,
@@ -3418,17 +3554,17 @@ function PensionProjection({
       gap: 11
     }
   }, [{
-    label: '1. līmenis · Valsts',
+    label: L('1. līmenis · Valsts', '1st pillar · State'),
     amount: s.tier1Monthly,
     dot: '#C8C1B4',
     op: 1
   }, {
-    label: '2. līmenis · Fonds',
+    label: L('2. līmenis · Fonds', '2nd pillar · Fund'),
     amount: s.tier2Monthly,
     dot: BRAND.promo,
     op: 0.45
   }, {
-    label: '3. līmenis · Dinamiskais',
+    label: L('3. līmenis · Dinamiskais', '3rd pillar · Dynamic'),
     amount: s.tier3Monthly,
     dot: BRAND.promo,
     op: 1
@@ -3471,7 +3607,7 @@ function PensionProjection({
       fontWeight: 400,
       color: BRAND.mute
     }
-  }, "/m\u0113n."))))))));
+  }, "/", L('mēn.', 'mo.')))))))));
 }
 function PensionGoals({
   onBack,
@@ -3479,13 +3615,16 @@ function PensionGoals({
   model,
   config
 }) {
+  const {
+    L
+  } = useLanguage();
   const selectedScenario = FUTURE_SCENARIOS[scenario];
   const goalProgress = clamp(selectedScenario.todayMoneyMonthly / FUTURE_GOAL, 0, 1);
   const gapToGoal = Math.max(0, FUTURE_GOAL - selectedScenario.todayMoneyMonthly);
   const extraMonthlyNeeded = Math.round(gapToGoal * 0.18);
   const milestoneLeft = NEXT_MILESTONE - TIER3_BALANCE;
   return React.createElement("div", null, React.createElement(SubPageHeader, {
-    title: "M\u0113r\u0137i un sasniegumi",
+    title: L('Mērķi un sasniegumi', 'Goals and milestones'),
     onBack: onBack
   }), React.createElement("div", {
     style: {
@@ -3506,7 +3645,7 @@ function PensionGoals({
       fontSize: 12.5,
       color: BRAND.mute
     }
-  }, "Pensijas m\u0113r\u0137is"), React.createElement("div", {
+  }, L('Pensijas mērķis', 'Pension goal')), React.createElement("div", {
     style: {
       marginTop: 6
     }
@@ -3523,7 +3662,7 @@ function PensionGoals({
       color: BRAND.mute,
       fontWeight: 500
     }
-  }, " / ", formatMoney(FUTURE_GOAL), " m\u0113nes\u012B")), React.createElement("div", {
+  }, " / ", formatMoney(FUTURE_GOAL), " ", L('mēnesī', 'per month'))), React.createElement("div", {
     style: {
       marginTop: 12,
       height: 8,
@@ -3545,18 +3684,18 @@ function PensionGoals({
       color: BRAND.mute,
       lineHeight: '17px'
     }
-  }, "Pietr\u016Bkst ", formatMoney(gapToGoal), " \xB7 apm\u0113ram ", formatMoney(extraMonthlyNeeded), " papildu m\u0113nes\u012B.")), React.createElement("div", {
+  }, L(`Pietrūkst ${formatMoney(gapToGoal)} · apmēram ${formatMoney(extraMonthlyNeeded)} papildu mēnesī.`, `${formatMoney(gapToGoal)} short · around ${formatMoney(extraMonthlyNeeded)} extra per month.`))), React.createElement("div", {
     style: {
       display: 'flex',
       gap: 10
     }
   }, React.createElement(ConfigPill, {
     icon: React.createElement(TrophyIcon, null),
-    label: "Streak",
-    value: `${model.streak} mēneši`
+    label: L('Streak', 'Streak'),
+    value: L(`${model.streak} mēneši`, `${model.streak} months`)
   }), React.createElement(ConfigPill, {
     icon: React.createElement(PigIcon, null),
-    label: "N\u0101kamais \u20AC5000",
+    label: L('Nākamais €5000', 'Next €5000'),
     value: formatMoney(milestoneLeft)
   })), React.createElement("div", {
     style: {
@@ -3571,13 +3710,13 @@ function PensionGoals({
       fontWeight: 700,
       letterSpacing: 0
     }
-  }, "Ko var\u0113si at\u013Cauties"), React.createElement("div", {
+  }, L('Ko varēsi atļauties', 'What you could afford')), React.createElement("div", {
     style: {
       fontSize: 12.5,
       color: BRAND.mute,
       marginTop: 3
     }
-  }, "Pensija pret re\u0101laj\u0101m izmaks\u0101m \u0161odien"), React.createElement("div", {
+  }, L('Pensija pret reālajām izmaksām šodien', 'Pension against real costs today')), React.createElement("div", {
     style: {
       display: 'flex',
       gap: 10,
@@ -3585,17 +3724,17 @@ function PensionGoals({
     }
   }, React.createElement(LifestyleCard, {
     icon: React.createElement(CarIcon, null),
-    label: "BMW 3 l\u012Bzings",
+    label: L('BMW 3 līzings', 'BMW 3 lease'),
     cost: 790,
     income: selectedScenario.todayMoneyMonthly
   }), React.createElement(LifestyleCard, {
     icon: React.createElement(PigIcon, null),
-    label: "P\u0101rtika",
+    label: L('Pārtika', 'Groceries'),
     cost: 320,
     income: selectedScenario.todayMoneyMonthly
   }), React.createElement(LifestyleCard, {
     icon: Icon.goal(BRAND.ink),
-    label: "Komun\u0101lie",
+    label: L('Komunālie', 'Utilities'),
     cost: 160,
     income: selectedScenario.todayMoneyMonthly
   }))), React.createElement("div", {
@@ -3611,7 +3750,7 @@ function PensionGoals({
       fontWeight: 700,
       letterSpacing: 0
     }
-  }, "K\u0101 darbojas dinamisk\u0101 iemaksa"), React.createElement("div", {
+  }, L('Kā darbojas dinamiskā iemaksa', 'How the dynamic contribution works')), React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',
@@ -3620,20 +3759,20 @@ function PensionGoals({
     }
   }, React.createElement(StepRow, {
     number: 1,
-    title: "Atkl\u0101j",
-    body: `"Tu jau būtu uzkrājis ${formatMoney(model.totalDynamic)}" — parādās sākumlapā.`
+    title: L('Atklāj', 'Discover'),
+    body: L(`"Tu jau būtu uzkrājis ${formatMoney(model.totalDynamic)}" — parādās sākumlapā.`, `"You would already have saved ${formatMoney(model.totalDynamic)}" — shown on the home screen.`)
   }), React.createElement(StepRow, {
     number: 2,
-    title: "Piel\u0101go",
-    body: "Nosaki m\u0113r\u0137a procentu, dro\u0161\u012Bbas buferi, diapazonu un iemaksas datumu."
+    title: L('Pielāgo', 'Adjust'),
+    body: L('Nosaki mērķa procentu, drošības buferi, diapazonu un iemaksas datumu.', 'Set the target percentage, safety buffer, range and contribution date.')
   }), React.createElement(StepRow, {
     number: 3,
-    title: "Automatiz\u0113",
-    body: "Katru m\u0113nesi sist\u0113ma apr\u0113\u0137ina dro\u0161o iemaksu p\u0113c ien\u0101kumiem un t\u0113ri\u0146iem."
+    title: L('Automatizē', 'Automate'),
+    body: L('Katru mēnesi sistēma aprēķina drošo iemaksu pēc ienākumiem un tēriņiem.', 'Each month the system calculates a safe contribution from income and spending.')
   }), React.createElement(StepRow, {
     number: 4,
-    title: "Sa\u0146em atskaiti",
-    body: "P\u0113c katras iemaksas redzi summu, iemeslu un ietekmi uz n\u0101kotnes pensiju."
+    title: L('Saņem atskaiti', 'Get a report'),
+    body: L('Pēc katras iemaksas redzi summu, iemeslu un ietekmi uz nākotnes pensiju.', 'After each contribution you see the amount, the reason and the impact on your future pension.')
   })), React.createElement("div", {
     style: {
       marginTop: 16,
@@ -3649,7 +3788,7 @@ function PensionGoals({
       letterSpacing: 1,
       color: BRAND.mute
     }
-  }, "Ikm\u0113ne\u0161a atskaite"), React.createElement("div", {
+  }, L('Ikmēneša atskaite', 'Monthly report')), React.createElement("div", {
     style: {
       marginTop: 6,
       fontSize: 14,
@@ -3658,11 +3797,14 @@ function PensionGoals({
       lineHeight: '20px',
       color: BRAND.ink
     }
-  }, "\u0160om\u0113nes tiktu novirz\u012Bti ", formatMoney(model.preview.contribution), ", jo p\u0113c algas un t\u0113ri\u0146iem paliek ", formatMoney(model.preview.safeToInvest), " dro\u0161i ieguld\u0101mas naudas. Nodok\u013Cu optimiz\u0101cija prognoz\u0113 ", formatMoney(model.taxRefund), " atmaksu.")))));
+  }, L(`Šomēnes tiktu novirzīti ${formatMoney(model.preview.contribution)}, jo pēc algas un tēriņiem paliek ${formatMoney(model.preview.safeToInvest)} droši ieguldāmas naudas. Nodokļu optimizācija prognozē ${formatMoney(model.taxRefund)} atmaksu.`, `This month ${formatMoney(model.preview.contribution)} would be set aside because ${formatMoney(model.preview.safeToInvest)} remains safely investable after salary and spending. Tax optimization forecasts a ${formatMoney(model.taxRefund)} refund.`))))));
 }
 function BackChev({
   onClick
 }) {
+  const {
+    L
+  } = useLanguage();
   return React.createElement("button", {
     type: "button",
     onClick: onClick,
@@ -3688,7 +3830,7 @@ function BackChev({
     strokeWidth: "1.8",
     strokeLinecap: "round",
     strokeLinejoin: "round"
-  })), "Back");
+  })), L('Atpakaļ', 'Back'));
 }
 function OnboardingShell({
   step,
@@ -3701,6 +3843,9 @@ function OnboardingShell({
   onNext,
   nextLabel
 }) {
+  const {
+    L
+  } = useLanguage();
   return React.createElement("div", {
     style: {
       minHeight: 600,
@@ -3776,13 +3921,13 @@ function OnboardingShell({
       border: 0,
       borderRadius: 15,
       background: BRAND.accent,
-      color: BRAND.promo,
+      color: BRAND.ink,
       fontSize: 15,
       fontWeight: 700,
       cursor: 'pointer',
       flexShrink: 0
     }
-  }, nextLabel || 'Continue'));
+  }, nextLabel || L('Turpināt', 'Continue')));
 }
 function OnboardingCard({
   children,
@@ -3804,15 +3949,21 @@ function DynamicPensionOnboarding({
   initialConfig = FLUXION_SETTINGS,
   model = FLUXION_MODEL
 }) {
+  const {
+    L
+  } = useLanguage();
+  const GROSS_ESTIMATE_RATIO = 0.75;
+  const RECOMMENDED_GROSS_RATE = 10;
   const [step, setStep] = React.useState(0);
   const [mode, setMode] = React.useState(initialConfig.mode || 'dynamic');
   const [salaryAccount] = React.useState('Main account');
   const [salary] = React.useState(model.averageIncome || 2000);
   const [salaryDate] = React.useState('25th of each month');
   const [accountBalance] = React.useState(2300);
-  const [targetPct, setTargetPct] = React.useState(Math.min(10, Math.max(1, Math.round((initialConfig.targetRate || 0.03) * 100))));
+  const [targetPct, setTargetPct] = React.useState(10);
   const [buffer, setBuffer] = React.useState(initialConfig.safetyBuffer || 500);
   const [customBuffer, setCustomBuffer] = React.useState(initialConfig.safetyBuffer || 500);
+  const [useCustomBuffer, setUseCustomBuffer] = React.useState(![300, 500, 1000].includes(initialConfig.safetyBuffer || 500));
   const [maxContribution, setMaxContribution] = React.useState(150);
   const [skipBelow, setSkipBelow] = React.useState(10);
   const [taxOption, setTaxOption] = React.useState('ask');
@@ -3827,14 +3978,18 @@ function DynamicPensionOnboarding({
   const averageRecentBalance = Math.round(recentBalances.reduce((sum, value) => sum + value, 0) / Math.max(1, recentBalances.length));
   const balanceTrend = recentBalances.length > 1 ? recentBalances[recentBalances.length - 1] - recentBalances[0] : 0;
   const balanceRiskAdjustment = lowestRecentBalance < buffer ? Math.max(0, buffer - lowestRecentBalance) : 0;
-  const baseContribution = Math.round(salary * (targetPct / 100));
+  const estimatedGrossSalary = Math.round(salary / GROSS_ESTIMATE_RATIO);
+  const contributionFromGrossPct = pct => Math.round(estimatedGrossSalary * (pct / 100));
+  const netRateFromGrossPct = pct => Math.min(1, contributionFromGrossPct(pct) / Math.max(1, salary));
+  const baseContribution = contributionFromGrossPct(targetPct);
   const expectedSpending = model.averageSpending;
   const recurringPayments = model.obligationsTotal;
   const balanceAfterPlannedOutflows = accountBalance - expectedSpending - recurringPayments;
   const safeAvailable = Math.max(0, balanceAfterPlannedOutflows - buffer - balanceRiskAdjustment);
   const estimatedContribution = Math.min(baseContribution, maxContribution, safeAvailable);
   const finalContribution = Math.max(0, estimatedContribution < skipBelow ? 0 : estimatedContribution);
-  const maxEligibleContribution = Math.round(Math.min(4000, salary * 12 * 0.1));
+  const recommendedContribution = contributionFromGrossPct(RECOMMENDED_GROSS_RATE);
+  const maxEligibleContribution = Math.round(Math.min(4000, estimatedGrossSalary * 12 * 0.1));
   const alreadyContributed = model.totalDynamic;
   const remainingThisYear = Math.max(0, maxEligibleContribution - alreadyContributed);
   const suggestedMonthly = Math.round(remainingThisYear / 12);
@@ -3888,7 +4043,7 @@ function DynamicPensionOnboarding({
       fontWeight: 700,
       color: BRAND.promo
     }
-  }, "Recommended")), React.createElement("div", {
+  }, L('Ieteicams', 'Recommended'))), React.createElement("div", {
     style: {
       fontSize: 13,
       color: BRAND.mute,
@@ -3923,9 +4078,9 @@ function DynamicPensionOnboarding({
   function finish() {
     onComplete({
       goalMonthly: 1200,
-      targetRate: targetPct / 100,
-      minRate: Math.max(0.01, (targetPct - 2) / 100),
-      maxRate: Math.min(0.15, (targetPct + 2) / 100),
+      targetRate: netRateFromGrossPct(targetPct),
+      minRate: Math.max(0.01, netRateFromGrossPct(Math.max(1, targetPct - 2))),
+      maxRate: Math.min(1, netRateFromGrossPct(Math.min(100, targetPct + 2))),
       safetyBuffer: buffer,
       payday: 25,
       fixedContribution: maxContribution,
@@ -3943,43 +4098,43 @@ function DynamicPensionOnboarding({
   if (step === 0) return React.createElement(OnboardingShell, {
     step: step,
     total: STEPS,
-    eyebrow: "Dynamic 3rd pillar pension",
-    title: "Set up your 3rd pillar pension",
-    subtitle: "Choose what percentage of your salary you want to invest. The app adjusts or skips contributions based on your salary, account balance, spending, and safety buffer.",
+    eyebrow: L('Dinamisks pensiju 3. līmenis', 'Dynamic 3rd pillar pension'),
+    title: L('Iestati savu pensiju 3. līmeni', 'Set up your 3rd pillar pension'),
+    subtitle: L('Izvēlies, kādu daļu no algas vēlies ieguldīt. Lietotne pielāgo vai izlaiž iemaksas, balstoties uz algu, konta atlikumu, tēriņiem un drošības buferi.', 'Choose what percentage of your salary you want to invest. The app adjusts or skips contributions based on your salary, account balance, spending, and safety buffer.'),
     onBack: onBack,
     onNext: () => setStep(1),
-    nextLabel: "Get started"
+    nextLabel: L('Sākt', 'Get started')
   }, React.createElement(OnboardingCard, null, React.createElement(MiniSetting, {
-    label: "Contribution type",
-    value: "Dynamic 3rd pillar"
+    label: L('Iemaksu veids', 'Contribution type'),
+    value: L('Dinamisks 3. līmenis', 'Dynamic 3rd pillar')
   }), React.createElement(MiniSetting, {
-    label: "Checks before investing",
-    value: "Salary, balance, spending"
+    label: L('Pārbaudes pirms ieguldīšanas', 'Checks before investing'),
+    value: L('Alga, atlikums, tēriņi', 'Salary, balance, spending')
   }), React.createElement(MiniSetting, {
-    label: "Control",
-    value: "Notification before investing"
+    label: L('Kontrole', 'Control'),
+    value: L('Paziņojums pirms ieguldīšanas', 'Notification before investing')
   })));
   if (step === 1) return React.createElement(OnboardingShell, {
     step: step,
     total: STEPS,
-    eyebrow: "Contribution mode",
-    title: "Choose how you want to contribute",
+    eyebrow: L('Iemaksu režīms', 'Contribution mode'),
+    title: L('Izvēlies, kā vēlies veikt iemaksas', 'Choose how you want to contribute'),
     onBack: () => setStep(0),
     onNext: () => setStep(2)
   }, React.createElement(Option, {
-    title: "Fixed",
-    body: "Same amount every month.",
+    title: L('Fiksēts', 'Fixed'),
+    body: L('Katru mēnesi viena un tā pati summa.', 'Same amount every month.'),
     active: mode === 'fixed',
     onClick: () => setMode('fixed')
   }), React.createElement(Option, {
-    title: "Dynamic",
-    body: "Contributes a percentage of your salary and adjusts based on your financial situation.",
+    title: L('Dinamisks', 'Dynamic'),
+    body: L('Iegulda procentu no algas un pielāgojas tavai finanšu situācijai.', 'Contributes a percentage of your salary and adjusts based on your financial situation.'),
     active: mode === 'dynamic',
     onClick: () => setMode('dynamic'),
     recommended: true
   }), React.createElement(Option, {
-    title: "Tax target",
-    body: "Helps you reach the yearly amount needed for the maximum eligible tax benefit.",
+    title: L('Nodokļu mērķis', 'Tax target'),
+    body: L('Palīdz sasniegt gada summu maksimālajam nodokļu ieguvumam.', 'Helps you reach the yearly amount needed for the maximum eligible tax benefit.'),
     active: mode === 'tax',
     onClick: () => {
       setMode('tax');
@@ -3989,22 +4144,22 @@ function DynamicPensionOnboarding({
   if (step === 2) return React.createElement(OnboardingShell, {
     step: step,
     total: STEPS,
-    eyebrow: "Salary account",
-    title: "Choose your salary account",
-    subtitle: "This account will be used to detect your salary, spending, recurring payments, and available balance.",
+    eyebrow: L('Algas konts', 'Salary account'),
+    title: L('Izvēlies savu algas kontu', 'Choose your salary account'),
+    subtitle: L('Šis konts tiks izmantots, lai noteiktu algu, tēriņus, regulāros maksājumus un pieejamo atlikumu.', 'This account will be used to detect your salary, spending, recurring payments, and available balance.'),
     onBack: () => setStep(1),
     onNext: () => setStep(3)
   }, React.createElement(OnboardingCard, null, React.createElement(MiniSetting, {
-    label: "Account",
-    value: salaryAccount
+    label: L('Konts', 'Account'),
+    value: L('Galvenais konts', 'Main account')
   }), React.createElement(MiniSetting, {
-    label: "Detected salary",
+    label: L('Atpazītie neto ienākumi', 'Detected net income'),
     value: formatMoney(salary)
   }), React.createElement(MiniSetting, {
-    label: "Detected salary date",
-    value: salaryDate
+    label: L('Atpazītais algas datums', 'Detected salary date'),
+    value: L('Katra mēneša 25. datums', '25th of each month')
   }), React.createElement(MiniSetting, {
-    label: "Account balance",
+    label: L('Konta atlikums', 'Account balance'),
     value: formatMoney(accountBalance)
   })), React.createElement("div", {
     style: {
@@ -4013,86 +4168,144 @@ function DynamicPensionOnboarding({
       lineHeight: '18px',
       color: BRAND.mute
     }
-  }, "If no salary is detected, no contribution is made."));
+  }, L('Ja alga netiek atpazīta, iemaksa netiek veikta.', 'If no salary is detected, no contribution is made.')));
   if (step === 3) return React.createElement(OnboardingShell, {
     step: step,
     total: STEPS,
-    eyebrow: "Salary percentage",
-    title: "Choose your contribution percentage",
-    subtitle: "This starts from salary, then checks current balance, expected spending, recurring payments, and recent balance history before investing.",
+    eyebrow: L('Algas procents', 'Salary percentage'),
+    title: L('Izvēlies savu iemaksas procentu', 'Choose your contribution percentage'),
+    subtitle: L('Aprēķins balstās uz jūsu ienākumiem un izdevumiem. Pirms ieguldīšanas tiek pārbaudīts drošs konta atlikums.', 'The calculation is based on your income and expenses. Before investing, a safe account balance is checked.'),
     onBack: () => setStep(2),
     onNext: () => setStep(4)
+  }, React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 16,
+      paddingBottom: 18
+    }
+  }, React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10
+    }
   }, React.createElement("label", {
     htmlFor: "target-percent",
     style: {
-      display: 'block',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 16,
       fontSize: 14,
       fontWeight: 700
     }
-  }, "Slider from 1% to 10% of salary"), React.createElement("input", {
+  }, React.createElement("span", null, L('No savas algas vēlos ieguldīt', 'From my salary I want to invest')), React.createElement("span", {
+    style: {
+      fontSize: 20,
+      fontWeight: 700,
+      color: BRAND.promo,
+      flexShrink: 0
+    }
+  }, targetPct, "%")), React.createElement("input", {
     id: "target-percent",
     type: "range",
     min: 1,
-    max: 10,
+    max: 100,
     step: 1,
     value: targetPct,
-    "aria-valuetext": `${targetPct}% of salary`,
+    "aria-valuetext": L(`${targetPct}% no algas`, `${targetPct}% of salary`),
     onChange: e => setTargetPct(Number(e.target.value)),
     style: {
       width: '100%',
-      marginTop: 12,
       accentColor: BRAND.promo,
       cursor: 'pointer'
     }
-  }), React.createElement(OnboardingCard, {
-    style: {
-      marginTop: 16
-    }
-  }, React.createElement(MiniSetting, {
-    label: "Salary",
-    value: formatMoney(salary)
+  })), React.createElement(OnboardingCard, null, React.createElement(MiniSetting, {
+    label: L('Bruto alga (novērtēta)', 'Estimated gross salary'),
+    value: formatMoney(estimatedGrossSalary)
   }), React.createElement(MiniSetting, {
-    label: "Selected rate",
+    label: L('Izvēlētā likme', 'Selected rate'),
     value: `${targetPct}%`
   }), React.createElement(MiniSetting, {
-    label: "Starting contribution",
+    label: L('Sākuma iemaksa', 'Starting contribution'),
     value: formatMoney(baseContribution)
   })), React.createElement(OnboardingCard, {
     style: {
-      marginTop: 12,
+      background: '#F7F2E6',
+      boxShadow: 'none',
+      border: `1px solid ${BRAND.line}`,
+      padding: '18px 16px'
+    }
+  }, React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 700,
+      letterSpacing: 1,
+      textTransform: 'uppercase',
+      color: BRAND.promo
+    }
+  }, L('INDEXO ieteikums', 'INDEXO suggestion')), React.createElement("div", {
+    style: {
+      fontSize: 14,
+      fontWeight: 700,
+      lineHeight: '20px',
+      color: BRAND.ink
+    }
+  }, L('Ieteicamais līmenis: līdz 10% no bruto algas.', 'Recommended level: up to 10% of gross salary.')), React.createElement("div", {
+    style: {
+      fontSize: 13,
+      lineHeight: '19px',
+      color: BRAND.mute
+    }
+  }, L('Šis līmenis ļauj pilnvērtīgi izmantot nodokļu atmaksas priekšrocības un veidot stabilus ilgtermiņa uzkrājumus. Bruto alga tiek novērtēta, balstoties uz jūsu neto ienākumiem.', 'This level helps you make full practical use of tax refund benefits while building stable long-term savings. Gross salary is estimated based on your net income.')))), React.createElement(OnboardingCard, {
+    style: {
       boxShadow: 'none',
       background: '#F1ECDD'
     }
   }, React.createElement(MiniSetting, {
-    label: "Current account balance",
+    label: L('Pašreizējais konta atlikums', 'Current account balance'),
     value: formatMoney(accountBalance)
   }), React.createElement(MiniSetting, {
-    label: "Avg. past spending",
+    label: L('Vidējie iepriekšējie tēriņi', 'Avg. past spending'),
     value: formatMoney(expectedSpending)
   }), React.createElement(MiniSetting, {
-    label: "Upcoming recurring payments",
+    label: L('Gaidāmie regulārie maksājumi', 'Upcoming recurring payments'),
     value: formatMoney(recurringPayments)
   }), React.createElement(MiniSetting, {
-    label: "Average recent balance",
+    label: L('Vidējais nesenais atlikums', 'Average recent balance'),
     value: formatMoney(averageRecentBalance)
   }), React.createElement(MiniSetting, {
-    label: "Lowest recent balance",
+    label: L('Zemākais nesenais atlikums', 'Lowest recent balance'),
     value: formatMoney(lowestRecentBalance)
   }), React.createElement(MiniSetting, {
-    label: "Estimated safe contribution",
+    label: L('Aprēķinātā drošā iemaksa', 'Estimated safe contribution'),
     value: formatMoney(finalContribution)
-  })));
+  }), finalContribution === 0 && React.createElement("div", {
+    style: {
+      marginTop: 8,
+      fontSize: 13,
+      lineHeight: '18px',
+      color: BRAND.mute
+    }
+  }, L('Pašlaik iemaksa nav ieteicama, lai saglabātu minimālo drošības rezervi.', 'A contribution is currently not recommended in order to preserve the minimum safety reserve.')))));
   if (step === 4) return React.createElement(OnboardingShell, {
     step: step,
     total: STEPS,
-    eyebrow: "Safety balance",
-    title: "Set your minimum balance",
-    subtitle: "The app will not invest if your account would fall below this amount.",
+    eyebrow: L('Drošības atlikums', 'Safety balance'),
+    title: L('Iestati savu minimālo atlikumu', 'Set your minimum balance'),
+    subtitle: L('Lietotne neieguldīs, ja konta atlikums pēc tam būtu zem šīs summas.', 'The app will not invest if your account would fall below this amount.'),
     onBack: () => setStep(3),
     onNext: () => setStep(5)
   }, React.createElement("div", {
     role: "group",
-    "aria-label": "Minimum balance options",
+    "aria-label": L('Minimālā atlikuma izvēles', 'Minimum balance options'),
     style: {
       display: 'grid',
       gridTemplateColumns: '1fr 1fr',
@@ -4101,20 +4314,26 @@ function DynamicPensionOnboarding({
   }, [300, 500, 1000].map(amount => React.createElement(ModeButton, {
     key: amount,
     label: formatMoney(amount),
-    active: buffer === amount,
-    onClick: () => setBuffer(amount)
+    active: !useCustomBuffer && buffer === amount,
+    onClick: () => {
+      setUseCustomBuffer(false);
+      setBuffer(amount);
+    }
   })), React.createElement(ModeButton, {
-    label: "Custom amount",
-    active: buffer === customBuffer && ![300, 500, 1000].includes(buffer),
-    onClick: () => setBuffer(customBuffer)
-  })), React.createElement("label", {
+    label: L('Cita summa', 'Custom amount'),
+    active: useCustomBuffer,
+    onClick: () => {
+      setUseCustomBuffer(true);
+      setBuffer(customBuffer);
+    }
+  })), useCustomBuffer && React.createElement("label", {
     style: {
       display: 'block',
       marginTop: 14,
       fontSize: 13,
       color: BRAND.mute
     }
-  }, "Custom amount", React.createElement("input", {
+  }, L('Cita summa', 'Custom amount'), React.createElement("input", {
     type: "number",
     min: 0,
     value: customBuffer,
@@ -4122,6 +4341,7 @@ function DynamicPensionOnboarding({
       const next = Number(e.target.value);
       setCustomBuffer(next);
       setBuffer(next);
+      setUseCustomBuffer(true);
     },
     style: {
       width: '100%',
@@ -4139,7 +4359,7 @@ function DynamicPensionOnboarding({
       background: '#F1ECDD'
     }
   }, React.createElement(MiniSetting, {
-    label: "Minimum balance",
+    label: L('Minimālais atlikums', 'Minimum balance'),
     value: formatMoney(buffer)
   }), React.createElement("div", {
     style: {
@@ -4148,13 +4368,13 @@ function DynamicPensionOnboarding({
       color: BRAND.mute,
       lineHeight: '18px'
     }
-  }, "If your balance would drop below ", formatMoney(buffer), ", the contribution is skipped.")));
+  }, L(`Ja atlikums nokristu zem ${formatMoney(buffer)}, iemaksa tiks izlaista.`, `If your balance would drop below ${formatMoney(buffer)}, the contribution is skipped.`))));
   if (step === 5) return React.createElement(OnboardingShell, {
     step: step,
     total: STEPS,
-    eyebrow: "Contribution limit",
-    title: "Set your maximum monthly contribution",
-    subtitle: "This protects you from contributing more than you are comfortable with, even if your salary increases.",
+    eyebrow: L('Iemaksas limits', 'Contribution limit'),
+    title: L('Iestati savu maksimālo mēneša iemaksu', 'Set your maximum monthly contribution'),
+    subtitle: L('Tas pasargā no pārāk lielām iemaksām pat tad, ja alga palielinās.', 'This protects you from contributing more than you are comfortable with, even if your salary increases.'),
     onBack: () => setStep(4),
     onNext: () => setStep(6)
   }, React.createElement("label", {
@@ -4163,7 +4383,7 @@ function DynamicPensionOnboarding({
       fontSize: 14,
       fontWeight: 700
     }
-  }, "Never contribute more than per month", React.createElement("input", {
+  }, L('Nekad neiemaksāt vairāk par šo summu mēnesī', 'Never contribute more than per month'), React.createElement("input", {
     type: "number",
     min: 0,
     value: maxContribution,
@@ -4184,7 +4404,7 @@ function DynamicPensionOnboarding({
       fontSize: 13,
       color: BRAND.mute
     }
-  }, "Skip contribution if calculated amount is below", React.createElement("input", {
+  }, L('Izlaist iemaksu, ja aprēķinātā summa ir zem', 'Skip contribution if calculated amount is below'), React.createElement("input", {
     type: "number",
     min: 0,
     value: skipBelow,
@@ -4203,109 +4423,112 @@ function DynamicPensionOnboarding({
       marginTop: 14
     }
   }, React.createElement(MiniSetting, {
-    label: "Salary",
+    label: L('Alga', 'Salary'),
     value: formatMoney(5000)
   }), React.createElement(MiniSetting, {
-    label: "Selected rate",
+    label: L('Izvēlētā likme', 'Selected rate'),
     value: "5%"
   }), React.createElement(MiniSetting, {
-    label: "Base contribution",
+    label: L('Bāzes iemaksa', 'Base contribution'),
     value: formatMoney(250)
   }), React.createElement(MiniSetting, {
-    label: "Maximum limit",
+    label: L('Maksimālais limits', 'Maximum limit'),
     value: formatMoney(maxContribution)
   }), React.createElement(MiniSetting, {
-    label: "Final contribution",
+    label: L('Galīgā iemaksa', 'Final contribution'),
     value: formatMoney(Math.min(250, maxContribution))
   })));
   if (step === 6) return React.createElement(OnboardingShell, {
     step: step,
     total: STEPS,
-    eyebrow: "Tax benefit",
-    title: "Optimize your tax benefit",
-    subtitle: "Based on your income, the app estimates how much you can contribute this year to reach the maximum eligible tax benefit.",
+    eyebrow: L('Nodokļu ieguvums', 'Tax benefit'),
+    title: L('Optimizē savu nodokļu ieguvumu', 'Optimize your tax benefit'),
+    subtitle: L('Balstoties uz taviem ienākumiem, lietotne aprēķina, cik vari iemaksāt šogad, lai sasniegtu maksimālo nodokļu ieguvumu.', 'Based on your income, the app estimates how much you can contribute this year to reach the maximum eligible tax benefit.'),
     onBack: () => setStep(5),
     onNext: () => setStep(7)
   }, React.createElement(OnboardingCard, null, React.createElement(MiniSetting, {
-    label: "Estimated yearly income",
-    value: formatMoney(salary * 12)
+    label: L('Aprēķinātie gada bruto ienākumi', 'Estimated yearly gross income'),
+    value: formatMoney(estimatedGrossSalary * 12)
   }), React.createElement(MiniSetting, {
-    label: "Maximum eligible contribution",
+    label: L('Maksimālā atbilstošā iemaksa', 'Maximum eligible contribution'),
     value: formatMoney(maxEligibleContribution)
   }), React.createElement(MiniSetting, {
-    label: "Already contributed",
+    label: L('Jau iemaksāts', 'Already contributed'),
     value: formatMoney(alreadyContributed)
   }), React.createElement(MiniSetting, {
-    label: "Remaining this year",
+    label: L('Atlikums šim gadam', 'Remaining this year'),
     value: formatMoney(remainingThisYear)
   }), React.createElement(MiniSetting, {
-    label: "Suggested monthly amount",
+    label: L('Ieteicamā mēneša summa', 'Suggested monthly amount'),
     value: formatMoney(suggestedMonthly)
   })), React.createElement(Option, {
-    title: "Keep my selected percentage",
-    body: "Use the selected salary percentage without automatic tax-target changes.",
+    title: L('Saglabāt izvēlēto procentu', 'Keep my selected percentage'),
+    body: L('Izmantot izvēlēto algas procentu bez automātiskām nodokļu mērķa korekcijām.', 'Use the selected salary percentage without automatic tax-target changes.'),
     active: taxOption === 'keep',
     onClick: () => setTaxOption('keep')
   }), React.createElement(Option, {
-    title: "Adjust contributions to reach tax target",
-    body: "Increase or reduce monthly contributions to aim for the eligible yearly amount.",
+    title: L('Pielāgot iemaksas nodokļu mērķim', 'Adjust contributions to reach tax target'),
+    body: L('Palielināt vai samazināt mēneša iemaksas, lai sasniegtu atbilstošo gada summu.', 'Increase or reduce monthly contributions to aim for the eligible yearly amount.'),
     active: taxOption === 'adjust',
     onClick: () => setTaxOption('adjust')
   }), React.createElement(Option, {
-    title: "Ask me before increasing contributions",
-    body: "Send a confirmation before any tax-driven increase is applied.",
+    title: L('Jautāt pirms iemaksu palielināšanas', 'Ask me before increasing contributions'),
+    body: L('Nosūtīt apstiprinājumu pirms tiek piemērots ar nodokļiem saistīts pieaugums.', 'Send a confirmation before any tax-driven increase is applied.'),
     active: taxOption === 'ask',
     onClick: () => setTaxOption('ask')
   }));
   if (step === 7) return React.createElement(OnboardingShell, {
     step: step,
     total: STEPS,
-    eyebrow: "Preview",
-    title: "Your next contribution estimate",
+    eyebrow: L('Priekšskatījums', 'Preview'),
+    title: L('Tavas nākamās iemaksas aprēķins', 'Your next contribution estimate'),
     onBack: () => setStep(6),
     onNext: () => setStep(8)
   }, React.createElement(OnboardingCard, null, React.createElement(MiniSetting, {
-    label: "Detected salary",
+    label: L('Atpazītie neto ienākumi', 'Detected net income'),
     value: formatMoney(salary)
   }), React.createElement(MiniSetting, {
-    label: "Selected rate",
+    label: L('Novērtētā bruto alga', 'Estimated gross salary'),
+    value: formatMoney(estimatedGrossSalary)
+  }), React.createElement(MiniSetting, {
+    label: L('Izvēlētā likme', 'Selected rate'),
     value: `${targetPct}%`
   }), React.createElement(MiniSetting, {
-    label: "Base contribution",
+    label: L('Bāzes iemaksa', 'Base contribution'),
     value: formatMoney(baseContribution)
   })), React.createElement(OnboardingCard, {
     style: {
       marginTop: 12
     }
   }, React.createElement(MiniSetting, {
-    label: "Current balance",
+    label: L('Pašreizējais atlikums', 'Current balance'),
     value: formatMoney(accountBalance)
   }), React.createElement(MiniSetting, {
-    label: "Expected spending",
-    value: `${formatMoney(expectedSpending)} avg.`
+    label: L('Prognozētie tēriņi', 'Expected spending'),
+    value: L(`${formatMoney(expectedSpending)} vidēji`, `${formatMoney(expectedSpending)} avg.`)
   }), React.createElement(MiniSetting, {
-    label: "Upcoming recurring payments",
+    label: L('Gaidāmie regulārie maksājumi', 'Upcoming recurring payments'),
     value: formatMoney(recurringPayments)
   }), React.createElement(MiniSetting, {
-    label: "Safety balance",
+    label: L('Drošības atlikums', 'Safety balance'),
     value: formatMoney(buffer)
   }), React.createElement(MiniSetting, {
-    label: "Average recent balance",
+    label: L('Vidējais nesenais atlikums', 'Average recent balance'),
     value: formatMoney(averageRecentBalance)
   }), React.createElement(MiniSetting, {
-    label: "Lowest recent balance",
+    label: L('Zemākais nesenais atlikums', 'Lowest recent balance'),
     value: formatMoney(lowestRecentBalance)
   }), React.createElement(MiniSetting, {
-    label: "Balance trend",
+    label: L('Atlikuma tendence', 'Balance trend'),
     value: balanceTrend >= 0 ? `+${formatMoney(balanceTrend)}` : formatMoney(balanceTrend)
   }), React.createElement(MiniSetting, {
-    label: "Past-balance adjustment",
+    label: L('Vēsturiskā atlikuma korekcija', 'Past-balance adjustment'),
     value: formatMoney(balanceRiskAdjustment)
   }), React.createElement(MiniSetting, {
-    label: "Safe available amount",
+    label: L('Droši pieejamā summa', 'Safe available amount'),
     value: formatMoney(safeAvailable)
   }), React.createElement(MiniSetting, {
-    label: "Estimated contribution",
+    label: L('Aprēķinātā iemaksa', 'Estimated contribution'),
     value: formatMoney(finalContribution)
   })), React.createElement(OnboardingCard, {
     style: {
@@ -4314,72 +4537,72 @@ function DynamicPensionOnboarding({
       background: '#F1ECDD'
     }
   }, React.createElement(MiniSetting, {
-    label: "No salary detected",
+    label: L('Alga nav atpazīta', 'No salary detected'),
     value: formatMoney(0)
   }), React.createElement(MiniSetting, {
-    label: "Balance below safety limit",
+    label: L('Atlikums zem drošības limita', 'Balance below safety limit'),
     value: formatMoney(0)
   }), React.createElement(MiniSetting, {
-    label: "Large one-time inflow",
-    value: "No auto-increase"
+    label: L('Liela vienreizēja iemaksa', 'Large one-time inflow'),
+    value: L('Bez automātiska palielinājuma', 'No auto-increase')
   })));
   if (step === 8) return React.createElement(OnboardingShell, {
     step: step,
     total: STEPS,
-    eyebrow: "Notifications",
-    title: "Stay in control",
-    subtitle: "Before each contribution, you will receive a notification with the planned amount.",
+    eyebrow: L('Paziņojumi', 'Notifications'),
+    title: L('Saglabā kontroli', 'Stay in control'),
+    subtitle: L('Pirms katras iemaksas saņemsi paziņojumu ar plānoto summu.', 'Before each contribution, you will receive a notification with the planned amount.'),
     onBack: () => setStep(7),
     onNext: () => setStep(9)
-  }, React.createElement(OnboardingCard, null, React.createElement(SectionLabel, null, "Settings"), React.createElement(ToggleRow, {
-    label: "Notify me 2 days before salary day",
+  }, React.createElement(OnboardingCard, null, React.createElement(SectionLabel, null, L('Iestatījumi', 'Settings')), React.createElement(ToggleRow, {
+    label: L('Paziņot man 2 dienas pirms algas dienas', 'Notify me 2 days before salary day'),
     checked: notifyBefore,
     onChange: setNotifyBefore
   }), React.createElement(ToggleRow, {
-    label: "Allow 24-hour reversal after contribution",
+    label: L('Atļaut atsaukšanu 24 stundu laikā pēc iemaksas', 'Allow 24-hour reversal after contribution'),
     checked: allowReversal,
     onChange: setAllowReversal
   }), React.createElement(ToggleRow, {
-    label: "Send monthly pension summary",
+    label: L('Sūtīt ikmēneša pensijas kopsavilkumu', 'Send monthly pension summary'),
     checked: monthlySummary,
     onChange: setMonthlySummary
   }), React.createElement(ToggleRow, {
-    label: "Send occasional tax benefit reminders",
+    label: L('Sūtīt atgādinājumus par nodokļu ieguvumu', 'Send occasional tax benefit reminders'),
     checked: taxReminders,
     onChange: setTaxReminders
   })));
   if (step === 9) return React.createElement(OnboardingShell, {
     step: step,
     total: STEPS,
-    eyebrow: "Review",
-    title: "Review your setup",
+    eyebrow: L('Pārskats', 'Review'),
+    title: L('Pārskati savu iestatījumu', 'Review your setup'),
     onBack: () => setStep(8),
     onNext: () => setStep(10),
-    nextLabel: "Activate dynamic contributions"
+    nextLabel: L('Aktivizēt dinamiskās iemaksas', 'Activate dynamic contributions')
   }, React.createElement(OnboardingCard, null, React.createElement(MiniSetting, {
-    label: "Mode",
-    value: mode === 'fixed' ? 'Fixed' : mode === 'tax' ? 'Tax target' : 'Dynamic'
+    label: L('Režīms', 'Mode'),
+    value: mode === 'fixed' ? L('Fiksēts', 'Fixed') : mode === 'tax' ? L('Nodokļu mērķis', 'Tax target') : L('Dinamisks', 'Dynamic')
   }), React.createElement(MiniSetting, {
-    label: "Salary account",
-    value: salaryAccount
+    label: L('Algas konts', 'Salary account'),
+    value: L('Galvenais konts', 'Main account')
   }), React.createElement(MiniSetting, {
-    label: "Target contribution",
-    value: `${targetPct}% of salary`
+    label: L('Mērķa iemaksa', 'Target contribution'),
+    value: L(`${targetPct}% no bruto algas`, `${targetPct}% of gross salary`)
   }), React.createElement(MiniSetting, {
-    label: "Minimum balance",
+    label: L('Minimālais atlikums', 'Minimum balance'),
     value: formatMoney(buffer)
   }), React.createElement(MiniSetting, {
-    label: "Maximum monthly contribution",
+    label: L('Maksimālā mēneša iemaksa', 'Maximum monthly contribution'),
     value: formatMoney(maxContribution)
   }), React.createElement(MiniSetting, {
-    label: "Tax optimization",
-    value: taxOptimization ? 'Enabled' : 'Disabled'
+    label: L('Nodokļu optimizācija', 'Tax optimization'),
+    value: taxOptimization ? L('Ieslēgta', 'Enabled') : L('Izslēgta', 'Disabled')
   }), React.createElement(MiniSetting, {
-    label: "Notification",
-    value: notifyBefore ? '2 days before salary day' : 'Disabled'
+    label: L('Paziņojums', 'Notification'),
+    value: notifyBefore ? L('2 dienas pirms algas dienas', '2 days before salary day') : L('Izslēgts', 'Disabled')
   }), React.createElement(MiniSetting, {
-    label: "24-hour reversal",
-    value: allowReversal ? 'Enabled' : 'Disabled'
+    label: L('24 stundu atsaukšana', '24-hour reversal'),
+    value: allowReversal ? L('Ieslēgta', 'Enabled') : L('Izslēgta', 'Disabled')
   })), React.createElement("button", {
     type: "button",
     onClick: () => setStep(1),
@@ -4394,25 +4617,25 @@ function DynamicPensionOnboarding({
       fontWeight: 700,
       cursor: 'pointer'
     }
-  }, "Edit settings"));
+  }, L('Rediģēt iestatījumus', 'Edit settings')));
   return React.createElement(OnboardingShell, {
     step: step,
     total: STEPS,
-    eyebrow: "Active",
-    title: "Your dynamic 3rd pillar plan is active",
-    subtitle: "Your first contribution will be calculated before your next salary date. You will be notified before anything is invested.",
+    eyebrow: L('Aktīvs', 'Active'),
+    title: L('Tavs dinamiskais pensiju 3. līmenis ir aktīvs', 'Your dynamic 3rd pillar plan is active'),
+    subtitle: L('Tava pirmā iemaksa tiks aprēķināta pirms nākamās algas dienas. Pirms jebkāda ieguldījuma saņemsi paziņojumu.', 'Your first contribution will be calculated before your next salary date. You will be notified before anything is invested.'),
     onBack: () => setStep(9),
     onNext: finish,
-    nextLabel: "View pension dashboard"
+    nextLabel: L('Skatīt pensijas paneli', 'View pension dashboard')
   }, React.createElement(OnboardingCard, null, React.createElement(MiniSetting, {
-    label: "Next salary date",
-    value: salaryDate
+    label: L('Nākamais algas datums', 'Next salary date'),
+    value: L('Katra mēneša 25. datums', '25th of each month')
   }), React.createElement(MiniSetting, {
-    label: "Expected contribution range",
-    value: `${formatMoney(0)} to ${formatMoney(Math.min(baseContribution, maxContribution))}`
+    label: L('Sagaidāmais iemaksu diapazons', 'Expected contribution range'),
+    value: L(`${formatMoney(0)} līdz ${formatMoney(Math.min(baseContribution, maxContribution))}`, `${formatMoney(0)} to ${formatMoney(Math.min(baseContribution, maxContribution))}`)
   }), React.createElement(MiniSetting, {
-    label: "Current pension projection",
-    value: `${formatMoney(FUTURE_SCENARIOS.balanced.todayMoneyMonthly)}/month`
+    label: L('Pašreizējā pensijas prognoze', 'Current pension projection'),
+    value: `${formatMoney(FUTURE_SCENARIOS.balanced.todayMoneyMonthly)}/${L('mēn.', 'month')}`
   })));
 }
 function FluxionPensijaScreen() {
@@ -4531,10 +4754,46 @@ function Home({
   const [promo, setPromo] = React.useState(0);
   const [nav, setNav] = React.useState('Home');
   const [dismissed, setDismissed] = React.useState(false);
-  const tabs = ['Konti', 'Pensija', 'Uzkrājumi', 'Aizdevumi'];
+  const [language, setLanguage] = React.useState('lv');
+  const [profileMenuOpen, setProfileMenuOpen] = React.useState(false);
+  const profileMenuRef = React.useRef(null);
+  const L = (lv, en) => language === 'lv' ? lv : en;
+  const languageValue = React.useMemo(() => ({
+    language,
+    setLanguage,
+    L: (lv, en) => language === 'lv' ? lv : en,
+    monthLabel: label => translateMonth(label, language),
+    shortMonthLabel: label => translateMonth(label, language).slice(0, 3),
+    scenarioLabel: key => translateScenarioLabel(key, language),
+    scenarioNote: key => translateScenarioNote(key, language)
+  }), [language]);
+  React.useEffect(() => {
+    const onPointerDown = event => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, []);
+  const tabs = [{
+    key: 'Konti',
+    label: L('Konti', 'Accounts')
+  }, {
+    key: 'Pensija',
+    label: L('Pensija', 'Pension')
+  }, {
+    key: 'Uzkrājumi',
+    label: L('Uzkrājumi', 'Savings')
+  }, {
+    key: 'Aizdevumi',
+    label: L('Aizdevumi', 'Loans')
+  }];
   const promos = ['indigo', 'cashback', 'goal'];
   const currentPromo = tweaks.promo === 'auto' ? promos[promo] : tweaks.promo;
-  return React.createElement("div", {
+  return React.createElement(LanguageContext.Provider, {
+    value: languageValue
+  }, React.createElement("div", {
     style: {
       background: BRAND.bg,
       height: '100%',
@@ -4559,6 +4818,27 @@ function Home({
       gap: 14
     }
   }, React.createElement("div", {
+    ref: profileMenuRef,
+    style: {
+      flex: 1,
+      position: 'relative'
+    }
+  }, React.createElement("button", {
+    type: "button",
+    "aria-label": L('Mainīt valodu', 'Change language'),
+    onClick: () => setProfileMenuOpen(current => !current),
+    style: {
+      width: '100%',
+      background: 'transparent',
+      border: 0,
+      padding: 0,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 14,
+      textAlign: 'left',
+      cursor: 'pointer'
+    }
+  }, React.createElement("div", {
     style: {
       width: 40,
       height: 40,
@@ -4579,9 +4859,41 @@ function Home({
       fontWeight: 600,
       letterSpacing: 0
     }
-  }, "Edvards Markuss Selikovs"), React.createElement("button", {
+  }, "Edvards Markuss Selikovs")), profileMenuOpen && React.createElement("div", {
+    style: {
+      position: 'absolute',
+      top: 'calc(100% + 8px)',
+      left: 0,
+      zIndex: 40,
+      background: BRAND.card,
+      border: `1px solid ${BRAND.line}`,
+      borderRadius: 12,
+      padding: 6,
+      boxShadow: '0 8px 18px rgba(17,23,19,0.12)'
+    }
+  }, [['lv', 'Latviski'], ['en', 'English']].map(([value, label]) => React.createElement("button", {
+    key: value,
     type: "button",
-    "aria-label": "Atv\u0113rt zi\u0146ojumus",
+    onClick: () => {
+      setLanguage(value);
+      setProfileMenuOpen(false);
+    },
+    style: {
+      display: 'block',
+      width: '100%',
+      border: 0,
+      borderRadius: 8,
+      padding: '8px 10px',
+      background: language === value ? '#F1ECDD' : 'transparent',
+      color: BRAND.ink,
+      fontSize: 12.5,
+      fontWeight: language === value ? 700 : 500,
+      textAlign: 'left',
+      cursor: 'pointer'
+    }
+  }, label)))), React.createElement("button", {
+    type: "button",
+    "aria-label": L('Atvērt ziņojumus', 'Open messages'),
     style: {
       background: 'transparent',
       border: 0,
@@ -4592,17 +4904,20 @@ function Home({
     }
   }, Icon.chat(24))), React.createElement("div", {
     role: "tablist",
-    "aria-label": "Sada\u013Cas",
+    "aria-label": L('Sadaļas', 'Sections'),
     style: {
       display: 'flex',
       padding: '12px 16px 0',
       borderBottom: `1px solid ${BRAND.line}`
     }
-  }, tabs.map(t => React.createElement(Tab, {
-    key: t,
-    label: t,
-    active: tab === t,
-    onClick: () => setTab(t)
+  }, tabs.map(({
+    key,
+    label
+  }) => React.createElement(Tab, {
+    key: key,
+    label: label,
+    active: tab === key,
+    onClick: () => setTab(key)
   }))), tab === 'Pensija' ? React.createElement(FluxionPensijaScreen, null) : tab === 'Konti' ? React.createElement(React.Fragment, null, React.createElement("div", {
     style: {
       padding: '16px 16px 0'
@@ -4628,7 +4943,7 @@ function Home({
       fontSize: 15,
       fontWeight: 600
     }
-  }, "Nor\u0113\u0137inu konts"), React.createElement("div", {
+  }, L('Norēķinu konts', 'Current account')), React.createElement("div", {
     style: {
       fontSize: 11.5,
       color: BRAND.mute,
@@ -4682,7 +4997,7 @@ function Home({
       alignItems: 'center',
       gap: 6
     }
-  }, "Nopeln\u012Btie procenti ", Icon.info(13, BRAND.promo))))), React.createElement("div", {
+  }, L('Nopelnītie procenti', 'Earned interest'), " ", Icon.info(13, BRAND.promo))))), React.createElement("div", {
     style: {
       display: 'flex',
       padding: '20px 20px 6px',
@@ -4690,16 +5005,16 @@ function Home({
     }
   }, React.createElement(QuickAction, {
     icon: Icon.card(),
-    label: "Izveidot karti",
-    ariaLabel: "Izveidot karti"
+    label: L('Izveidot karti', 'Create card'),
+    ariaLabel: L('Izveidot karti', 'Create card')
   }), React.createElement(QuickAction, {
     icon: Icon.send(),
-    label: React.createElement(React.Fragment, null, "S\u016Bt\u012Bt,", React.createElement("br", null), "piepras\u012Bt"),
-    ariaLabel: "S\u016Bt\u012Bt vai piepras\u012Bt"
+    label: language === 'lv' ? React.createElement(React.Fragment, null, "S\u016Bt\u012Bt,", React.createElement("br", null), "piepras\u012Bt") : React.createElement(React.Fragment, null, "Send,", React.createElement("br", null), "request"),
+    ariaLabel: L('Sūtīt vai pieprasīt', 'Send or request')
   }), React.createElement(QuickAction, {
     icon: Icon.chart(),
-    label: "Papildin\u0101t",
-    ariaLabel: "Papildin\u0101t"
+    label: L('Papildināt', 'Add funds'),
+    ariaLabel: L('Papildināt', 'Add funds')
   })), !dismissed && React.createElement("div", {
     style: {
       padding: '16px 16px 0'
@@ -4712,7 +5027,7 @@ function Home({
     onClose: () => setDismissed(true)
   }), tweaks.promo === 'auto' && React.createElement("div", {
     role: "group",
-    "aria-label": "Pied\u0101v\u0101jumu karuselis",
+    "aria-label": L('Piedāvājumu karuselis', 'Offer carousel'),
     style: {
       display: 'flex',
       justifyContent: 'center',
@@ -4722,7 +5037,7 @@ function Home({
   }, promos.map((_, i) => React.createElement("button", {
     type: "button",
     key: i,
-    "aria-label": `Rādīt ${i + 1}. piedāvājumu`,
+    "aria-label": L(`Rādīt ${i + 1}. piedāvājumu`, `Show offer ${i + 1}`),
     "aria-pressed": i === promo,
     onClick: () => setPromo(i),
     style: {
@@ -4762,13 +5077,13 @@ function Home({
       fontWeight: 600,
       letterSpacing: 0
     }
-  }, "Dar\u012Bjumi"), Icon.dots()), React.createElement("div", {
+  }, L('Darījumi', 'Transactions')), Icon.dots()), React.createElement("div", {
     style: {
       fontSize: 14,
       color: BRAND.mute,
       marginTop: 8
     }
-  }, "Tavi dar\u012Bjumi par\u0101d\u012Bsies \u0161eit")), React.createElement("div", {
+  }, L('Tavi darījumi parādīsies šeit', 'Your transactions will appear here'))), React.createElement("div", {
     style: {
       height: 1,
       background: BRAND.line,
@@ -4790,14 +5105,14 @@ function Home({
       fontWeight: 600,
       letterSpacing: 0
     }
-  }, "\u0100trie kontakti"), Icon.dots()))) : React.createElement("div", {
+  }, L('Ātrie kontakti', 'Quick contacts')), Icon.dots()))) : React.createElement("div", {
     style: {
       padding: '40px 24px',
       textAlign: 'center',
       color: BRAND.mute,
       fontSize: 14
     }
-  }, tab, " \u2014 dr\u012Bzum\u0101"), React.createElement("div", {
+  }, L(`${tab} — drīzumā`, `${tabs.find(item => item.key === tab)?.label || tab} — coming soon`)), React.createElement("div", {
     style: {
       height: 16
     }
@@ -4818,20 +5133,20 @@ function Home({
     }
   }, React.createElement(NavItem, {
     icon: Icon.home(nav === 'Home'),
-    label: "S\u0101kums",
+    label: L('Sākums', 'Home'),
     active: nav === 'Home',
     onClick: () => setNav('Home')
   }), React.createElement(NavItem, {
     icon: Icon.swap,
-    label: "Maks\u0101jumi",
+    label: L('Maksājumi', 'Payments'),
     active: nav === 'Pay',
     onClick: () => setNav('Pay')
   }), React.createElement(NavItem, {
     icon: Icon.grid,
-    label: "Viss",
+    label: L('Viss', 'More'),
     active: nav === 'More',
     onClick: () => setNav('More')
-  }))));
+  })))));
 }
 window.Home = Home;
 const TWEAK_DEFAULTS = {

@@ -19,6 +19,62 @@ const BRAND = {
   tapTransition: 'background-color 0.18s ease-out, color 0.18s ease-out, transform 0.18s ease-out',
 };
 
+const LanguageContext = React.createContext({
+  language: 'lv',
+  setLanguage: () => {},
+  L: (lv, en) => lv,
+  monthLabel: (label) => label,
+  shortMonthLabel: (label) => label.slice(0, 3),
+  scenarioLabel: (key) => key,
+  scenarioNote: (key) => key,
+});
+
+function useLanguage() {
+  return React.useContext(LanguageContext);
+}
+
+const MONTH_COPY = {
+  Maijs: { lv: 'Maijs', en: 'May' },
+  Jūnijs: { lv: 'Jūnijs', en: 'Jun' },
+  Jūlijs: { lv: 'Jūlijs', en: 'Jul' },
+  Augusts: { lv: 'Augusts', en: 'Aug' },
+  Septembris: { lv: 'Septembris', en: 'Sep' },
+  Oktobris: { lv: 'Oktobris', en: 'Oct' },
+  Novembris: { lv: 'Novembris', en: 'Nov' },
+  Decembris: { lv: 'Decembris', en: 'Dec' },
+  Janvāris: { lv: 'Janvāris', en: 'Jan' },
+  Februāris: { lv: 'Februāris', en: 'Feb' },
+  Marts: { lv: 'Marts', en: 'Mar' },
+  Aprīlis: { lv: 'Aprīlis', en: 'Apr' },
+};
+
+const SCENARIO_COPY = {
+  cautious: {
+    lv: { label: 'Piesardzīgs', note: '2.8% gada ienesīgums' },
+    en: { label: 'Cautious', note: '2.8% annual return' },
+  },
+  balanced: {
+    lv: { label: 'Bāzes', note: '4.1% gada ienesīgums' },
+    en: { label: 'Balanced', note: '4.1% annual return' },
+  },
+  dynamic: {
+    lv: { label: 'Dinamiskais', note: '5.3% gada ienesīgums' },
+    en: { label: 'Dynamic', note: '5.3% annual return' },
+  },
+};
+
+function translateMonth(label, language) {
+  return MONTH_COPY[label]?.[language] || label;
+}
+
+function translateScenarioLabel(key, language) {
+  return SCENARIO_COPY[key]?.[language]?.label || FUTURE_SCENARIOS[key]?.label || key;
+}
+
+function translateScenarioNote(key, language) {
+  return SCENARIO_COPY[key]?.[language]?.note || FUTURE_SCENARIOS[key]?.note || key;
+}
+
 // ——— little inline icons (geometric, no emoji) ———
 const Icon = {
   chat: (s = 22, c = BRAND.ink) => (
@@ -160,6 +216,7 @@ function Tab({ label, active, onClick }) {
 }
 
 function PromoIndigo({ onClose }) {
+  const { L } = useLanguage();
   return (
     <div style={{
       background: BRAND.promo, borderRadius: 12, padding: '18px 18px 18px 20px',
@@ -167,23 +224,23 @@ function PromoIndigo({ onClose }) {
       height: 200, boxSizing: 'border-box',
       boxShadow: '0 1px 2px rgba(30,25,10,0.06), 0 8px 20px rgba(75,63,168,0.18)',
     }}>
-      <button type="button" aria-label="Aizvērt piedāvājumu" onClick={onClose} style={{
+      <button type="button" aria-label={L('Aizvērt piedāvājumu', 'Close offer')} onClick={onClose} style={{
         position: 'absolute', top: 12, right: 12, background: 'transparent',
         border: 0, cursor: 'pointer', padding: 4,
       }}>{Icon.close(18)}</button>
 
       <div style={{ maxWidth: 220 }}>
         <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: 0 }}>
-          Ieguldi 50%
+          {L('Ieguldi 50%', 'Invest 50%')}
         </div>
         <div style={{ fontSize: 13, lineHeight: '18px', marginTop: 6, color: 'rgba(255,255,255,0.85)' }}>
-          no atgūtās nodokļu atmaksas savā pensiju 3. līmenī
+          {L('no atgūtās nodokļu atmaksas savā pensiju 3. līmenī', 'of your recovered tax refund into your 3rd pension pillar')}
         </div>
         <button type="button" style={{
           marginTop: 22, background: BRAND.accent, color: BRAND.ink, border: 0,
           borderRadius: 12, padding: '12px 22px', fontWeight: 700, fontSize: 15,
           letterSpacing: 0, cursor: 'pointer', width: '100%', maxWidth: 220,
-        }}>Ieguldīt</button>
+        }}>{L('Ieguldīt', 'Invest')}</button>
       </div>
 
       {/* decorative sparkle graphic */}
@@ -198,6 +255,7 @@ function PromoIndigo({ onClose }) {
 }
 
 function PromoCashback({ onClose }) {
+  const { L } = useLanguage();
   return (
     <div style={{
       background: '#1B1C22', borderRadius: 12, padding: '18px 20px',
@@ -205,22 +263,22 @@ function PromoCashback({ onClose }) {
       height: 200, boxSizing: 'border-box',
       boxShadow: '0 1px 2px rgba(0,0,0,0.08), 0 8px 20px rgba(0,0,0,0.12)',
     }}>
-      <button type="button" aria-label="Aizvērt piedāvājumu" onClick={onClose} style={{
+      <button type="button" aria-label={L('Aizvērt piedāvājumu', 'Close offer')} onClick={onClose} style={{
         position: 'absolute', top: 12, right: 12, background: 'transparent',
         border: 0, cursor: 'pointer', padding: 4,
       }}>{Icon.close(18)}</button>
-      <div style={{ fontSize: 11, letterSpacing: 2, color: BRAND.accent, fontWeight: 600 }}>ŠOMĒNES</div>
+      <div style={{ fontSize: 11, letterSpacing: 2, color: BRAND.accent, fontWeight: 600 }}>{L('ŠOMĒNES', 'THIS MONTH')}</div>
       <div style={{ fontSize: 22, fontWeight: 600, marginTop: 6, letterSpacing: 0, maxWidth: 220 }}>
-        €14.20 atgriezts naudā
+        {L('€14.20 atgriezts naudā', '€14.20 cashback')}
       </div>
       <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 6 }}>
-        Pārtika, transports un straumēšana — izmaksa 30.&nbsp;apr.
+        {L('Pārtika, transports un straumēšana — izmaksa 30. apr.', 'Groceries, transport and streaming — payout Apr 30')}
       </div>
       <button type="button" style={{
         marginTop: 16, background: BRAND.accent, color: BRAND.ink, border: 0,
         borderRadius: 12, padding: '11px 22px', fontWeight: 600, fontSize: 14,
         cursor: 'pointer',
-      }}>Apskatīt sadalījumu</button>
+      }}>{L('Apskatīt sadalījumu', 'View breakdown')}</button>
       <div style={{
         position: 'absolute', right: -40, bottom: -40, width: 160, height: 160,
         borderRadius: '50%', border: `14px solid ${BRAND.accent}`, opacity: 0.15,
@@ -230,6 +288,7 @@ function PromoCashback({ onClose }) {
 }
 
 function PromoGoal({ onClose }) {
+  const { L } = useLanguage();
   return (
     <div style={{
       background: '#E8E2F7', borderRadius: 12, padding: '18px 20px',
@@ -237,25 +296,25 @@ function PromoGoal({ onClose }) {
       height: 200, boxSizing: 'border-box',
       boxShadow: '0 1px 2px rgba(75,63,168,0.05), 0 8px 20px rgba(75,63,168,0.10)',
     }}>
-      <button type="button" aria-label="Aizvērt piedāvājumu" onClick={onClose} style={{
+      <button type="button" aria-label={L('Aizvērt piedāvājumu', 'Close offer')} onClick={onClose} style={{
         position: 'absolute', top: 12, right: 12, background: 'transparent',
         border: 0, cursor: 'pointer', padding: 4,
       }}>{Icon.close(18, BRAND.ink)}</button>
-      <div style={{ fontSize: 13, color: BRAND.promo, fontWeight: 600 }}>Vasaras ceļojums · Mērķis</div>
+      <div style={{ fontSize: 13, color: BRAND.promo, fontWeight: 600 }}>{L('Vasaras ceļojums · Mērķis', 'Summer trip · Goal')}</div>
       <div style={{ fontSize: 20, fontWeight: 600, marginTop: 4, letterSpacing: 0 }}>
-        Esi sasniedzis 62% no mērķa
+        {L('Esi sasniedzis 62% no mērķa', 'You have reached 62% of the goal')}
       </div>
       <div style={{ marginTop: 14, height: 8, borderRadius: 4, background: '#fff', overflow: 'hidden' }}>
         <div style={{ width: '62%', height: '100%', background: BRAND.promo, borderRadius: 4 }}/>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 12, color: BRAND.mute }}>
-        <span>€930 uzkrāts</span><span>€1,500 mērķis</span>
+        <span>{L('€930 uzkrāts', '€930 saved')}</span><span>{L('€1,500 mērķis', '€1,500 goal')}</span>
       </div>
       <button type="button" style={{
         marginTop: 14, background: BRAND.promo, color: '#fff', border: 0,
         borderRadius: 12, padding: '10px 20px', fontWeight: 600, fontSize: 13,
         cursor: 'pointer',
-      }}>Pievienot mērķim</button>
+      }}>{L('Pievienot mērķim', 'Add to goal')}</button>
     </div>
   );
 }
@@ -842,7 +901,7 @@ function ModeButton({ label, active, onClick }) {
       borderRadius: 12,
       cursor: 'pointer',
       background: active ? BRAND.accent : '#F1ECDD',
-      color: active ? BRAND.promo : BRAND.ink,
+      color: BRAND.ink,
       fontSize: 13,
       fontWeight: active ? 700 : 500,
     }}>{label}</button>
@@ -963,6 +1022,7 @@ function ComparisonBar({ label, value, max, tone, detail }) {
 }
 
 function LifestyleCard({ icon, label, cost, income }) {
+  const { L } = useLanguage();
   return (
     <div style={{
       flex: 1,
@@ -984,7 +1044,7 @@ function LifestyleCard({ icon, label, cost, income }) {
       <div style={{ marginTop: 6, fontSize: 18, fontWeight: 700, color: BRAND.promo, letterSpacing: 0 }}>
         {(income / cost).toFixed(1)}x
       </div>
-      <div style={{ marginTop: 4, fontSize: 11.5, color: BRAND.mute }}>šodienas naudā</div>
+      <div style={{ marginTop: 4, fontSize: 11.5, color: BRAND.mute }}>{L('šodienas naudā', 'in today’s money')}</div>
     </div>
   );
 }
@@ -1012,6 +1072,7 @@ function StepRow({ number, title, body }) {
 }
 
 function SubPageHeader({ title, onBack }) {
+  const { L } = useLanguage();
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '16px 16px 8px' }}>
       <button type="button" onClick={onBack} style={{
@@ -1021,7 +1082,7 @@ function SubPageHeader({ title, onBack }) {
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path d="M12 5l-5 5 5 5" stroke={BRAND.promo} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        Atpakaļ
+        {L('Atpakaļ', 'Back')}
       </button>
       <div style={{ flex: 1, fontSize: 16, fontWeight: 700, letterSpacing: 0, textAlign: 'center', paddingRight: 70 }}>
         {title}
@@ -1061,11 +1122,12 @@ function PensionNavRow({ icon, title, subtitle, value, onClick }) {
 }
 
 function PensionMain({ onNav, activated, scenario, config, model, onConfigChange, reversed, onReverse }) {
+  const { L, scenarioNote } = useLanguage();
   const selectedScenario = FUTURE_SCENARIOS[scenario];
   const totalMonthly = selectedScenario.tier1Monthly + selectedScenario.tier2Monthly + selectedScenario.tier3Monthly;
   const preview = model.preview;
   const nextContribution = reversed || config.paused ? 0 : preview.contribution;
-  const modeLabel = config.mode === 'dynamic' ? 'Dinamiskais' : 'Fiksēts';
+  const modeLabel = config.mode === 'dynamic' ? L('Dinamiskais', 'Dynamic') : L('Fiksēts', 'Fixed');
 
   return (
     <div style={{ padding: '4px 16px 24px' }}>
@@ -1081,7 +1143,7 @@ function PensionMain({ onNav, activated, scenario, config, model, onConfigChange
           <button type="button" onClick={() => onNav('analysis')} style={{
             background: 'transparent', border: 0, cursor: 'pointer',
             fontSize: 13, color: BRAND.promo, fontWeight: 500, padding: 0, letterSpacing: 0,
-          }}>Analīze →</button>
+          }}>{L('Analīze →', 'Analysis →')}</button>
         </div>
 
         <div style={{ fontSize: 30, fontWeight: 700, color: BRAND.ink, letterSpacing: 0, marginTop: 6 }}>
@@ -1090,41 +1152,41 @@ function PensionMain({ onNav, activated, scenario, config, model, onConfigChange
         <div style={{ fontSize: 13, color: BRAND.mute, marginTop: 4, lineHeight: '18px' }}>
           {activated
             ? reversed
-              ? 'Pēdējā iemaksa atgriezta 24h logā · nākamā izpilde netiek dublēta'
+              ? L('Pēdējā iemaksa atgriezta 24h logā · nākamā izpilde netiek dublēta', 'Last contribution reversed in the 24h window · next execution will not be duplicated')
               : config.paused
-                ? 'Pauze darbojas līdz brīdim, kad to atjauno'
-                : `${modeLabel} · automātiski ${config.payday}. datumā · droši pieejams ${formatMoney(preview.safeToInvest)}`
-            : `${formatMoney(model.dynamicAdvantage)} vairāk nekā ar fiksētu ${formatMoney(config.fixedContribution)}/mēn.`}
+                ? L('Pauze darbojas līdz brīdim, kad to atjauno', 'Pause remains active until you resume it')
+                : L(`${modeLabel} · automātiski ${config.payday}. datumā · droši pieejams ${formatMoney(preview.safeToInvest)}`, `${modeLabel} · automatic on the ${config.payday}th · safely available ${formatMoney(preview.safeToInvest)}`)
+            : L(`${formatMoney(model.dynamicAdvantage)} vairāk nekā ar fiksētu ${formatMoney(config.fixedContribution)}/mēn.`, `${formatMoney(model.dynamicAdvantage)} more than a fixed ${formatMoney(config.fixedContribution)}/mo.`)}
         </div>
 
         {activated ? (
           <>
             <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-              <ConfigPill icon={<TrendIcon/>} label="Grīda/griesti" value={`${formatPercent(config.minRate)}-${formatPercent(config.maxRate)}`}/>
-              <ConfigPill icon={<ShieldIcon/>} label="Buferis" value={formatMoney(config.safetyBuffer)}/>
+              <ConfigPill icon={<TrendIcon/>} label={L('Grīda/griesti', 'Floor/ceiling')} value={`${formatPercent(config.minRate)}-${formatPercent(config.maxRate)}`}/>
+              <ConfigPill icon={<ShieldIcon/>} label={L('Buferis', 'Buffer')} value={formatMoney(config.safetyBuffer)}/>
             </div>
             <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-              <ModeButton label="Fiksēts" active={config.mode === 'fixed'} onClick={() => onConfigChange({ mode: 'fixed' })}/>
-              <ModeButton label="Dinamiskais" active={config.mode === 'dynamic'} onClick={() => onConfigChange({ mode: 'dynamic' })}/>
+              <ModeButton label={L('Fiksēts', 'Fixed')} active={config.mode === 'fixed'} onClick={() => onConfigChange({ mode: 'fixed' })}/>
+              <ModeButton label={L('Dinamiskais', 'Dynamic')} active={config.mode === 'dynamic'} onClick={() => onConfigChange({ mode: 'dynamic' })}/>
             </div>
             <div style={{ marginTop: 12, background: '#FAF9F8', borderRadius: 12, padding: '12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <MiniSetting label="Nodokļu optimizācija" value={config.taxOptimization ? `${formatMoney(model.taxRefund)} atmaksa` : 'Izslēgta'}/>
-              <MiniSetting label="Paziņojums" value="2 dienas pirms"/>
-              <MiniSetting label="Stabilitātes limits" value={`${formatMoney(config.stabilityCap)}/mēn.`}/>
-              <MiniSetting label="Atkārtotie maksājumi" value={formatMoney(model.obligationsTotal)}/>
+              <MiniSetting label={L('Nodokļu optimizācija', 'Tax optimization')} value={config.taxOptimization ? L(`${formatMoney(model.taxRefund)} atmaksa`, `${formatMoney(model.taxRefund)} refund`) : L('Izslēgta', 'Off')}/>
+              <MiniSetting label={L('Paziņojums', 'Notification')} value={L('2 dienas pirms', '2 days before')}/>
+              <MiniSetting label={L('Stabilitātes limits', 'Stability cap')} value={`${formatMoney(config.stabilityCap)}/${L('mēn.', 'mo.')}`}/>
+              <MiniSetting label={L('Atkārtotie maksājumi', 'Recurring payments')} value={formatMoney(model.obligationsTotal)}/>
               <div style={{ display: 'flex', gap: 8, marginTop: 2 }}>
                 <button type="button" aria-pressed={config.paused} onClick={() => onConfigChange({ paused: !config.paused })} style={{
                   flex: 1, border: 0, borderRadius: 10, minHeight: 44, background: config.paused ? BRAND.accent : '#EAE6DB',
                   color: BRAND.promo, fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                }}>{config.paused ? 'Atjaunot' : 'Pauzēt'}</button>
+                }}>{config.paused ? L('Atjaunot', 'Resume') : L('Pauzēt', 'Pause')}</button>
                 <button type="button" onClick={onReverse} disabled={reversed || config.paused} style={{
                   flex: 1, border: 0, borderRadius: 10, minHeight: 44, background: reversed || config.paused ? BRAND.line : '#EAE6DB',
                   color: reversed || config.paused ? BRAND.mute : BRAND.ink, fontSize: 13, fontWeight: 700, cursor: reversed || config.paused ? 'not-allowed' : 'pointer',
-                }}>{reversed ? 'Atgriezta' : 'Atgriezt 24h'}</button>
+                }}>{reversed ? L('Atgriezta', 'Reversed') : L('Atgriezt 24h', 'Reverse 24h')}</button>
                 <button type="button" aria-pressed={config.taxOptimization} onClick={() => onConfigChange({ taxOptimization: !config.taxOptimization })} style={{
                   flex: 1, border: 0, borderRadius: 10, minHeight: 44, background: '#EAE6DB',
                   color: BRAND.ink, fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                }}>{config.taxOptimization ? 'Nodokļi' : 'Bez nod.'}</button>
+                }}>{config.taxOptimization ? L('Nodokļi', 'Tax') : L('Bez nod.', 'No tax')}</button>
               </div>
             </div>
           </>
@@ -1134,14 +1196,14 @@ function PensionMain({ onNav, activated, scenario, config, model, onConfigChange
             padding: '14px', background: BRAND.accent, color: BRAND.ink,
             fontSize: 15, fontWeight: 700, cursor: 'pointer', letterSpacing: 0,
           }}>
-            Set up 3rd pillar pension
+            {L('Iestatīt pensiju 3. līmeni', 'Set up 3rd pillar pension')}
           </button>
         )}
       </div>
 
       {/* Section header */}
       <div style={{ marginTop: 24, marginBottom: 12, fontSize: 18, fontWeight: 700, letterSpacing: 0 }}>
-        Tavi pensiju līmeņi
+        {L('Tavi pensiju līmeņi', 'Your pension pillars')}
       </div>
 
       {/* Tier 1 — State pension */}
@@ -1158,15 +1220,15 @@ function PensionMain({ onNav, activated, scenario, config, model, onConfigChange
                 display: 'grid', placeItems: 'center',
                 fontSize: 13, fontWeight: 700, color: '#6B879D',
               }}>1</div>
-              <div style={{ fontSize: 15, fontWeight: 600 }}>Valsts pensija</div>
+              <div style={{ fontSize: 15, fontWeight: 600 }}>{L('Valsts pensija', 'State pension')}</div>
             </div>
             <div style={{ marginTop: 10, fontSize: 26, fontWeight: 700, color: BRAND.promo, letterSpacing: 0 }}>
-              {formatMoney(selectedScenario.tier1Monthly)}<span style={{ fontSize: 14, fontWeight: 500, color: BRAND.mute }}>/mēn.</span>
+              {formatMoney(selectedScenario.tier1Monthly)}<span style={{ fontSize: 14, fontWeight: 500, color: BRAND.mute }}>/{L('mēn.', 'mo.')}</span>
             </div>
             <div style={{ marginTop: 10, height: 4, borderRadius: 2, background: BRAND.line, overflow: 'hidden', maxWidth: 180 }}>
               <div style={{ width: `${Math.round((TIER1_SERVICE_YEARS / TIER1_TARGET_YEARS) * 100)}%`, height: '100%', background: BRAND.promo, borderRadius: 2 }}/>
             </div>
-            <div style={{ marginTop: 5, fontSize: 12, color: BRAND.mute }}>{TIER1_SERVICE_YEARS} / {TIER1_TARGET_YEARS} darba gadi</div>
+            <div style={{ marginTop: 5, fontSize: 12, color: BRAND.mute }}>{TIER1_SERVICE_YEARS} / {TIER1_TARGET_YEARS} {L('darba gadi', 'work years')}</div>
           </div>
           <div style={{ flexShrink: 0 }}><TierIllustration1/></div>
         </div>
@@ -1177,18 +1239,18 @@ function PensionMain({ onNav, activated, scenario, config, model, onConfigChange
         <CompactTierCard
           tier="2"
           illustration={<TierIllustration2/>}
-          title="2. līmenis"
+          title={L('2. līmenis', '2nd pillar')}
           balance={formatMoney(TIER2_BALANCE)}
-          monthly={`${formatMoney(selectedScenario.tier2Monthly)}/mēn.`}
-          note="Fonda uzkrājums"
+          monthly={`${formatMoney(selectedScenario.tier2Monthly)}/${L('mēn.', 'mo.')}`}
+          note={L('Fonda uzkrājums', 'Fund balance')}
         />
         <CompactTierCard
           tier="3"
           illustration={<TierIllustration3/>}
-          title="3. līmenis"
+          title={L('3. līmenis', '3rd pillar')}
           balance={formatMoney(TIER3_BALANCE)}
-          monthly={`${formatMoney(selectedScenario.tier3Monthly)}/mēn.`}
-          note="Dinamiskais"
+          monthly={`${formatMoney(selectedScenario.tier3Monthly)}/${L('mēn.', 'mo.')}`}
+          note={L('Dinamiskais', 'Dynamic')}
         />
       </div>
 
@@ -1197,14 +1259,14 @@ function PensionMain({ onNav, activated, scenario, config, model, onConfigChange
         marginTop: 10, background: '#EAE6DB', borderRadius: 12, padding: '16px 18px',
         boxShadow: '0 1px 2px rgba(30,25,10,0.04), 0 4px 12px rgba(30,25,10,0.04)',
       }}>
-        <div style={{ fontSize: 12.5, color: BRAND.mute, letterSpacing: 0 }}>Kopā prognozētā pensija</div>
+        <div style={{ fontSize: 12.5, color: BRAND.mute, letterSpacing: 0 }}>{L('Kopā prognozētā pensija', 'Total projected pension')}</div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 4 }}>
           <div style={{ fontSize: 30, fontWeight: 700, color: BRAND.promo, letterSpacing: 0 }}>
             {formatMoney(totalMonthly)}
           </div>
-          <div style={{ fontSize: 14, color: BRAND.mute }}>/mēnesī šodienas naudā</div>
+          <div style={{ fontSize: 14, color: BRAND.mute }}>{L('/mēnesī šodienas naudā', '/month in today’s money')}</div>
         </div>
-        <div style={{ fontSize: 12.5, color: BRAND.mute, marginTop: 2 }}>{selectedScenario.note}</div>
+        <div style={{ fontSize: 12.5, color: BRAND.mute, marginTop: 2 }}>{scenarioNote(scenario)}</div>
       </div>
 
       {/* Divider */}
@@ -1213,23 +1275,23 @@ function PensionMain({ onNav, activated, scenario, config, model, onConfigChange
       {/* Sub-page nav rows */}
       <PensionNavRow
         icon={<TrendIcon/>}
-        title="Ikmēneša analīze"
-        subtitle="Simulācija un salīdzinājums"
+        title={L('Ikmēneša analīze', 'Monthly analysis')}
+        subtitle={L('Simulācija un salīdzinājums', 'Simulation and comparison')}
         onClick={() => onNav('analysis')}
       />
       <div style={{ height: 1, background: BRAND.line }}/>
       <PensionNavRow
         icon={Icon.goal()}
-        title="Nākotnes projekcija"
-        subtitle="Scenāriji un pensijas grafiks"
-        value={`${formatMoney(selectedScenario.todayMoneyMonthly)}/mēn.`}
+        title={L('Nākotnes projekcija', 'Future projection')}
+        subtitle={L('Scenāriji un pensijas grafiks', 'Scenarios and pension chart')}
+        value={`${formatMoney(selectedScenario.todayMoneyMonthly)}/${L('mēn.', 'mo.')}`}
         onClick={() => onNav('projection')}
       />
       <div style={{ height: 1, background: BRAND.line }}/>
       <PensionNavRow
         icon={<TrophyIcon/>}
-        title="Mērķi un sasniegumi"
-        subtitle={`Streak: ${model.streak} mēn. · Nākamais milestone: ${formatMoney(NEXT_MILESTONE - TIER3_BALANCE)}`}
+        title={L('Mērķi un sasniegumi', 'Goals and milestones')}
+        subtitle={L(`Streak: ${model.streak} mēn. · Nākamais milestone: ${formatMoney(NEXT_MILESTONE - TIER3_BALANCE)}`, `Streak: ${model.streak} mo. · Next milestone: ${formatMoney(NEXT_MILESTONE - TIER3_BALANCE)}`)}
         onClick={() => onNav('goals')}
       />
     </div>
@@ -1237,12 +1299,13 @@ function PensionMain({ onNav, activated, scenario, config, model, onConfigChange
 }
 
 function MonthlyBarChart({ months, selectedIndex, onSelect }) {
+  const { L, monthLabel, shortMonthLabel } = useLanguage();
   const maxVal = Math.max(...months.flatMap((m) => [m.income, m.spending])) || 1;
   const H = 80;
   return (
     <div style={{ marginTop: 18 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
-        {[['#B8B0A4', 'Ienākumi'], ['#DDD7CE', 'Tēriņi'], [BRAND.accent, 'Iemaksa']].map(([col, lbl]) => (
+        {[['#B8B0A4', L('Ienākumi', 'Income')], ['#DDD7CE', L('Tēriņi', 'Spending')], [BRAND.accent, L('Iemaksa', 'Contribution')]].map(([col, lbl]) => (
           <div key={lbl} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <div style={{ width: 8, height: 8, borderRadius: 2, background: col }}/>
             <span style={{ fontSize: 11, color: BRAND.mute }}>{lbl}</span>
@@ -1256,7 +1319,7 @@ function MonthlyBarChart({ months, selectedIndex, onSelect }) {
           const spH = Math.round((month.spending / maxVal) * H);
           const coH = month.contribution > 0 ? Math.max(4, Math.round((month.contribution / maxVal) * H)) : 0;
           return (
-            <button type="button" key={month.month} aria-label={`${month.month}: ienākumi ${formatMoney(month.income)}, tēriņi ${formatMoney(month.spending)}, iemaksa ${formatMoney(month.contribution)}`} aria-pressed={active} onClick={() => onSelect(index)} style={{
+            <button type="button" key={month.month} aria-label={L(`${monthLabel(month.month)}: ienākumi ${formatMoney(month.income)}, tēriņi ${formatMoney(month.spending)}, iemaksa ${formatMoney(month.contribution)}`, `${monthLabel(month.month)}: income ${formatMoney(month.income)}, spending ${formatMoney(month.spending)}, contribution ${formatMoney(month.contribution)}`)} aria-pressed={active} onClick={() => onSelect(index)} style={{
               flex: 1, background: 'transparent', border: 0, padding: 0, cursor: 'pointer',
               display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: 44,
             }}>
@@ -1266,7 +1329,7 @@ function MonthlyBarChart({ months, selectedIndex, onSelect }) {
                 <div style={{ width: 9, height: coH, borderRadius: '3px 3px 0 0', background: coH > 0 ? BRAND.accent : 'transparent' }}/>
               </div>
               <div style={{ marginTop: 5, fontSize: 10, color: active ? BRAND.ink : BRAND.mute, fontWeight: active ? 700 : 400 }}>
-                {month.month.slice(0, 3)}
+                {shortMonthLabel(month.month)}
               </div>
               <div style={{ marginTop: 2, width: 14, height: 2, borderRadius: 1, background: active ? BRAND.accent : 'transparent' }}/>
             </button>
@@ -1278,29 +1341,30 @@ function MonthlyBarChart({ months, selectedIndex, onSelect }) {
 }
 
 function PensionAnalysis({ onBack, selectedMonthIndex, setSelectedMonthIndex, model, config }) {
+  const { L, monthLabel } = useLanguage();
   const selectedMonth = model.lastSix[selectedMonthIndex];
   const diff = selectedMonth.contribution - selectedMonth.fixedContribution;
   return (
     <div>
-      <SubPageHeader title="Ikmēneša analīze" onBack={onBack}/>
+      <SubPageHeader title={L('Ikmēneša analīze', 'Monthly analysis')} onBack={onBack}/>
       <div style={{ padding: '8px 16px 24px', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
         <div>
-          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: 0 }}>Pēdējie 6 mēneši</div>
+          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: 0 }}>{L('Pēdējie 6 mēneši', 'Last 6 months')}</div>
           <MonthlyBarChart months={model.lastSix} selectedIndex={selectedMonthIndex} onSelect={setSelectedMonthIndex}/>
 
           <div style={{ marginTop: 16, background: '#F7F2E6', borderRadius: 16, padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.ink }}>{selectedMonth.month}</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.ink }}>{monthLabel(selectedMonth.month)}</div>
               <div style={{ fontSize: 26, fontWeight: 700, color: BRAND.promo, letterSpacing: 0 }}>
                 {formatMoney(selectedMonth.contribution)}
               </div>
             </div>
             <div style={{ marginTop: 12, display: 'flex', justifyContent: 'space-between' }}>
               {[
-                ['Ienākumi', selectedMonth.income, BRAND.ink],
-                ['Tēriņi', selectedMonth.spending, BRAND.ink],
-                ['Droši', selectedMonth.safeToInvest, BRAND.ok],
+                [L('Ienākumi', 'Income'), selectedMonth.income, BRAND.ink],
+                [L('Tēriņi', 'Spending'), selectedMonth.spending, BRAND.ink],
+                [L('Droši', 'Safe'), selectedMonth.safeToInvest, BRAND.ok],
               ].map(([lbl, val, col]) => (
                 <div key={lbl}>
                   <div style={{ fontSize: 10.5, color: BRAND.mute, textTransform: 'uppercase', letterSpacing: 0.7 }}>{lbl}</div>
@@ -1310,22 +1374,22 @@ function PensionAnalysis({ onBack, selectedMonthIndex, setSelectedMonthIndex, mo
             </div>
             <div style={{ marginTop: 10, fontSize: 12.5, color: BRAND.mute, lineHeight: '17px' }}>
               {selectedMonth.fixedBreaksBuffer
-                ? 'Fiksēta iemaksa aizskartu rezervi — dinamiskā apstājās automātiski'
+                ? L('Fiksēta iemaksa aizskartu rezervi — dinamiskā apstājās automātiski', 'A fixed contribution would cut into the buffer — the dynamic one stopped automatically')
                 : diff >= 0
-                  ? `+${formatMoney(diff)} vairāk nekā ar fiksētu iemaksu`
-                  : `${formatMoney(Math.abs(diff))} mazāk — mēnesis bija finansiāli stingrs`}
+                  ? L(`+${formatMoney(diff)} vairāk nekā ar fiksētu iemaksu`, `+${formatMoney(diff)} more than a fixed contribution`)
+                  : L(`${formatMoney(Math.abs(diff))} mazāk — mēnesis bija finansiāli stingrs`, `${formatMoney(Math.abs(diff))} less — the month was financially tight`)}
             </div>
           </div>
         </div>
 
         <div>
-          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: 0 }}>Dinamiskais vs fiksētais</div>
+          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: 0 }}>{L('Dinamiskais vs fiksētais', 'Dynamic vs fixed')}</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 16 }}>
-            <ComparisonBar label="Dinamiskais" value={model.totalDynamic} max={model.totalDynamic} tone={BRAND.promo} detail={`${model.boostedMonths} mēnešos iemaksa pārsniedza mērķi`}/>
-            <ComparisonBar label="Fiksēta iemaksa" value={model.totalFixed} max={model.totalDynamic} tone="#C8C1B4" detail={`${formatMoney(config.fixedContribution)}/mēn. ar ienākumiem`}/>
+            <ComparisonBar label={L('Dinamiskais', 'Dynamic')} value={model.totalDynamic} max={model.totalDynamic} tone={BRAND.promo} detail={L(`${model.boostedMonths} mēnešos iemaksa pārsniedza mērķi`, `Contribution exceeded the target in ${model.boostedMonths} months`)}/>
+            <ComparisonBar label={L('Fiksēta iemaksa', 'Fixed contribution')} value={model.totalFixed} max={model.totalDynamic} tone="#C8C1B4" detail={`${formatMoney(config.fixedContribution)}/${L('mēn. ar ienākumiem', 'mo. with income')}`}/>
           </div>
           <div style={{ marginTop: 12, fontSize: 13, color: BRAND.mute, lineHeight: '18px' }}>
-            {formatMoney(model.dynamicAdvantage)} papildu · {model.pausedMonths} mēnesī apstājās automātiski · {model.cappedMonths} stabilizēti
+            {L(`${formatMoney(model.dynamicAdvantage)} papildu · ${model.pausedMonths} mēnesī apstājās automātiski · ${model.cappedMonths} stabilizēti`, `${formatMoney(model.dynamicAdvantage)} extra · auto-stopped in ${model.pausedMonths} months · ${model.cappedMonths} stabilized`)}
           </div>
         </div>
 
@@ -1335,6 +1399,7 @@ function PensionAnalysis({ onBack, selectedMonthIndex, setSelectedMonthIndex, mo
 }
 
 function PensionProjection({ onBack, scenario, setScenario }) {
+  const { L, scenarioLabel, scenarioNote } = useLanguage();
   const s = FUTURE_SCENARIOS[scenario];
   const total = s.tier1Monthly + s.tier2Monthly + s.tier3Monthly;
   const t1w = Math.round((s.tier1Monthly / total) * 100);
@@ -1343,15 +1408,15 @@ function PensionProjection({ onBack, scenario, setScenario }) {
 
   return (
     <div>
-      <SubPageHeader title="Nākotnes projekcija" onBack={onBack}/>
+      <SubPageHeader title={L('Nākotnes projekcija', 'Future projection')} onBack={onBack}/>
       <div style={{ padding: '8px 16px 24px', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
         <div>
-          <div style={{ fontSize: 12.5, color: BRAND.mute }}>Prognozētā pensija 67 gados</div>
+          <div style={{ fontSize: 12.5, color: BRAND.mute }}>{L('Prognozētā pensija 67 gados', 'Projected pension at age 67')}</div>
           <div style={{ fontSize: 34, fontWeight: 700, color: BRAND.promo, letterSpacing: 0, marginTop: 4 }}>
-            {formatMoney(s.todayMoneyMonthly)}<span style={{ fontSize: 16, fontWeight: 500, color: BRAND.mute }}>/mēn.</span>
+            {formatMoney(s.todayMoneyMonthly)}<span style={{ fontSize: 16, fontWeight: 500, color: BRAND.mute }}>/{L('mēn.', 'mo.')}</span>
           </div>
-          <div style={{ fontSize: 12.5, color: BRAND.mute, marginTop: 3 }}>šodienas naudā · {s.note}</div>
+          <div style={{ fontSize: 12.5, color: BRAND.mute, marginTop: 3 }}>{L('šodienas naudā', 'in today’s money')} · {scenarioNote(scenario)}</div>
           <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
             {SCENARIO_ORDER.map((key) => (
               <button type="button" key={key} aria-pressed={key === scenario} onClick={() => setScenario(key)} style={{
@@ -1359,7 +1424,7 @@ function PensionProjection({ onBack, scenario, setScenario }) {
                 background: key === scenario ? BRAND.accent : BRAND.line,
                 fontSize: 13, fontWeight: 700, color: BRAND.ink,
               }}>
-                {FUTURE_SCENARIOS[key].label}
+                {scenarioLabel(key)}
               </button>
             ))}
           </div>
@@ -1367,7 +1432,7 @@ function PensionProjection({ onBack, scenario, setScenario }) {
         </div>
 
         <div>
-          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: 0, marginBottom: 14 }}>Sadalījums</div>
+          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: 0, marginBottom: 14 }}>{L('Sadalījums', 'Breakdown')}</div>
           <div style={{ display: 'flex', height: 8, borderRadius: 4, overflow: 'hidden' }}>
             <div style={{ width: `${t1w}%`, background: '#C8C1B4' }}/>
             <div style={{ width: `${t2w}%`, background: BRAND.promo, opacity: 0.45, marginLeft: 2 }}/>
@@ -1375,14 +1440,14 @@ function PensionProjection({ onBack, scenario, setScenario }) {
           </div>
           <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 11 }}>
             {[
-              { label: '1. līmenis · Valsts', amount: s.tier1Monthly, dot: '#C8C1B4', op: 1 },
-              { label: '2. līmenis · Fonds', amount: s.tier2Monthly, dot: BRAND.promo, op: 0.45 },
-              { label: '3. līmenis · Dinamiskais', amount: s.tier3Monthly, dot: BRAND.promo, op: 1 },
+              { label: L('1. līmenis · Valsts', '1st pillar · State'), amount: s.tier1Monthly, dot: '#C8C1B4', op: 1 },
+              { label: L('2. līmenis · Fonds', '2nd pillar · Fund'), amount: s.tier2Monthly, dot: BRAND.promo, op: 0.45 },
+              { label: L('3. līmenis · Dinamiskais', '3rd pillar · Dynamic'), amount: s.tier3Monthly, dot: BRAND.promo, op: 1 },
             ].map(({ label, amount, dot, op }) => (
               <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div style={{ width: 8, height: 8, borderRadius: 2, background: dot, opacity: op, flexShrink: 0 }}/>
                 <div style={{ flex: 1, fontSize: 13.5, color: BRAND.mute }}>{label}</div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: BRAND.ink }}>{formatMoney(amount)}<span style={{ fontSize: 12, fontWeight: 400, color: BRAND.mute }}>/mēn.</span></div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: BRAND.ink }}>{formatMoney(amount)}<span style={{ fontSize: 12, fontWeight: 400, color: BRAND.mute }}>/{L('mēn.', 'mo.')}</span></div>
               </div>
             ))}
           </div>
@@ -1394,6 +1459,7 @@ function PensionProjection({ onBack, scenario, setScenario }) {
 }
 
 function PensionGoals({ onBack, scenario, model, config }) {
+  const { L } = useLanguage();
   const selectedScenario = FUTURE_SCENARIOS[scenario];
   const goalProgress = clamp(selectedScenario.todayMoneyMonthly / FUTURE_GOAL, 0, 1);
   const gapToGoal = Math.max(0, FUTURE_GOAL - selectedScenario.todayMoneyMonthly);
@@ -1402,54 +1468,54 @@ function PensionGoals({ onBack, scenario, model, config }) {
 
   return (
     <div>
-      <SubPageHeader title="Mērķi un sasniegumi" onBack={onBack}/>
+      <SubPageHeader title={L('Mērķi un sasniegumi', 'Goals and milestones')} onBack={onBack}/>
       <div style={{ padding: '8px 16px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div style={{ background: BRAND.card, borderRadius: 12, padding: '18px', border: `1px solid ${BRAND.line}` }}>
-          <div style={{ fontSize: 12.5, color: BRAND.mute }}>Pensijas mērķis</div>
+          <div style={{ fontSize: 12.5, color: BRAND.mute }}>{L('Pensijas mērķis', 'Pension goal')}</div>
           <div style={{ marginTop: 6 }}>
             <span style={{ fontSize: 28, fontWeight: 700, color: BRAND.promo, letterSpacing: 0 }}>
               {formatMoney(selectedScenario.todayMoneyMonthly)}
             </span>
-            <span style={{ fontSize: 15, color: BRAND.mute, fontWeight: 500 }}> / {formatMoney(FUTURE_GOAL)} mēnesī</span>
+            <span style={{ fontSize: 15, color: BRAND.mute, fontWeight: 500 }}> / {formatMoney(FUTURE_GOAL)} {L('mēnesī', 'per month')}</span>
           </div>
           <div style={{ marginTop: 12, height: 8, borderRadius: 4, background: BRAND.line, overflow: 'hidden' }}>
             <div style={{ width: `${Math.round(goalProgress * 100)}%`, height: '100%', background: BRAND.promo, borderRadius: 4 }}/>
           </div>
           <div style={{ marginTop: 8, fontSize: 13, color: BRAND.mute, lineHeight: '17px' }}>
-            Pietrūkst {formatMoney(gapToGoal)} · apmēram {formatMoney(extraMonthlyNeeded)} papildu mēnesī.
+            {L(`Pietrūkst ${formatMoney(gapToGoal)} · apmēram ${formatMoney(extraMonthlyNeeded)} papildu mēnesī.`, `${formatMoney(gapToGoal)} short · around ${formatMoney(extraMonthlyNeeded)} extra per month.`)}
           </div>
         </div>
 
         <div style={{ display: 'flex', gap: 10 }}>
-          <ConfigPill icon={<TrophyIcon/>} label="Streak" value={`${model.streak} mēneši`}/>
-          <ConfigPill icon={<PigIcon/>} label="Nākamais €5000" value={formatMoney(milestoneLeft)}/>
+          <ConfigPill icon={<TrophyIcon/>} label={L('Streak', 'Streak')} value={L(`${model.streak} mēneši`, `${model.streak} months`)}/>
+          <ConfigPill icon={<PigIcon/>} label={L('Nākamais €5000', 'Next €5000')} value={formatMoney(milestoneLeft)}/>
         </div>
 
         <div style={{ background: BRAND.card, borderRadius: 12, padding: '18px', border: `1px solid ${BRAND.line}` }}>
-          <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: 0 }}>Ko varēsi atļauties</div>
-          <div style={{ fontSize: 12.5, color: BRAND.mute, marginTop: 3 }}>Pensija pret reālajām izmaksām šodien</div>
+          <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: 0 }}>{L('Ko varēsi atļauties', 'What you could afford')}</div>
+          <div style={{ fontSize: 12.5, color: BRAND.mute, marginTop: 3 }}>{L('Pensija pret reālajām izmaksām šodien', 'Pension against real costs today')}</div>
           <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-            <LifestyleCard icon={<CarIcon/>} label="BMW 3 līzings" cost={790} income={selectedScenario.todayMoneyMonthly}/>
-            <LifestyleCard icon={<PigIcon/>} label="Pārtika" cost={320} income={selectedScenario.todayMoneyMonthly}/>
-            <LifestyleCard icon={Icon.goal(BRAND.ink)} label="Komunālie" cost={160} income={selectedScenario.todayMoneyMonthly}/>
+            <LifestyleCard icon={<CarIcon/>} label={L('BMW 3 līzings', 'BMW 3 lease')} cost={790} income={selectedScenario.todayMoneyMonthly}/>
+            <LifestyleCard icon={<PigIcon/>} label={L('Pārtika', 'Groceries')} cost={320} income={selectedScenario.todayMoneyMonthly}/>
+            <LifestyleCard icon={Icon.goal(BRAND.ink)} label={L('Komunālie', 'Utilities')} cost={160} income={selectedScenario.todayMoneyMonthly}/>
           </div>
         </div>
 
         <div style={{ background: BRAND.card, borderRadius: 12, padding: '18px', border: `1px solid ${BRAND.line}` }}>
-          <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: 0 }}>Kā darbojas dinamiskā iemaksa</div>
+          <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: 0 }}>{L('Kā darbojas dinamiskā iemaksa', 'How the dynamic contribution works')}</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 16 }}>
-            <StepRow number={1} title="Atklāj" body={`"Tu jau būtu uzkrājis ${formatMoney(model.totalDynamic)}" — parādās sākumlapā.`}/>
-            <StepRow number={2} title="Pielāgo" body="Nosaki mērķa procentu, drošības buferi, diapazonu un iemaksas datumu."/>
-            <StepRow number={3} title="Automatizē" body="Katru mēnesi sistēma aprēķina drošo iemaksu pēc ienākumiem un tēriņiem."/>
-            <StepRow number={4} title="Saņem atskaiti" body="Pēc katras iemaksas redzi summu, iemeslu un ietekmi uz nākotnes pensiju."/>
+            <StepRow number={1} title={L('Atklāj', 'Discover')} body={L(`"Tu jau būtu uzkrājis ${formatMoney(model.totalDynamic)}" — parādās sākumlapā.`, `"You would already have saved ${formatMoney(model.totalDynamic)}" — shown on the home screen.`)}/>
+            <StepRow number={2} title={L('Pielāgo', 'Adjust')} body={L('Nosaki mērķa procentu, drošības buferi, diapazonu un iemaksas datumu.', 'Set the target percentage, safety buffer, range and contribution date.')}/>
+            <StepRow number={3} title={L('Automatizē', 'Automate')} body={L('Katru mēnesi sistēma aprēķina drošo iemaksu pēc ienākumiem un tēriņiem.', 'Each month the system calculates a safe contribution from income and spending.')}/>
+            <StepRow number={4} title={L('Saņem atskaiti', 'Get a report')} body={L('Pēc katras iemaksas redzi summu, iemeslu un ietekmi uz nākotnes pensiju.', 'After each contribution you see the amount, the reason and the impact on your future pension.')}/>
           </div>
           <div style={{
             marginTop: 16, borderRadius: 12, background: '#F7F2E6',
             border: `1px solid ${BRAND.line}`, padding: '14px 16px',
           }}>
-            <div style={{ fontSize: 11.5, textTransform: 'uppercase', letterSpacing: 1, color: BRAND.mute }}>Ikmēneša atskaite</div>
+            <div style={{ fontSize: 11.5, textTransform: 'uppercase', letterSpacing: 1, color: BRAND.mute }}>{L('Ikmēneša atskaite', 'Monthly report')}</div>
             <div style={{ marginTop: 6, fontSize: 14, fontWeight: 600, letterSpacing: 0, lineHeight: '20px', color: BRAND.ink }}>
-              Šomēnes tiktu novirzīti {formatMoney(model.preview.contribution)}, jo pēc algas un tēriņiem paliek {formatMoney(model.preview.safeToInvest)} droši ieguldāmas naudas. Nodokļu optimizācija prognozē {formatMoney(model.taxRefund)} atmaksu.
+              {L(`Šomēnes tiktu novirzīti ${formatMoney(model.preview.contribution)}, jo pēc algas un tēriņiem paliek ${formatMoney(model.preview.safeToInvest)} droši ieguldāmas naudas. Nodokļu optimizācija prognozē ${formatMoney(model.taxRefund)} atmaksu.`, `This month ${formatMoney(model.preview.contribution)} would be set aside because ${formatMoney(model.preview.safeToInvest)} remains safely investable after salary and spending. Tax optimization forecasts a ${formatMoney(model.taxRefund)} refund.`)}
             </div>
           </div>
         </div>
@@ -1459,6 +1525,7 @@ function PensionGoals({ onBack, scenario, model, config }) {
 }
 
 function BackChev({ onClick }) {
+  const { L } = useLanguage();
   return (
     <button type="button" onClick={onClick} style={{
       background: 'transparent', border: 0, padding: '4px 8px 4px 0', cursor: 'pointer',
@@ -1467,12 +1534,13 @@ function BackChev({ onClick }) {
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
         <path d="M12 5l-5 5 5 5" stroke={BRAND.promo} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
-      Back
+      {L('Atpakaļ', 'Back')}
     </button>
   );
 }
 
 function OnboardingShell({ step, total, eyebrow, title, subtitle, onBack, children, onNext, nextLabel }) {
+  const { L } = useLanguage();
   return (
     <div style={{
       minHeight: 600,
@@ -1509,12 +1577,12 @@ function OnboardingShell({ step, total, eyebrow, title, subtitle, onBack, childr
         border: 0,
         borderRadius: 15,
         background: BRAND.accent,
-        color: BRAND.promo,
+        color: BRAND.ink,
         fontSize: 15,
         fontWeight: 700,
         cursor: 'pointer',
         flexShrink: 0,
-      }}>{nextLabel || 'Continue'}</button>
+      }}>{nextLabel || L('Turpināt', 'Continue')}</button>
     </div>
   );
 }
@@ -1532,15 +1600,19 @@ function OnboardingCard({ children, style = {} }) {
 }
 
 function DynamicPensionOnboarding({ onBack, onComplete, initialConfig = FLUXION_SETTINGS, model = FLUXION_MODEL }) {
+  const { L } = useLanguage();
+  const GROSS_ESTIMATE_RATIO = 0.75;
+  const RECOMMENDED_GROSS_RATE = 10;
   const [step, setStep] = React.useState(0);
   const [mode, setMode] = React.useState(initialConfig.mode || 'dynamic');
   const [salaryAccount] = React.useState('Main account');
   const [salary] = React.useState(model.averageIncome || 2000);
   const [salaryDate] = React.useState('25th of each month');
   const [accountBalance] = React.useState(2300);
-  const [targetPct, setTargetPct] = React.useState(Math.min(10, Math.max(1, Math.round((initialConfig.targetRate || 0.03) * 100))));
+  const [targetPct, setTargetPct] = React.useState(10);
   const [buffer, setBuffer] = React.useState(initialConfig.safetyBuffer || 500);
   const [customBuffer, setCustomBuffer] = React.useState(initialConfig.safetyBuffer || 500);
+  const [useCustomBuffer, setUseCustomBuffer] = React.useState(![300, 500, 1000].includes(initialConfig.safetyBuffer || 500));
   const [maxContribution, setMaxContribution] = React.useState(150);
   const [skipBelow, setSkipBelow] = React.useState(10);
   const [taxOption, setTaxOption] = React.useState('ask');
@@ -1556,19 +1628,22 @@ function DynamicPensionOnboarding({ onBack, onComplete, initialConfig = FLUXION_
   const averageRecentBalance = Math.round(recentBalances.reduce((sum, value) => sum + value, 0) / Math.max(1, recentBalances.length));
   const balanceTrend = recentBalances.length > 1 ? recentBalances[recentBalances.length - 1] - recentBalances[0] : 0;
   const balanceRiskAdjustment = lowestRecentBalance < buffer ? Math.max(0, buffer - lowestRecentBalance) : 0;
-  const baseContribution = Math.round(salary * (targetPct / 100));
+  const estimatedGrossSalary = Math.round(salary / GROSS_ESTIMATE_RATIO);
+  const contributionFromGrossPct = pct => Math.round(estimatedGrossSalary * (pct / 100));
+  const netRateFromGrossPct = pct => Math.min(1, contributionFromGrossPct(pct) / Math.max(1, salary));
+  const baseContribution = contributionFromGrossPct(targetPct);
   const expectedSpending = model.averageSpending;
   const recurringPayments = model.obligationsTotal;
   const balanceAfterPlannedOutflows = accountBalance - expectedSpending - recurringPayments;
   const safeAvailable = Math.max(0, balanceAfterPlannedOutflows - buffer - balanceRiskAdjustment);
   const estimatedContribution = Math.min(baseContribution, maxContribution, safeAvailable);
   const finalContribution = Math.max(0, estimatedContribution < skipBelow ? 0 : estimatedContribution);
-  const maxEligibleContribution = Math.round(Math.min(4000, salary * 12 * 0.1));
+  const recommendedContribution = contributionFromGrossPct(RECOMMENDED_GROSS_RATE);
+  const maxEligibleContribution = Math.round(Math.min(4000, estimatedGrossSalary * 12 * 0.1));
   const alreadyContributed = model.totalDynamic;
   const remainingThisYear = Math.max(0, maxEligibleContribution - alreadyContributed);
   const suggestedMonthly = Math.round(remainingThisYear / 12);
   const taxOptimization = taxOption !== 'keep';
-
   const SectionLabel = ({ children }) => (
     <div style={{ fontSize: 13, fontWeight: 700, color: BRAND.ink, marginBottom: 8 }}>{children}</div>
   );
@@ -1581,7 +1656,7 @@ function DynamicPensionOnboarding({ onBack, onComplete, initialConfig = FLUXION_
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
         <span style={{ fontSize: 15, fontWeight: 700, color: BRAND.ink }}>{title}</span>
-        {recommended && <span style={{ fontSize: 12, fontWeight: 700, color: BRAND.promo }}>Recommended</span>}
+        {recommended && <span style={{ fontSize: 12, fontWeight: 700, color: BRAND.promo }}>{L('Ieteicams', 'Recommended')}</span>}
       </div>
       <div style={{ fontSize: 13, color: BRAND.mute, lineHeight: '18px', marginTop: 4 }}>{body}</div>
     </button>
@@ -1597,9 +1672,9 @@ function DynamicPensionOnboarding({ onBack, onComplete, initialConfig = FLUXION_
   function finish() {
     onComplete({
       goalMonthly: 1200,
-      targetRate: targetPct / 100,
-      minRate: Math.max(0.01, (targetPct - 2) / 100),
-      maxRate: Math.min(0.15, (targetPct + 2) / 100),
+      targetRate: netRateFromGrossPct(targetPct),
+      minRate: Math.max(0.01, netRateFromGrossPct(Math.max(1, targetPct - 2))),
+      maxRate: Math.min(1, netRateFromGrossPct(Math.min(100, targetPct + 2))),
       safetyBuffer: buffer,
       payday: 25,
       fixedContribution: maxContribution,
@@ -1616,168 +1691,196 @@ function DynamicPensionOnboarding({ onBack, onComplete, initialConfig = FLUXION_
   }
 
   if (step === 0) return (
-    <OnboardingShell step={step} total={STEPS} eyebrow="Dynamic 3rd pillar pension" title="Set up your 3rd pillar pension" subtitle="Choose what percentage of your salary you want to invest. The app adjusts or skips contributions based on your salary, account balance, spending, and safety buffer." onBack={onBack} onNext={() => setStep(1)} nextLabel="Get started">
+    <OnboardingShell step={step} total={STEPS} eyebrow={L('Dinamisks pensiju 3. līmenis', 'Dynamic 3rd pillar pension')} title={L('Iestati savu pensiju 3. līmeni', 'Set up your 3rd pillar pension')} subtitle={L('Izvēlies, kādu daļu no algas vēlies ieguldīt. Lietotne pielāgo vai izlaiž iemaksas, balstoties uz algu, konta atlikumu, tēriņiem un drošības buferi.', 'Choose what percentage of your salary you want to invest. The app adjusts or skips contributions based on your salary, account balance, spending, and safety buffer.')} onBack={onBack} onNext={() => setStep(1)} nextLabel={L('Sākt', 'Get started')}>
       <OnboardingCard>
-        <MiniSetting label="Contribution type" value="Dynamic 3rd pillar"/>
-        <MiniSetting label="Checks before investing" value="Salary, balance, spending"/>
-        <MiniSetting label="Control" value="Notification before investing"/>
+        <MiniSetting label={L('Iemaksu veids', 'Contribution type')} value={L('Dinamisks 3. līmenis', 'Dynamic 3rd pillar')}/>
+        <MiniSetting label={L('Pārbaudes pirms ieguldīšanas', 'Checks before investing')} value={L('Alga, atlikums, tēriņi', 'Salary, balance, spending')}/>
+        <MiniSetting label={L('Kontrole', 'Control')} value={L('Paziņojums pirms ieguldīšanas', 'Notification before investing')}/>
       </OnboardingCard>
     </OnboardingShell>
   );
 
   if (step === 1) return (
-    <OnboardingShell step={step} total={STEPS} eyebrow="Contribution mode" title="Choose how you want to contribute" onBack={() => setStep(0)} onNext={() => setStep(2)}>
-      <Option title="Fixed" body="Same amount every month." active={mode === 'fixed'} onClick={() => setMode('fixed')}/>
-      <Option title="Dynamic" body="Contributes a percentage of your salary and adjusts based on your financial situation." active={mode === 'dynamic'} onClick={() => setMode('dynamic')} recommended/>
-      <Option title="Tax target" body="Helps you reach the yearly amount needed for the maximum eligible tax benefit." active={mode === 'tax'} onClick={() => { setMode('tax'); setTaxOption('adjust'); }}/>
+    <OnboardingShell step={step} total={STEPS} eyebrow={L('Iemaksu režīms', 'Contribution mode')} title={L('Izvēlies, kā vēlies veikt iemaksas', 'Choose how you want to contribute')} onBack={() => setStep(0)} onNext={() => setStep(2)}>
+      <Option title={L('Fiksēts', 'Fixed')} body={L('Katru mēnesi viena un tā pati summa.', 'Same amount every month.')} active={mode === 'fixed'} onClick={() => setMode('fixed')}/>
+      <Option title={L('Dinamisks', 'Dynamic')} body={L('Iegulda procentu no algas un pielāgojas tavai finanšu situācijai.', 'Contributes a percentage of your salary and adjusts based on your financial situation.')} active={mode === 'dynamic'} onClick={() => setMode('dynamic')} recommended/>
+      <Option title={L('Nodokļu mērķis', 'Tax target')} body={L('Palīdz sasniegt gada summu maksimālajam nodokļu ieguvumam.', 'Helps you reach the yearly amount needed for the maximum eligible tax benefit.')} active={mode === 'tax'} onClick={() => { setMode('tax'); setTaxOption('adjust'); }}/>
     </OnboardingShell>
   );
 
   if (step === 2) return (
-    <OnboardingShell step={step} total={STEPS} eyebrow="Salary account" title="Choose your salary account" subtitle="This account will be used to detect your salary, spending, recurring payments, and available balance." onBack={() => setStep(1)} onNext={() => setStep(3)}>
+    <OnboardingShell step={step} total={STEPS} eyebrow={L('Algas konts', 'Salary account')} title={L('Izvēlies savu algas kontu', 'Choose your salary account')} subtitle={L('Šis konts tiks izmantots, lai noteiktu algu, tēriņus, regulāros maksājumus un pieejamo atlikumu.', 'This account will be used to detect your salary, spending, recurring payments, and available balance.')} onBack={() => setStep(1)} onNext={() => setStep(3)}>
       <OnboardingCard>
-        <MiniSetting label="Account" value={salaryAccount}/>
-        <MiniSetting label="Detected salary" value={formatMoney(salary)}/>
-        <MiniSetting label="Detected salary date" value={salaryDate}/>
-        <MiniSetting label="Account balance" value={formatMoney(accountBalance)}/>
+        <MiniSetting label={L('Konts', 'Account')} value={L('Galvenais konts', 'Main account')}/>
+        <MiniSetting label={L('Atpazītie neto ienākumi', 'Detected net income')} value={formatMoney(salary)}/>
+        <MiniSetting label={L('Atpazītais algas datums', 'Detected salary date')} value={L('Katra mēneša 25. datums', '25th of each month')}/>
+        <MiniSetting label={L('Konta atlikums', 'Account balance')} value={formatMoney(accountBalance)}/>
       </OnboardingCard>
-      <div style={{ marginTop: 12, fontSize: 13, lineHeight: '18px', color: BRAND.mute }}>If no salary is detected, no contribution is made.</div>
+      <div style={{ marginTop: 12, fontSize: 13, lineHeight: '18px', color: BRAND.mute }}>{L('Ja alga netiek atpazīta, iemaksa netiek veikta.', 'If no salary is detected, no contribution is made.')}</div>
     </OnboardingShell>
   );
 
   if (step === 3) return (
-    <OnboardingShell step={step} total={STEPS} eyebrow="Salary percentage" title="Choose your contribution percentage" subtitle="This starts from salary, then checks current balance, expected spending, recurring payments, and recent balance history before investing." onBack={() => setStep(2)} onNext={() => setStep(4)}>
-      <label htmlFor="target-percent" style={{ display: 'block', fontSize: 14, fontWeight: 700 }}>Slider from 1% to 10% of salary</label>
-      <input id="target-percent" type="range" min={1} max={10} step={1} value={targetPct} aria-valuetext={`${targetPct}% of salary`} onChange={e => setTargetPct(Number(e.target.value))} style={{ width: '100%', marginTop: 12, accentColor: BRAND.promo, cursor: 'pointer' }}/>
-      <OnboardingCard style={{ marginTop: 16 }}>
-        <MiniSetting label="Salary" value={formatMoney(salary)}/>
-        <MiniSetting label="Selected rate" value={`${targetPct}%`}/>
-        <MiniSetting label="Starting contribution" value={formatMoney(baseContribution)}/>
-      </OnboardingCard>
-      <OnboardingCard style={{ marginTop: 12, boxShadow: 'none', background: '#F1ECDD' }}>
-        <MiniSetting label="Current account balance" value={formatMoney(accountBalance)}/>
-        <MiniSetting label="Avg. past spending" value={formatMoney(expectedSpending)}/>
-        <MiniSetting label="Upcoming recurring payments" value={formatMoney(recurringPayments)}/>
-        <MiniSetting label="Average recent balance" value={formatMoney(averageRecentBalance)}/>
-        <MiniSetting label="Lowest recent balance" value={formatMoney(lowestRecentBalance)}/>
-        <MiniSetting label="Estimated safe contribution" value={formatMoney(finalContribution)}/>
-      </OnboardingCard>
+    <OnboardingShell step={step} total={STEPS} eyebrow={L('Algas procents', 'Salary percentage')} title={L('Izvēlies savu iemaksas procentu', 'Choose your contribution percentage')} subtitle={L('Aprēķins balstās uz jūsu ienākumiem un izdevumiem. Pirms ieguldīšanas tiek pārbaudīts drošs konta atlikums.', 'The calculation is based on your income and expenses. Before investing, a safe account balance is checked.')} onBack={() => setStep(2)} onNext={() => setStep(4)}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingBottom: 18 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <label htmlFor="target-percent" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, fontSize: 14, fontWeight: 700 }}>
+            <span>{L('No savas algas vēlos ieguldīt', 'From my salary I want to invest')}</span>
+            <span style={{ fontSize: 20, fontWeight: 700, color: BRAND.promo, flexShrink: 0 }}>{targetPct}%</span>
+          </label>
+          <input id="target-percent" type="range" min={1} max={100} step={1} value={targetPct} aria-valuetext={L(`${targetPct}% no algas`, `${targetPct}% of salary`)} onChange={e => setTargetPct(Number(e.target.value))} style={{ width: '100%', accentColor: BRAND.promo, cursor: 'pointer' }}/>
+        </div>
+        <OnboardingCard>
+          <MiniSetting label={L('Bruto alga (novērtēta)', 'Estimated gross salary')} value={formatMoney(estimatedGrossSalary)}/>
+          <MiniSetting label={L('Izvēlētā likme', 'Selected rate')} value={`${targetPct}%`}/>
+          <MiniSetting label={L('Sākuma iemaksa', 'Starting contribution')} value={formatMoney(baseContribution)}/>
+        </OnboardingCard>
+        <OnboardingCard style={{ background: '#F7F2E6', boxShadow: 'none', border: `1px solid ${BRAND.line}`, padding: '18px 16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', color: BRAND.promo }}>
+              {L('INDEXO ieteikums', 'INDEXO suggestion')}
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 700, lineHeight: '20px', color: BRAND.ink }}>
+              {L('Ieteicamais līmenis: līdz 10% no bruto algas.', 'Recommended level: up to 10% of gross salary.')}
+            </div>
+            <div style={{ fontSize: 13, lineHeight: '19px', color: BRAND.mute }}>
+              {L('Šis līmenis ļauj pilnvērtīgi izmantot nodokļu atmaksas priekšrocības un veidot stabilus ilgtermiņa uzkrājumus. Bruto alga tiek novērtēta, balstoties uz jūsu neto ienākumiem.', 'This level helps you make full practical use of tax refund benefits while building stable long-term savings. Gross salary is estimated based on your net income.')}
+            </div>
+          </div>
+        </OnboardingCard>
+        <OnboardingCard style={{ boxShadow: 'none', background: '#F1ECDD' }}>
+          <MiniSetting label={L('Pašreizējais konta atlikums', 'Current account balance')} value={formatMoney(accountBalance)}/>
+          <MiniSetting label={L('Vidējie iepriekšējie tēriņi', 'Avg. past spending')} value={formatMoney(expectedSpending)}/>
+          <MiniSetting label={L('Gaidāmie regulārie maksājumi', 'Upcoming recurring payments')} value={formatMoney(recurringPayments)}/>
+          <MiniSetting label={L('Vidējais nesenais atlikums', 'Average recent balance')} value={formatMoney(averageRecentBalance)}/>
+          <MiniSetting label={L('Zemākais nesenais atlikums', 'Lowest recent balance')} value={formatMoney(lowestRecentBalance)}/>
+          <MiniSetting label={L('Aprēķinātā drošā iemaksa', 'Estimated safe contribution')} value={formatMoney(finalContribution)}/>
+          {finalContribution === 0 && (
+            <div style={{ marginTop: 8, fontSize: 13, lineHeight: '18px', color: BRAND.mute }}>
+              {L('Pašlaik iemaksa nav ieteicama, lai saglabātu minimālo drošības rezervi.', 'A contribution is currently not recommended in order to preserve the minimum safety reserve.')}
+            </div>
+          )}
+        </OnboardingCard>
+      </div>
     </OnboardingShell>
   );
 
   if (step === 4) return (
-    <OnboardingShell step={step} total={STEPS} eyebrow="Safety balance" title="Set your minimum balance" subtitle="The app will not invest if your account would fall below this amount." onBack={() => setStep(3)} onNext={() => setStep(5)}>
-      <div role="group" aria-label="Minimum balance options" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-        {[300, 500, 1000].map(amount => <ModeButton key={amount} label={formatMoney(amount)} active={buffer === amount} onClick={() => setBuffer(amount)}/>)}
-        <ModeButton label="Custom amount" active={buffer === customBuffer && ![300, 500, 1000].includes(buffer)} onClick={() => setBuffer(customBuffer)}/>
+    <OnboardingShell step={step} total={STEPS} eyebrow={L('Drošības atlikums', 'Safety balance')} title={L('Iestati savu minimālo atlikumu', 'Set your minimum balance')} subtitle={L('Lietotne neieguldīs, ja konta atlikums pēc tam būtu zem šīs summas.', 'The app will not invest if your account would fall below this amount.')} onBack={() => setStep(3)} onNext={() => setStep(5)}>
+      <div role="group" aria-label={L('Minimālā atlikuma izvēles', 'Minimum balance options')} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+        {[300, 500, 1000].map(amount => <ModeButton key={amount} label={formatMoney(amount)} active={!useCustomBuffer && buffer === amount} onClick={() => { setUseCustomBuffer(false); setBuffer(amount); }}/>)}
+        <ModeButton label={L('Cita summa', 'Custom amount')} active={useCustomBuffer} onClick={() => { setUseCustomBuffer(true); setBuffer(customBuffer); }}/>
       </div>
+      {useCustomBuffer && (
       <label style={{ display: 'block', marginTop: 14, fontSize: 13, color: BRAND.mute }}>
-        Custom amount
-        <input type="number" min={0} value={customBuffer} onChange={e => { const next = Number(e.target.value); setCustomBuffer(next); setBuffer(next); }} style={{ width: '100%', marginTop: 6, minHeight: 44, border: `1px solid ${BRAND.line}`, borderRadius: 10, padding: '0 12px', font: 'inherit' }}/>
+        {L('Cita summa', 'Custom amount')}
+        <input type="number" min={0} value={customBuffer} onChange={e => { const next = Number(e.target.value); setCustomBuffer(next); setBuffer(next); setUseCustomBuffer(true); }} style={{ width: '100%', marginTop: 6, minHeight: 44, border: `1px solid ${BRAND.line}`, borderRadius: 10, padding: '0 12px', font: 'inherit' }}/>
       </label>
+      )}
       <OnboardingCard style={{ marginTop: 14, boxShadow: 'none', background: '#F1ECDD' }}>
-        <MiniSetting label="Minimum balance" value={formatMoney(buffer)}/>
-        <div style={{ marginTop: 8, fontSize: 13, color: BRAND.mute, lineHeight: '18px' }}>If your balance would drop below {formatMoney(buffer)}, the contribution is skipped.</div>
+        <MiniSetting label={L('Minimālais atlikums', 'Minimum balance')} value={formatMoney(buffer)}/>
+        <div style={{ marginTop: 8, fontSize: 13, color: BRAND.mute, lineHeight: '18px' }}>{L(`Ja atlikums nokristu zem ${formatMoney(buffer)}, iemaksa tiks izlaista.`, `If your balance would drop below ${formatMoney(buffer)}, the contribution is skipped.`)}</div>
       </OnboardingCard>
     </OnboardingShell>
   );
 
   if (step === 5) return (
-    <OnboardingShell step={step} total={STEPS} eyebrow="Contribution limit" title="Set your maximum monthly contribution" subtitle="This protects you from contributing more than you are comfortable with, even if your salary increases." onBack={() => setStep(4)} onNext={() => setStep(6)}>
-      <label style={{ display: 'block', fontSize: 14, fontWeight: 700 }}>Never contribute more than per month
+    <OnboardingShell step={step} total={STEPS} eyebrow={L('Iemaksas limits', 'Contribution limit')} title={L('Iestati savu maksimālo mēneša iemaksu', 'Set your maximum monthly contribution')} subtitle={L('Tas pasargā no pārāk lielām iemaksām pat tad, ja alga palielinās.', 'This protects you from contributing more than you are comfortable with, even if your salary increases.')} onBack={() => setStep(4)} onNext={() => setStep(6)}>
+      <label style={{ display: 'block', fontSize: 14, fontWeight: 700 }}>{L('Nekad neiemaksāt vairāk par šo summu mēnesī', 'Never contribute more than per month')}
         <input type="number" min={0} value={maxContribution} onChange={e => setMaxContribution(Number(e.target.value))} style={{ width: '100%', marginTop: 8, minHeight: 44, border: `1px solid ${BRAND.line}`, borderRadius: 10, padding: '0 12px', font: 'inherit' }}/>
       </label>
-      <label style={{ display: 'block', marginTop: 14, fontSize: 13, color: BRAND.mute }}>Skip contribution if calculated amount is below
+      <label style={{ display: 'block', marginTop: 14, fontSize: 13, color: BRAND.mute }}>{L('Izlaist iemaksu, ja aprēķinātā summa ir zem', 'Skip contribution if calculated amount is below')}
         <input type="number" min={0} value={skipBelow} onChange={e => setSkipBelow(Number(e.target.value))} style={{ width: '100%', marginTop: 6, minHeight: 44, border: `1px solid ${BRAND.line}`, borderRadius: 10, padding: '0 12px', font: 'inherit' }}/>
       </label>
       <OnboardingCard style={{ marginTop: 14 }}>
-        <MiniSetting label="Salary" value={formatMoney(5000)}/>
-        <MiniSetting label="Selected rate" value="5%"/>
-        <MiniSetting label="Base contribution" value={formatMoney(250)}/>
-        <MiniSetting label="Maximum limit" value={formatMoney(maxContribution)}/>
-        <MiniSetting label="Final contribution" value={formatMoney(Math.min(250, maxContribution))}/>
+        <MiniSetting label={L('Alga', 'Salary')} value={formatMoney(5000)}/>
+        <MiniSetting label={L('Izvēlētā likme', 'Selected rate')} value="5%"/>
+        <MiniSetting label={L('Bāzes iemaksa', 'Base contribution')} value={formatMoney(250)}/>
+        <MiniSetting label={L('Maksimālais limits', 'Maximum limit')} value={formatMoney(maxContribution)}/>
+        <MiniSetting label={L('Galīgā iemaksa', 'Final contribution')} value={formatMoney(Math.min(250, maxContribution))}/>
       </OnboardingCard>
     </OnboardingShell>
   );
 
   if (step === 6) return (
-    <OnboardingShell step={step} total={STEPS} eyebrow="Tax benefit" title="Optimize your tax benefit" subtitle="Based on your income, the app estimates how much you can contribute this year to reach the maximum eligible tax benefit." onBack={() => setStep(5)} onNext={() => setStep(7)}>
+    <OnboardingShell step={step} total={STEPS} eyebrow={L('Nodokļu ieguvums', 'Tax benefit')} title={L('Optimizē savu nodokļu ieguvumu', 'Optimize your tax benefit')} subtitle={L('Balstoties uz taviem ienākumiem, lietotne aprēķina, cik vari iemaksāt šogad, lai sasniegtu maksimālo nodokļu ieguvumu.', 'Based on your income, the app estimates how much you can contribute this year to reach the maximum eligible tax benefit.')} onBack={() => setStep(5)} onNext={() => setStep(7)}>
       <OnboardingCard>
-        <MiniSetting label="Estimated yearly income" value={formatMoney(salary * 12)}/>
-        <MiniSetting label="Maximum eligible contribution" value={formatMoney(maxEligibleContribution)}/>
-        <MiniSetting label="Already contributed" value={formatMoney(alreadyContributed)}/>
-        <MiniSetting label="Remaining this year" value={formatMoney(remainingThisYear)}/>
-        <MiniSetting label="Suggested monthly amount" value={formatMoney(suggestedMonthly)}/>
+        <MiniSetting label={L('Aprēķinātie gada bruto ienākumi', 'Estimated yearly gross income')} value={formatMoney(estimatedGrossSalary * 12)}/>
+        <MiniSetting label={L('Maksimālā atbilstošā iemaksa', 'Maximum eligible contribution')} value={formatMoney(maxEligibleContribution)}/>
+        <MiniSetting label={L('Jau iemaksāts', 'Already contributed')} value={formatMoney(alreadyContributed)}/>
+        <MiniSetting label={L('Atlikums šim gadam', 'Remaining this year')} value={formatMoney(remainingThisYear)}/>
+        <MiniSetting label={L('Ieteicamā mēneša summa', 'Suggested monthly amount')} value={formatMoney(suggestedMonthly)}/>
       </OnboardingCard>
-      <Option title="Keep my selected percentage" body="Use the selected salary percentage without automatic tax-target changes." active={taxOption === 'keep'} onClick={() => setTaxOption('keep')}/>
-      <Option title="Adjust contributions to reach tax target" body="Increase or reduce monthly contributions to aim for the eligible yearly amount." active={taxOption === 'adjust'} onClick={() => setTaxOption('adjust')}/>
-      <Option title="Ask me before increasing contributions" body="Send a confirmation before any tax-driven increase is applied." active={taxOption === 'ask'} onClick={() => setTaxOption('ask')}/>
+      <Option title={L('Saglabāt izvēlēto procentu', 'Keep my selected percentage')} body={L('Izmantot izvēlēto algas procentu bez automātiskām nodokļu mērķa korekcijām.', 'Use the selected salary percentage without automatic tax-target changes.')} active={taxOption === 'keep'} onClick={() => setTaxOption('keep')}/>
+      <Option title={L('Pielāgot iemaksas nodokļu mērķim', 'Adjust contributions to reach tax target')} body={L('Palielināt vai samazināt mēneša iemaksas, lai sasniegtu atbilstošo gada summu.', 'Increase or reduce monthly contributions to aim for the eligible yearly amount.')} active={taxOption === 'adjust'} onClick={() => setTaxOption('adjust')}/>
+      <Option title={L('Jautāt pirms iemaksu palielināšanas', 'Ask me before increasing contributions')} body={L('Nosūtīt apstiprinājumu pirms tiek piemērots ar nodokļiem saistīts pieaugums.', 'Send a confirmation before any tax-driven increase is applied.')} active={taxOption === 'ask'} onClick={() => setTaxOption('ask')}/>
     </OnboardingShell>
   );
 
   if (step === 7) return (
-    <OnboardingShell step={step} total={STEPS} eyebrow="Preview" title="Your next contribution estimate" onBack={() => setStep(6)} onNext={() => setStep(8)}>
+    <OnboardingShell step={step} total={STEPS} eyebrow={L('Priekšskatījums', 'Preview')} title={L('Tavas nākamās iemaksas aprēķins', 'Your next contribution estimate')} onBack={() => setStep(6)} onNext={() => setStep(8)}>
       <OnboardingCard>
-        <MiniSetting label="Detected salary" value={formatMoney(salary)}/>
-        <MiniSetting label="Selected rate" value={`${targetPct}%`}/>
-        <MiniSetting label="Base contribution" value={formatMoney(baseContribution)}/>
+        <MiniSetting label={L('Atpazītie neto ienākumi', 'Detected net income')} value={formatMoney(salary)}/>
+        <MiniSetting label={L('Novērtētā bruto alga', 'Estimated gross salary')} value={formatMoney(estimatedGrossSalary)}/>
+        <MiniSetting label={L('Izvēlētā likme', 'Selected rate')} value={`${targetPct}%`}/>
+        <MiniSetting label={L('Bāzes iemaksa', 'Base contribution')} value={formatMoney(baseContribution)}/>
       </OnboardingCard>
       <OnboardingCard style={{ marginTop: 12 }}>
-        <MiniSetting label="Current balance" value={formatMoney(accountBalance)}/>
-        <MiniSetting label="Expected spending" value={`${formatMoney(expectedSpending)} avg.`}/>
-        <MiniSetting label="Upcoming recurring payments" value={formatMoney(recurringPayments)}/>
-        <MiniSetting label="Safety balance" value={formatMoney(buffer)}/>
-        <MiniSetting label="Average recent balance" value={formatMoney(averageRecentBalance)}/>
-        <MiniSetting label="Lowest recent balance" value={formatMoney(lowestRecentBalance)}/>
-        <MiniSetting label="Balance trend" value={balanceTrend >= 0 ? `+${formatMoney(balanceTrend)}` : formatMoney(balanceTrend)}/>
-        <MiniSetting label="Past-balance adjustment" value={formatMoney(balanceRiskAdjustment)}/>
-        <MiniSetting label="Safe available amount" value={formatMoney(safeAvailable)}/>
-        <MiniSetting label="Estimated contribution" value={formatMoney(finalContribution)}/>
+        <MiniSetting label={L('Pašreizējais atlikums', 'Current balance')} value={formatMoney(accountBalance)}/>
+        <MiniSetting label={L('Prognozētie tēriņi', 'Expected spending')} value={L(`${formatMoney(expectedSpending)} vidēji`, `${formatMoney(expectedSpending)} avg.`)}/>
+        <MiniSetting label={L('Gaidāmie regulārie maksājumi', 'Upcoming recurring payments')} value={formatMoney(recurringPayments)}/>
+        <MiniSetting label={L('Drošības atlikums', 'Safety balance')} value={formatMoney(buffer)}/>
+        <MiniSetting label={L('Vidējais nesenais atlikums', 'Average recent balance')} value={formatMoney(averageRecentBalance)}/>
+        <MiniSetting label={L('Zemākais nesenais atlikums', 'Lowest recent balance')} value={formatMoney(lowestRecentBalance)}/>
+        <MiniSetting label={L('Atlikuma tendence', 'Balance trend')} value={balanceTrend >= 0 ? `+${formatMoney(balanceTrend)}` : formatMoney(balanceTrend)}/>
+        <MiniSetting label={L('Vēsturiskā atlikuma korekcija', 'Past-balance adjustment')} value={formatMoney(balanceRiskAdjustment)}/>
+        <MiniSetting label={L('Droši pieejamā summa', 'Safe available amount')} value={formatMoney(safeAvailable)}/>
+        <MiniSetting label={L('Aprēķinātā iemaksa', 'Estimated contribution')} value={formatMoney(finalContribution)}/>
       </OnboardingCard>
       <OnboardingCard style={{ marginTop: 12, boxShadow: 'none', background: '#F1ECDD' }}>
-        <MiniSetting label="No salary detected" value={formatMoney(0)}/>
-        <MiniSetting label="Balance below safety limit" value={formatMoney(0)}/>
-        <MiniSetting label="Large one-time inflow" value="No auto-increase"/>
+        <MiniSetting label={L('Alga nav atpazīta', 'No salary detected')} value={formatMoney(0)}/>
+        <MiniSetting label={L('Atlikums zem drošības limita', 'Balance below safety limit')} value={formatMoney(0)}/>
+        <MiniSetting label={L('Liela vienreizēja iemaksa', 'Large one-time inflow')} value={L('Bez automātiska palielinājuma', 'No auto-increase')}/>
       </OnboardingCard>
     </OnboardingShell>
   );
 
   if (step === 8) return (
-    <OnboardingShell step={step} total={STEPS} eyebrow="Notifications" title="Stay in control" subtitle="Before each contribution, you will receive a notification with the planned amount." onBack={() => setStep(7)} onNext={() => setStep(9)}>
+    <OnboardingShell step={step} total={STEPS} eyebrow={L('Paziņojumi', 'Notifications')} title={L('Saglabā kontroli', 'Stay in control')} subtitle={L('Pirms katras iemaksas saņemsi paziņojumu ar plānoto summu.', 'Before each contribution, you will receive a notification with the planned amount.')} onBack={() => setStep(7)} onNext={() => setStep(9)}>
       <OnboardingCard>
-        <SectionLabel>Settings</SectionLabel>
-        <ToggleRow label="Notify me 2 days before salary day" checked={notifyBefore} onChange={setNotifyBefore}/>
-        <ToggleRow label="Allow 24-hour reversal after contribution" checked={allowReversal} onChange={setAllowReversal}/>
-        <ToggleRow label="Send monthly pension summary" checked={monthlySummary} onChange={setMonthlySummary}/>
-        <ToggleRow label="Send occasional tax benefit reminders" checked={taxReminders} onChange={setTaxReminders}/>
+        <SectionLabel>{L('Iestatījumi', 'Settings')}</SectionLabel>
+        <ToggleRow label={L('Paziņot man 2 dienas pirms algas dienas', 'Notify me 2 days before salary day')} checked={notifyBefore} onChange={setNotifyBefore}/>
+        <ToggleRow label={L('Atļaut atsaukšanu 24 stundu laikā pēc iemaksas', 'Allow 24-hour reversal after contribution')} checked={allowReversal} onChange={setAllowReversal}/>
+        <ToggleRow label={L('Sūtīt ikmēneša pensijas kopsavilkumu', 'Send monthly pension summary')} checked={monthlySummary} onChange={setMonthlySummary}/>
+        <ToggleRow label={L('Sūtīt atgādinājumus par nodokļu ieguvumu', 'Send occasional tax benefit reminders')} checked={taxReminders} onChange={setTaxReminders}/>
       </OnboardingCard>
     </OnboardingShell>
   );
 
   if (step === 9) return (
-    <OnboardingShell step={step} total={STEPS} eyebrow="Review" title="Review your setup" onBack={() => setStep(8)} onNext={() => setStep(10)} nextLabel="Activate dynamic contributions">
+    <OnboardingShell step={step} total={STEPS} eyebrow={L('Pārskats', 'Review')} title={L('Pārskati savu iestatījumu', 'Review your setup')} onBack={() => setStep(8)} onNext={() => setStep(10)} nextLabel={L('Aktivizēt dinamiskās iemaksas', 'Activate dynamic contributions')}>
       <OnboardingCard>
-        <MiniSetting label="Mode" value={mode === 'fixed' ? 'Fixed' : mode === 'tax' ? 'Tax target' : 'Dynamic'}/>
-        <MiniSetting label="Salary account" value={salaryAccount}/>
-        <MiniSetting label="Target contribution" value={`${targetPct}% of salary`}/>
-        <MiniSetting label="Minimum balance" value={formatMoney(buffer)}/>
-        <MiniSetting label="Maximum monthly contribution" value={formatMoney(maxContribution)}/>
-        <MiniSetting label="Tax optimization" value={taxOptimization ? 'Enabled' : 'Disabled'}/>
-        <MiniSetting label="Notification" value={notifyBefore ? '2 days before salary day' : 'Disabled'}/>
-        <MiniSetting label="24-hour reversal" value={allowReversal ? 'Enabled' : 'Disabled'}/>
+        <MiniSetting label={L('Režīms', 'Mode')} value={mode === 'fixed' ? L('Fiksēts', 'Fixed') : mode === 'tax' ? L('Nodokļu mērķis', 'Tax target') : L('Dinamisks', 'Dynamic')}/>
+        <MiniSetting label={L('Algas konts', 'Salary account')} value={L('Galvenais konts', 'Main account')}/>
+        <MiniSetting label={L('Mērķa iemaksa', 'Target contribution')} value={L(`${targetPct}% no bruto algas`, `${targetPct}% of gross salary`)}/>
+        <MiniSetting label={L('Minimālais atlikums', 'Minimum balance')} value={formatMoney(buffer)}/>
+        <MiniSetting label={L('Maksimālā mēneša iemaksa', 'Maximum monthly contribution')} value={formatMoney(maxContribution)}/>
+        <MiniSetting label={L('Nodokļu optimizācija', 'Tax optimization')} value={taxOptimization ? L('Ieslēgta', 'Enabled') : L('Izslēgta', 'Disabled')}/>
+        <MiniSetting label={L('Paziņojums', 'Notification')} value={notifyBefore ? L('2 dienas pirms algas dienas', '2 days before salary day') : L('Izslēgts', 'Disabled')}/>
+        <MiniSetting label={L('24 stundu atsaukšana', '24-hour reversal')} value={allowReversal ? L('Ieslēgta', 'Enabled') : L('Izslēgta', 'Disabled')}/>
       </OnboardingCard>
       <button type="button" onClick={() => setStep(1)} style={{ width: '100%', minHeight: 48, marginTop: 12, border: `1px solid ${BRAND.line}`, borderRadius: 12, background: BRAND.card, color: BRAND.ink, fontWeight: 700, cursor: 'pointer' }}>
-        Edit settings
+        {L('Rediģēt iestatījumus', 'Edit settings')}
       </button>
     </OnboardingShell>
   );
 
   return (
-    <OnboardingShell step={step} total={STEPS} eyebrow="Active" title="Your dynamic 3rd pillar plan is active" subtitle="Your first contribution will be calculated before your next salary date. You will be notified before anything is invested." onBack={() => setStep(9)} onNext={finish} nextLabel="View pension dashboard">
+    <OnboardingShell step={step} total={STEPS} eyebrow={L('Aktīvs', 'Active')} title={L('Tavs dinamiskais pensiju 3. līmenis ir aktīvs', 'Your dynamic 3rd pillar plan is active')} subtitle={L('Tava pirmā iemaksa tiks aprēķināta pirms nākamās algas dienas. Pirms jebkāda ieguldījuma saņemsi paziņojumu.', 'Your first contribution will be calculated before your next salary date. You will be notified before anything is invested.')} onBack={() => setStep(9)} onNext={finish} nextLabel={L('Skatīt pensijas paneli', 'View pension dashboard')}>
       <OnboardingCard>
-        <MiniSetting label="Next salary date" value={salaryDate}/>
-        <MiniSetting label="Expected contribution range" value={`${formatMoney(0)} to ${formatMoney(Math.min(baseContribution, maxContribution))}`}/>
-        <MiniSetting label="Current pension projection" value={`${formatMoney(FUTURE_SCENARIOS.balanced.todayMoneyMonthly)}/month`}/>
+        <MiniSetting label={L('Nākamais algas datums', 'Next salary date')} value={L('Katra mēneša 25. datums', '25th of each month')}/>
+        <MiniSetting label={L('Sagaidāmais iemaksu diapazons', 'Expected contribution range')} value={L(`${formatMoney(0)} līdz ${formatMoney(Math.min(baseContribution, maxContribution))}`, `${formatMoney(0)} to ${formatMoney(Math.min(baseContribution, maxContribution))}`)}/>
+        <MiniSetting label={L('Pašreizējā pensijas prognoze', 'Current pension projection')} value={`${formatMoney(FUTURE_SCENARIOS.balanced.todayMoneyMonthly)}/${L('mēn.', 'month')}`}/>
       </OnboardingCard>
     </OnboardingShell>
   );
@@ -1856,12 +1959,42 @@ function Home({ tweaks }) {
   const [promo, setPromo] = React.useState(0);
   const [nav, setNav] = React.useState('Home');
   const [dismissed, setDismissed] = React.useState(false);
+  const [language, setLanguage] = React.useState('lv');
+  const [profileMenuOpen, setProfileMenuOpen] = React.useState(false);
+  const profileMenuRef = React.useRef(null);
 
-  const tabs = ['Konti', 'Pensija', 'Uzkrājumi', 'Aizdevumi'];
+  const L = (lv, en) => (language === 'lv' ? lv : en);
+  const languageValue = React.useMemo(() => ({
+    language,
+    setLanguage,
+    L: (lv, en) => (language === 'lv' ? lv : en),
+    monthLabel: (label) => translateMonth(label, language),
+    shortMonthLabel: (label) => translateMonth(label, language).slice(0, 3),
+    scenarioLabel: (key) => translateScenarioLabel(key, language),
+    scenarioNote: (key) => translateScenarioNote(key, language),
+  }), [language]);
+
+  React.useEffect(() => {
+    const onPointerDown = (event) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, []);
+
+  const tabs = [
+    { key: 'Konti', label: L('Konti', 'Accounts') },
+    { key: 'Pensija', label: L('Pensija', 'Pension') },
+    { key: 'Uzkrājumi', label: L('Uzkrājumi', 'Savings') },
+    { key: 'Aizdevumi', label: L('Aizdevumi', 'Loans') },
+  ];
   const promos = ['indigo', 'cashback', 'goal'];
   const currentPromo = tweaks.promo === 'auto' ? promos[promo] : tweaks.promo;
 
   return (
+    <LanguageContext.Provider value={languageValue}>
     <div style={{
       background: BRAND.bg, height: '100%', display: 'flex', flexDirection: 'column',
       overflow: 'hidden', fontFamily: '"Gibson", "IBM Plex Sans", "Aptos", system-ui, sans-serif', color: BRAND.ink,
@@ -1869,23 +2002,50 @@ function Home({ tweaks }) {
       <div data-app-scroll="true" style={{ flex: 1, overflowY: 'auto', paddingTop: 60 }}>
       {/* ——— Header ——— */}
       <div style={{ padding: '12px 20px 4px', display: 'flex', alignItems: 'center', gap: 14 }}>
-        <div style={{
-          width: 40, height: 40, borderRadius: 10, background: '#9A968A',
-          color: '#fff', fontWeight: 600, fontSize: 14, letterSpacing: 0.5,
-          display: 'grid', placeItems: 'center', flexShrink: 0,
-        }}>ES</div>
-        <div style={{ flex: 1, fontSize: 17, fontWeight: 600, letterSpacing: 0 }}>
-          Edvards Markuss Selikovs
+        <div ref={profileMenuRef} style={{ flex: 1, position: 'relative' }}>
+          <button type="button" aria-label={L('Mainīt valodu', 'Change language')} onClick={() => setProfileMenuOpen(current => !current)} style={{
+            width: '100%', background: 'transparent', border: 0, padding: 0,
+            display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', cursor: 'pointer',
+          }}>
+            <div style={{
+              width: 40, height: 40, borderRadius: 10, background: '#9A968A',
+              color: '#fff', fontWeight: 600, fontSize: 14, letterSpacing: 0.5,
+              display: 'grid', placeItems: 'center', flexShrink: 0,
+            }}>ES</div>
+            <div style={{ flex: 1, fontSize: 17, fontWeight: 600, letterSpacing: 0 }}>
+              Edvards Markuss Selikovs
+            </div>
+          </button>
+          {profileMenuOpen && (
+            <div style={{
+              position: 'absolute', top: 'calc(100% + 8px)', left: 0, zIndex: 40,
+              background: BRAND.card, border: `1px solid ${BRAND.line}`, borderRadius: 12,
+              padding: 6, boxShadow: '0 8px 18px rgba(17,23,19,0.12)',
+            }}>
+              {[
+                ['lv', 'Latviski'],
+                ['en', 'English'],
+              ].map(([value, label]) => (
+                <button key={value} type="button" onClick={() => { setLanguage(value); setProfileMenuOpen(false); }} style={{
+                  display: 'block', width: '100%', border: 0, borderRadius: 8, padding: '8px 10px',
+                  background: language === value ? '#F1ECDD' : 'transparent',
+                  color: BRAND.ink, fontSize: 12.5, fontWeight: language === value ? 700 : 500, textAlign: 'left', cursor: 'pointer',
+                }}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-        <button type="button" aria-label="Atvērt ziņojumus" style={{ background: 'transparent', border: 0, padding: 4, cursor: 'pointer', minWidth: BRAND.minTouch, minHeight: BRAND.minTouch }}>
+        <button type="button" aria-label={L('Atvērt ziņojumus', 'Open messages')} style={{ background: 'transparent', border: 0, padding: 4, cursor: 'pointer', minWidth: BRAND.minTouch, minHeight: BRAND.minTouch }}>
           {Icon.chat(24)}
         </button>
       </div>
 
       {/* ——— Tabs ——— */}
-      <div role="tablist" aria-label="Sadaļas" style={{ display: 'flex', padding: '12px 16px 0', borderBottom: `1px solid ${BRAND.line}` }}>
-        {tabs.map(t => (
-          <Tab key={t} label={t} active={tab === t} onClick={() => setTab(t)} />
+      <div role="tablist" aria-label={L('Sadaļas', 'Sections')} style={{ display: 'flex', padding: '12px 16px 0', borderBottom: `1px solid ${BRAND.line}` }}>
+        {tabs.map(({ key, label }) => (
+          <Tab key={key} label={label} active={tab === key} onClick={() => setTab(key)} />
         ))}
       </div>
 
@@ -1900,7 +2060,7 @@ function Home({ tweaks }) {
         }}>
           <CardImagery/>
           <div style={{ position: 'relative', zIndex: 1, maxWidth: 200 }}>
-            <div style={{ fontSize: 15, fontWeight: 600 }}>Norēķinu konts</div>
+            <div style={{ fontSize: 15, fontWeight: 600 }}>{L('Norēķinu konts', 'Current account')}</div>
             <div style={{
               fontSize: 11.5, color: BRAND.mute, marginTop: 2, display: 'flex', alignItems: 'center', gap: 3,
               letterSpacing: 0, whiteSpace: 'nowrap',
@@ -1924,7 +2084,7 @@ function Home({ tweaks }) {
               marginTop: 8, fontSize: 13, color: BRAND.promo, display: 'flex',
               alignItems: 'center', gap: 6,
             }}>
-              Nopelnītie procenti {Icon.info(13, BRAND.promo)}
+              {L('Nopelnītie procenti', 'Earned interest')} {Icon.info(13, BRAND.promo)}
             </div>
           </div>
         </div>
@@ -1932,9 +2092,9 @@ function Home({ tweaks }) {
 
       {/* ——— Quick actions ——— */}
       <div style={{ display: 'flex', padding: '20px 20px 6px', gap: 8 }}>
-        <QuickAction icon={Icon.card()} label="Izveidot karti" ariaLabel="Izveidot karti"/>
-        <QuickAction icon={Icon.send()} label={<>Sūtīt,<br/>pieprasīt</>} ariaLabel="Sūtīt vai pieprasīt"/>
-        <QuickAction icon={Icon.chart()} label="Papildināt" ariaLabel="Papildināt"/>
+        <QuickAction icon={Icon.card()} label={L('Izveidot karti', 'Create card')} ariaLabel={L('Izveidot karti', 'Create card')}/>
+        <QuickAction icon={Icon.send()} label={language === 'lv' ? <>Sūtīt,<br/>pieprasīt</> : <>Send,<br/>request</>} ariaLabel={L('Sūtīt vai pieprasīt', 'Send or request')}/>
+        <QuickAction icon={Icon.chart()} label={L('Papildināt', 'Add funds')} ariaLabel={L('Papildināt', 'Add funds')}/>
       </div>
 
       {/* ——— Promo carousel ——— */}
@@ -1945,9 +2105,9 @@ function Home({ tweaks }) {
           {currentPromo === 'goal' && <PromoGoal onClose={() => setDismissed(true)}/>}
 
           {tweaks.promo === 'auto' && (
-            <div role="group" aria-label="Piedāvājumu karuselis" style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 14 }}>
+            <div role="group" aria-label={L('Piedāvājumu karuselis', 'Offer carousel')} style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 14 }}>
               {promos.map((_, i) => (
-                <button type="button" key={i} aria-label={`Rādīt ${i + 1}. piedāvājumu`} aria-pressed={i === promo} onClick={() => setPromo(i)} style={{
+                <button type="button" key={i} aria-label={L(`Rādīt ${i + 1}. piedāvājumu`, `Show offer ${i + 1}`)} aria-pressed={i === promo} onClick={() => setPromo(i)} style={{
                   width: 18, height: 18, borderRadius: 9, padding: 0,
                   background: 'transparent', border: 0, cursor: 'pointer',
                   display: 'grid', placeItems: 'center',
@@ -1968,11 +2128,11 @@ function Home({ tweaks }) {
       {/* ——— Transactions ——— */}
       <div style={{ padding: '28px 20px 0' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: 18, fontWeight: 600, letterSpacing: 0 }}>Darījumi</div>
+          <div style={{ fontSize: 18, fontWeight: 600, letterSpacing: 0 }}>{L('Darījumi', 'Transactions')}</div>
           {Icon.dots()}
         </div>
         <div style={{ fontSize: 14, color: BRAND.mute, marginTop: 8 }}>
-          Tavi darījumi parādīsies šeit
+          {L('Tavi darījumi parādīsies šeit', 'Your transactions will appear here')}
         </div>
       </div>
 
@@ -1981,14 +2141,14 @@ function Home({ tweaks }) {
       {/* ——— Quick contacts ——— */}
       <div style={{ padding: '20px 20px 0' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: 18, fontWeight: 600, letterSpacing: 0 }}>Ātrie kontakti</div>
+          <div style={{ fontSize: 18, fontWeight: 600, letterSpacing: 0 }}>{L('Ātrie kontakti', 'Quick contacts')}</div>
           {Icon.dots()}
         </div>
       </div>
       </>
       ) : (
         <div style={{ padding: '40px 24px', textAlign: 'center', color: BRAND.mute, fontSize: 14 }}>
-          {tab} — drīzumā
+          {L(`${tab} — drīzumā`, `${tabs.find(item => item.key === tab)?.label || tab} — coming soon`)}
         </div>
       )}
       <div style={{ height: 16 }}/>
@@ -2001,13 +2161,14 @@ function Home({ tweaks }) {
           padding: '7px 8px', display: 'flex', gap: 0, alignItems: 'center',
           boxShadow: '0 2px 8px rgba(17,23,19,0.10)',
         }}>
-          <NavItem icon={Icon.home(nav === 'Home')} label="Sākums"
+          <NavItem icon={Icon.home(nav === 'Home')} label={L('Sākums', 'Home')}
                    active={nav === 'Home'} onClick={() => setNav('Home')}/>
-          <NavItem icon={Icon.swap} label="Maksājumi" active={nav === 'Pay'} onClick={() => setNav('Pay')}/>
-          <NavItem icon={Icon.grid} label="Viss" active={nav === 'More'} onClick={() => setNav('More')}/>
+          <NavItem icon={Icon.swap} label={L('Maksājumi', 'Payments')} active={nav === 'Pay'} onClick={() => setNav('Pay')}/>
+          <NavItem icon={Icon.grid} label={L('Viss', 'More')} active={nav === 'More'} onClick={() => setNav('More')}/>
         </div>
       </div>
     </div>
+    </LanguageContext.Provider>
   );
 }
 
