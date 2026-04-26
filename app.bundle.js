@@ -700,35 +700,68 @@ const MONTH_COPY = {
 const SCENARIO_COPY = {
   cautious: {
     lv: {
-      label: 'Piesardzīgs',
+      label: 'Pesimistiskais',
       note: '2.8% gada ienesīgums'
     },
     en: {
-      label: 'Cautious',
+      label: 'Pessimistic',
       note: '2.8% annual return'
     }
   },
   balanced: {
     lv: {
-      label: 'Bāzes',
+      label: 'Labvēlīgais',
       note: '4.1% gada ienesīgums'
     },
     en: {
-      label: 'Balanced',
+      label: 'Favorable',
       note: '4.1% annual return'
     }
   },
   dynamic: {
     lv: {
-      label: 'Dinamiskais',
+      label: 'Optimistiskais',
       note: '5.3% gada ienesīgums'
     },
     en: {
-      label: 'Dynamic',
+      label: 'Optimistic',
       note: '5.3% annual return'
     }
   }
 };
+const PENSION_PLAN_OPTIONS = [{
+  name: 'INDEXO AKCIJAS',
+  riskLv: 'Augsts risks',
+  riskEn: 'High risk'
+}, {
+  name: 'INDEXO OBLIGĀCIJAS',
+  riskLv: 'Zems risks',
+  riskEn: 'Low risk'
+}, {
+  name: 'SEB Dynamic',
+  riskLv: 'Augsts risks',
+  riskEn: 'High risk'
+}, {
+  name: 'SEB Balanced',
+  riskLv: 'Vidējs risks',
+  riskEn: 'Medium risk'
+}, {
+  name: 'SEB Conservative',
+  riskLv: 'Zems risks',
+  riskEn: 'Low risk'
+}, {
+  name: 'Swedbank Dynamic',
+  riskLv: 'Augsts risks',
+  riskEn: 'High risk'
+}, {
+  name: 'Swedbank Balanced',
+  riskLv: 'Vidējs risks',
+  riskEn: 'Medium risk'
+}, {
+  name: 'Swedbank Conservative',
+  riskLv: 'Zems risks',
+  riskEn: 'Low risk'
+}];
 function translateMonth(label, language) {
   return MONTH_COPY[label]?.[language] || label;
 }
@@ -1903,8 +1936,8 @@ const FLUXION_HISTORY = [{
 }];
 const FUTURE_SCENARIOS = {
   cautious: {
-    label: 'Piesardzīgs',
-    tone: '#74618D',
+    label: 'Pesimistiskais',
+    tone: '#90A35F',
     note: '2.8% gada ienesīgums',
     nominalMonthly: 1280,
     todayMoneyMonthly: 890,
@@ -1915,8 +1948,8 @@ const FUTURE_SCENARIOS = {
     line: [0.18, 0.20, 0.24, 0.31, 0.40, 0.48, 0.58]
   },
   balanced: {
-    label: 'Bāzes',
-    tone: '#90A35F',
+    label: 'Labvēlīgais',
+    tone: '#74618D',
     note: '4.1% gada ienesīgums',
     nominalMonthly: 1510,
     todayMoneyMonthly: 1040,
@@ -1927,7 +1960,7 @@ const FUTURE_SCENARIOS = {
     line: [0.18, 0.21, 0.27, 0.37, 0.51, 0.67, 0.79]
   },
   dynamic: {
-    label: 'Dinamiskais',
+    label: 'Optimistiskais',
     tone: '#E5C93A',
     note: '5.3% gada ienesīgums',
     nominalMonthly: 1760,
@@ -2840,7 +2873,61 @@ function PensionMain({
   const preview = model.preview;
   const nextContribution = reversed || config.paused ? 0 : preview.contribution;
   const modeLabel = config.mode === 'dynamic' ? L('Dinamiskais', 'Dynamic') : L('Fiksēts', 'Fixed');
-  return React.createElement("div", {
+  const [currentPensionPlan, setCurrentPensionPlan] = React.useState('INDEXO AKCIJAS');
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [pendingPensionPlan, setPendingPensionPlan] = React.useState(null);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [successDialog, setSuccessDialog] = React.useState(null);
+  const currentPlanMeta = PENSION_PLAN_OPTIONS.find(plan => plan.name === currentPensionPlan) || PENSION_PLAN_OPTIONS[0];
+  const confirmDialog = confirmAction === 'plan' ? {
+    title: L('Mainīt pensiju 3. līmeņa plānu?', 'Change the 3rd pillar plan?'),
+    body: L('Tu tiksi novirzīts atpakaļ uz iestatīšanas ekrānu, lai pārskatītu un apstiprinātu jauno plānu.', 'You will be taken back to the setup flow to review and confirm the new plan.'),
+    confirmLabel: L('Jā, mainīt', 'Yes, change'),
+    onConfirm: () => onNav('onboarding3')
+  } : confirmAction === 'pause' ? {
+    title: L('Pauzēt dinamisko plānu?', 'Pause the dynamic plan?'),
+    body: L('Automātiskās iemaksas tiks apturētas līdz brīdim, kad plānu atjaunosi.', 'Automatic contributions will be paused until you resume the plan.'),
+    confirmLabel: L('Jā, pauzēt', 'Yes, pause'),
+    onConfirm: () => onConfigChange({
+      paused: true
+    })
+  } : confirmAction === 'reverse' ? {
+    title: L('Atgriezt pēdējo iemaksu?', 'Reverse the last contribution?'),
+    body: L('Pēdējā 3. līmeņa iemaksa tiks atgriezta 24 stundu logā.', 'The latest 3rd pillar contribution will be reversed within the 24-hour window.'),
+    confirmLabel: L('Jā, atgriezt', 'Yes, reverse'),
+    onConfirm: () => onReverse()
+  } : confirmAction === 'pensionPlan' ? {
+    title: L('Mainīt pensiju plānu?', 'Change pension plan?'),
+    body: React.createElement(React.Fragment, null, React.createElement("div", null, L('Vai vēlaties mainīt savu pensiju plānu uz:', 'Do you want to change your pension plan to:')), React.createElement("div", {
+      style: {
+        marginTop: 10,
+        fontSize: 14,
+        fontWeight: 700,
+        color: BRAND.ink
+      }
+    }, pendingPensionPlan), React.createElement("div", {
+      style: {
+        marginTop: 10
+      }
+    }, L('Plāna maiņa var ietekmēt ieguldījumu risku un sagaidāmo ienesīgumu.', 'Changing the plan can affect investment risk and expected return.'))),
+    confirmLabel: L('Apstiprināt', 'Confirm'),
+    onConfirm: () => {
+      if (!pendingPensionPlan) return;
+      setCurrentPensionPlan(pendingPensionPlan);
+      setPendingPensionPlan(null);
+      setDropdownOpen(false);
+      setSuccessDialog({
+        body: L('Plāns veiksmīgi nomainīts.\nPlāna maiņa tiks izpildīta 1–3 darba dienu laikā.', 'Plan changed successfully.\nThe change will be processed within 1–3 business days.')
+      });
+    }
+  } : null;
+  const handleConfirmAction = () => {
+    if (!confirmDialog) return;
+    const nextAction = confirmDialog.onConfirm;
+    setConfirmAction(null);
+    nextAction();
+  };
+  return React.createElement(React.Fragment, null, React.createElement("div", {
     style: {
       padding: '4px 16px 24px'
     }
@@ -2909,23 +2996,124 @@ function PensionMain({
     value: formatMoney(config.safetyBuffer)
   })), React.createElement("div", {
     style: {
+      marginTop: 12,
+      background: '#FAF9F8',
+      borderRadius: 12,
+      padding: '12px 14px',
       display: 'flex',
-      gap: 8,
-      marginTop: 12
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12
     }
-  }, React.createElement(ModeButton, {
-    label: L('Fiksēts', 'Fixed'),
-    active: config.mode === 'fixed',
-    onClick: () => onConfigChange({
-      mode: 'fixed'
-    })
-  }), React.createElement(ModeButton, {
-    label: L('Dinamiskais', 'Dynamic'),
-    active: config.mode === 'dynamic',
-    onClick: () => onConfigChange({
-      mode: 'dynamic'
-    })
-  })), React.createElement("div", {
+  }, React.createElement("div", {
+    style: {
+      minWidth: 0
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: BRAND.mute
+    }
+  }, L('Šī brīža plāns', 'Current plan')), React.createElement("div", {
+    style: {
+      marginTop: 3,
+      fontSize: 15,
+      fontWeight: 700,
+      color: BRAND.ink
+    }
+  }, modeLabel)), React.createElement("button", {
+    type: "button",
+    onClick: () => setConfirmAction('plan'),
+    style: {
+      border: 0,
+      background: BRAND.accent,
+      color: BRAND.ink,
+      borderRadius: 10,
+      minHeight: 40,
+      padding: '0 14px',
+      fontSize: 13,
+      fontWeight: 700,
+      cursor: 'pointer',
+      flexShrink: 0
+    }
+  }, L('Mainīt plānu', 'Change plan'))), React.createElement("div", {
+    style: {
+      marginTop: 12,
+      background: '#FAF9F8',
+      borderRadius: 12,
+      padding: '12px 14px'
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: BRAND.mute
+    }
+  }, L('Pašreizējais pensiju plāns', 'Current pension plan')), React.createElement("button", {
+    type: "button",
+    onClick: () => setDropdownOpen(open => !open),
+    style: {
+      width: '100%',
+      marginTop: 8,
+      minHeight: 44,
+      border: `1px solid ${BRAND.line}`,
+      borderRadius: 10,
+      background: BRAND.card,
+      color: BRAND.ink,
+      padding: '0 12px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 10,
+      fontSize: 14,
+      fontWeight: 700,
+      cursor: 'pointer',
+      textAlign: 'left'
+    }
+  }, React.createElement("span", null, currentPensionPlan), React.createElement("span", {
+    style: {
+      transform: dropdownOpen ? 'rotate(90deg)' : 'rotate(0deg)',
+      transition: 'transform 0.16s ease'
+    }
+  }, Icon.chev(14, BRAND.mute))), dropdownOpen && React.createElement("div", {
+    style: {
+      marginTop: 8,
+      border: `1px solid ${BRAND.line}`,
+      borderRadius: 10,
+      overflow: 'hidden',
+      background: BRAND.card
+    }
+  }, PENSION_PLAN_OPTIONS.map((plan, index) => React.createElement("button", {
+    key: plan.name,
+    type: "button",
+    onClick: () => {
+      if (plan.name === currentPensionPlan) {
+        setDropdownOpen(false);
+        return;
+      }
+      setPendingPensionPlan(plan.name);
+      setDropdownOpen(false);
+      setConfirmAction('pensionPlan');
+    },
+    style: {
+      width: '100%',
+      border: 0,
+      borderTop: index === 0 ? 0 : `1px solid ${BRAND.line}`,
+      background: plan.name === currentPensionPlan ? '#F7F2E6' : BRAND.card,
+      color: BRAND.ink,
+      padding: '11px 12px',
+      textAlign: 'left',
+      fontSize: 13.5,
+      fontWeight: plan.name === currentPensionPlan ? 700 : 500,
+      cursor: 'pointer'
+    }
+  }, plan.name))), React.createElement("div", {
+    style: {
+      marginTop: 8,
+      fontSize: 12.5,
+      lineHeight: '17px',
+      color: BRAND.mute
+    }
+  }, L('Riska līmenis', 'Risk level'), ": ", L(currentPlanMeta.riskLv, currentPlanMeta.riskEn))), React.createElement("div", {
     style: {
       marginTop: 12,
       background: '#FAF9F8',
@@ -2956,23 +3144,23 @@ function PensionMain({
   }, React.createElement("button", {
     type: "button",
     "aria-pressed": config.paused,
-    onClick: () => onConfigChange({
-      paused: !config.paused
-    }),
+    onClick: () => config.paused ? onConfigChange({
+      paused: false
+    }) : setConfirmAction('pause'),
     style: {
       flex: 1,
       border: 0,
       borderRadius: 10,
       minHeight: 44,
       background: config.paused ? BRAND.accent : '#EAE6DB',
-      color: BRAND.promo,
+      color: BRAND.ink,
       fontSize: 13,
       fontWeight: 700,
       cursor: 'pointer'
     }
   }, config.paused ? L('Atjaunot', 'Resume') : L('Pauzēt', 'Pause')), React.createElement("button", {
     type: "button",
-    onClick: onReverse,
+    onClick: () => setConfirmAction('reverse'),
     disabled: reversed || config.paused,
     style: {
       flex: 1,
@@ -2980,7 +3168,8 @@ function PensionMain({
       borderRadius: 10,
       minHeight: 44,
       background: reversed || config.paused ? BRAND.line : '#EAE6DB',
-      color: reversed || config.paused ? BRAND.mute : BRAND.ink,
+      color: BRAND.ink,
+      opacity: reversed || config.paused ? 0.45 : 1,
       fontSize: 13,
       fontWeight: 700,
       cursor: reversed || config.paused ? 'not-allowed' : 'pointer'
@@ -3199,7 +3388,120 @@ function PensionMain({
     title: L('Mērķi un sasniegumi', 'Goals and milestones'),
     subtitle: L(`Streak: ${model.streak} mēn. · Nākamais milestone: ${formatMoney(NEXT_MILESTONE - TIER3_BALANCE)}`, `Streak: ${model.streak} mo. · Next milestone: ${formatMoney(NEXT_MILESTONE - TIER3_BALANCE)}`),
     onClick: () => onNav('goals')
-  }));
+  })), confirmDialog && React.createElement("div", {
+    style: {
+      position: 'fixed',
+      inset: 0,
+      background: 'rgba(17, 23, 19, 0.28)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      zIndex: 1000
+    }
+  }, React.createElement("div", {
+    style: {
+      width: '100%',
+      maxWidth: 320,
+      background: BRAND.card,
+      borderRadius: 16,
+      padding: '18px 16px 16px',
+      boxShadow: '0 16px 40px rgba(17,23,19,0.18)',
+      border: `1px solid ${BRAND.line}`
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 17,
+      fontWeight: 700,
+      color: BRAND.ink,
+      lineHeight: '22px'
+    }
+  }, confirmDialog.title), React.createElement("div", {
+    style: {
+      marginTop: 8,
+      fontSize: 13,
+      lineHeight: '18px',
+      color: BRAND.mute
+    }
+  }, confirmDialog.body), React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8,
+      marginTop: 16
+    }
+  }, React.createElement("button", {
+    type: "button",
+    onClick: () => setConfirmAction(null),
+    style: {
+      flex: 1,
+      minHeight: 44,
+      borderRadius: 12,
+      border: 0,
+      background: '#EAE6DB',
+      color: BRAND.ink,
+      fontSize: 14,
+      fontWeight: 700,
+      cursor: 'pointer'
+    }
+  }, L('Atcelt', 'Cancel')), React.createElement("button", {
+    type: "button",
+    onClick: handleConfirmAction,
+    style: {
+      flex: 1,
+      minHeight: 44,
+      borderRadius: 12,
+      border: 0,
+      background: BRAND.accent,
+      color: BRAND.ink,
+      fontSize: 14,
+      fontWeight: 700,
+      cursor: 'pointer'
+    }
+  }, confirmDialog.confirmLabel)))), successDialog && React.createElement("div", {
+    style: {
+      position: 'fixed',
+      inset: 0,
+      background: 'rgba(17, 23, 19, 0.28)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      zIndex: 1001
+    }
+  }, React.createElement("div", {
+    style: {
+      width: '100%',
+      maxWidth: 320,
+      background: BRAND.card,
+      borderRadius: 16,
+      padding: '18px 16px 16px',
+      boxShadow: '0 16px 40px rgba(17,23,19,0.18)',
+      border: `1px solid ${BRAND.line}`
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 15,
+      fontWeight: 700,
+      color: BRAND.ink,
+      lineHeight: '22px',
+      whiteSpace: 'pre-line'
+    }
+  }, successDialog.body), React.createElement("button", {
+    type: "button",
+    onClick: () => setSuccessDialog(null),
+    style: {
+      width: '100%',
+      marginTop: 16,
+      minHeight: 44,
+      borderRadius: 12,
+      border: 0,
+      background: BRAND.accent,
+      color: BRAND.ink,
+      fontSize: 14,
+      fontWeight: 700,
+      cursor: 'pointer'
+    }
+  }, L('Labi', 'OK')))));
 }
 function MonthlyBarChart({
   months,
@@ -4009,7 +4311,8 @@ function DynamicPensionOnboarding({
     body,
     active,
     onClick,
-    recommended
+    recommended,
+    style = {}
   }) => React.createElement("button", {
     type: "button",
     "aria-pressed": active,
@@ -4023,7 +4326,8 @@ function DynamicPensionOnboarding({
       padding: '14px 16px',
       cursor: 'pointer',
       minHeight: 74,
-      marginTop: 8
+      marginTop: 8,
+      ...style
     }
   }, React.createElement("div", {
     style: {
@@ -4446,7 +4750,20 @@ function DynamicPensionOnboarding({
     subtitle: L('Balstoties uz taviem ienākumiem, lietotne aprēķina, cik vari iemaksāt šogad, lai sasniegtu maksimālo nodokļu ieguvumu.', 'Based on your income, the app estimates how much you can contribute this year to reach the maximum eligible tax benefit.'),
     onBack: () => setStep(5),
     onNext: () => setStep(7)
-  }, React.createElement(OnboardingCard, null, React.createElement(MiniSetting, {
+  }, React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 12,
+      paddingBottom: 18
+    }
+  }, React.createElement(OnboardingCard, null, React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 6
+    }
+  }, React.createElement(MiniSetting, {
     label: L('Aprēķinātie gada bruto ienākumi', 'Estimated yearly gross income'),
     value: formatMoney(estimatedGrossSalary * 12)
   }), React.createElement(MiniSetting, {
@@ -4461,22 +4778,31 @@ function DynamicPensionOnboarding({
   }), React.createElement(MiniSetting, {
     label: L('Ieteicamā mēneša summa', 'Suggested monthly amount'),
     value: formatMoney(suggestedMonthly)
-  })), React.createElement(Option, {
+  }))), React.createElement(Option, {
     title: L('Saglabāt izvēlēto procentu', 'Keep my selected percentage'),
     body: L('Izmantot izvēlēto algas procentu bez automātiskām nodokļu mērķa korekcijām.', 'Use the selected salary percentage without automatic tax-target changes.'),
     active: taxOption === 'keep',
-    onClick: () => setTaxOption('keep')
+    onClick: () => setTaxOption('keep'),
+    style: {
+      marginTop: 0
+    }
   }), React.createElement(Option, {
     title: L('Pielāgot iemaksas nodokļu mērķim', 'Adjust contributions to reach tax target'),
     body: L('Palielināt vai samazināt mēneša iemaksas, lai sasniegtu atbilstošo gada summu.', 'Increase or reduce monthly contributions to aim for the eligible yearly amount.'),
     active: taxOption === 'adjust',
-    onClick: () => setTaxOption('adjust')
+    onClick: () => setTaxOption('adjust'),
+    style: {
+      marginTop: 0
+    }
   }), React.createElement(Option, {
     title: L('Jautāt pirms iemaksu palielināšanas', 'Ask me before increasing contributions'),
     body: L('Nosūtīt apstiprinājumu pirms tiek piemērots ar nodokļiem saistīts pieaugums.', 'Send a confirmation before any tax-driven increase is applied.'),
     active: taxOption === 'ask',
-    onClick: () => setTaxOption('ask')
-  }));
+    onClick: () => setTaxOption('ask'),
+    style: {
+      marginTop: 0
+    }
+  })));
   if (step === 7) return React.createElement(OnboardingShell, {
     step: step,
     total: STEPS,
