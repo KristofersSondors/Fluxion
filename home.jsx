@@ -3,16 +3,20 @@
 // Palette: warm cream bg, deep indigo, butter-yellow accent, slate ink
 
 const BRAND = {
-  bg: '#F6F3EC',
-  card: '#FFFFFF',
-  ink: '#1B1C22',
-  mute: '#8A8B93',
-  line: '#E6E2D7',
-  accent: '#F2D23A',         // butter yellow
-  accentDark: '#D4B61F',
-  promo: '#4B3FA8',          // deep indigo
-  promoSoft: '#6559C9',
-  ok: '#2F7D5B',
+  bg: '#FAF9F8',
+  card: '#FDFDFC',
+  ink: '#111713',
+  mute: '#808080',
+  line: '#DDDEDF',
+  accent: '#F7EA48',
+  accentDark: '#F7E948',
+  promo: '#0F584F',
+  promoSoft: '#5B99A6',
+  purple: '#51327B',
+  ok: '#29A745',
+  danger: '#D32F2F',
+  minTouch: 44,
+  tapTransition: 'background-color 0.18s ease-out, color 0.18s ease-out, transform 0.18s ease-out',
 };
 
 // ——— little inline icons (geometric, no emoji) ———
@@ -85,7 +89,7 @@ const Icon = {
     <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
       <rect x="12" y="10" width="20" height="24" rx="2" fill="#fff" opacity="0.95"/>
       <path d="M18 20h8M18 24h6" stroke={BRAND.promo} strokeWidth="1.4" strokeLinecap="round"/>
-      <text x="22" y="32" fontFamily="Inter" fontSize="9" fontWeight="700" fill={BRAND.promo} textAnchor="middle">%</text>
+      <text x="22" y="32" fontFamily="Gibson, IBM Plex Sans, Aptos, system-ui" fontSize="9" fontWeight="700" fill={BRAND.promo} textAnchor="middle">%</text>
       <path d="M34 8l1.5 3 3 .5-2.2 2 .5 3L34 15l-2.8 1.5.5-3-2.2-2 3-.5L34 8Z" fill={BRAND.accent}/>
       <path d="M8 20l4 2M6 26l3 .5M10 32l2-2" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" opacity="0.6"/>
     </svg>
@@ -113,23 +117,23 @@ function CardImagery() {
   );
 }
 
-function QuickAction({ icon, label, onClick }) {
+function QuickAction({ icon, label, ariaLabel, onClick }) {
   return (
-    <button onClick={onClick}
+    <button type="button" onClick={onClick} aria-label={ariaLabel}
       style={{
         flex: 1, background: 'transparent', border: 0, padding: 0, cursor: 'pointer',
         display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8,
         textAlign: 'left',
       }}>
       <div style={{
-        width: 44, height: 44, borderRadius: '50%',
+        width: BRAND.minTouch, height: BRAND.minTouch, borderRadius: '50%',
         background: BRAND.card, border: `1px solid ${BRAND.line}`,
         display: 'grid', placeItems: 'center', flexShrink: 0,
         boxShadow: '0 1px 2px rgba(30,25,10,0.04), 0 4px 10px rgba(30,25,10,0.04)',
       }}>{icon}</div>
       <div style={{
         fontSize: 12.5, lineHeight: '15px', color: BRAND.ink,
-        letterSpacing: '-0.1px',
+        letterSpacing: 0,
       }}>{label}</div>
     </button>
   );
@@ -137,12 +141,12 @@ function QuickAction({ icon, label, onClick }) {
 
 function Tab({ label, active, onClick }) {
   return (
-    <button onClick={onClick}
+    <button type="button" role="tab" aria-selected={active} onClick={onClick}
       style={{
         background: 'transparent', border: 0, padding: '10px 0',
         cursor: 'pointer', position: 'relative', flex: 1,
         fontSize: 15, color: active ? BRAND.ink : BRAND.mute,
-        fontWeight: active ? 500 : 400, letterSpacing: '-0.1px',
+        fontWeight: active ? 500 : 400, letterSpacing: 0,
       }}>
       {label}
       {active && (
@@ -158,27 +162,27 @@ function Tab({ label, active, onClick }) {
 function PromoIndigo({ onClose }) {
   return (
     <div style={{
-      background: BRAND.promo, borderRadius: 18, padding: '18px 18px 18px 20px',
+      background: BRAND.promo, borderRadius: 12, padding: '18px 18px 18px 20px',
       position: 'relative', color: '#fff', overflow: 'hidden',
       height: 200, boxSizing: 'border-box',
       boxShadow: '0 1px 2px rgba(30,25,10,0.06), 0 8px 20px rgba(75,63,168,0.18)',
     }}>
-      <button onClick={onClose} style={{
+      <button type="button" aria-label="Aizvērt piedāvājumu" onClick={onClose} style={{
         position: 'absolute', top: 12, right: 12, background: 'transparent',
         border: 0, cursor: 'pointer', padding: 4,
       }}>{Icon.close(18)}</button>
 
       <div style={{ maxWidth: 220 }}>
-        <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.3px' }}>
+        <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: 0 }}>
           Ieguldi 50%
         </div>
         <div style={{ fontSize: 13, lineHeight: '18px', marginTop: 6, color: 'rgba(255,255,255,0.85)' }}>
           no atgūtās nodokļu atmaksas savā pensiju 3. līmenī
         </div>
-        <button style={{
+        <button type="button" style={{
           marginTop: 22, background: BRAND.accent, color: BRAND.ink, border: 0,
-          borderRadius: 999, padding: '12px 22px', fontWeight: 700, fontSize: 15,
-          letterSpacing: '-0.1px', cursor: 'pointer', width: '100%', maxWidth: 220,
+          borderRadius: 12, padding: '12px 22px', fontWeight: 700, fontSize: 15,
+          letterSpacing: 0, cursor: 'pointer', width: '100%', maxWidth: 220,
         }}>Ieguldīt</button>
       </div>
 
@@ -196,25 +200,25 @@ function PromoIndigo({ onClose }) {
 function PromoCashback({ onClose }) {
   return (
     <div style={{
-      background: '#1B1C22', borderRadius: 18, padding: '18px 20px',
+      background: '#1B1C22', borderRadius: 12, padding: '18px 20px',
       position: 'relative', color: '#fff', overflow: 'hidden',
       height: 200, boxSizing: 'border-box',
       boxShadow: '0 1px 2px rgba(0,0,0,0.08), 0 8px 20px rgba(0,0,0,0.12)',
     }}>
-      <button onClick={onClose} style={{
+      <button type="button" aria-label="Aizvērt piedāvājumu" onClick={onClose} style={{
         position: 'absolute', top: 12, right: 12, background: 'transparent',
         border: 0, cursor: 'pointer', padding: 4,
       }}>{Icon.close(18)}</button>
       <div style={{ fontSize: 11, letterSpacing: 2, color: BRAND.accent, fontWeight: 600 }}>ŠOMĒNES</div>
-      <div style={{ fontSize: 22, fontWeight: 600, marginTop: 6, letterSpacing: '-0.4px', maxWidth: 220 }}>
+      <div style={{ fontSize: 22, fontWeight: 600, marginTop: 6, letterSpacing: 0, maxWidth: 220 }}>
         €14.20 atgriezts naudā
       </div>
       <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 6 }}>
         Pārtika, transports un straumēšana — izmaksa 30.&nbsp;apr.
       </div>
-      <button style={{
+      <button type="button" style={{
         marginTop: 16, background: BRAND.accent, color: BRAND.ink, border: 0,
-        borderRadius: 999, padding: '11px 22px', fontWeight: 600, fontSize: 14,
+        borderRadius: 12, padding: '11px 22px', fontWeight: 600, fontSize: 14,
         cursor: 'pointer',
       }}>Apskatīt sadalījumu</button>
       <div style={{
@@ -228,17 +232,17 @@ function PromoCashback({ onClose }) {
 function PromoGoal({ onClose }) {
   return (
     <div style={{
-      background: '#E8E2F7', borderRadius: 18, padding: '18px 20px',
+      background: '#E8E2F7', borderRadius: 12, padding: '18px 20px',
       position: 'relative', color: BRAND.ink, overflow: 'hidden',
       height: 200, boxSizing: 'border-box',
       boxShadow: '0 1px 2px rgba(75,63,168,0.05), 0 8px 20px rgba(75,63,168,0.10)',
     }}>
-      <button onClick={onClose} style={{
+      <button type="button" aria-label="Aizvērt piedāvājumu" onClick={onClose} style={{
         position: 'absolute', top: 12, right: 12, background: 'transparent',
         border: 0, cursor: 'pointer', padding: 4,
       }}>{Icon.close(18, BRAND.ink)}</button>
       <div style={{ fontSize: 13, color: BRAND.promo, fontWeight: 600 }}>Vasaras ceļojums · Mērķis</div>
-      <div style={{ fontSize: 20, fontWeight: 600, marginTop: 4, letterSpacing: '-0.3px' }}>
+      <div style={{ fontSize: 20, fontWeight: 600, marginTop: 4, letterSpacing: 0 }}>
         Esi sasniedzis 62% no mērķa
       </div>
       <div style={{ marginTop: 14, height: 8, borderRadius: 4, background: '#fff', overflow: 'hidden' }}>
@@ -247,9 +251,9 @@ function PromoGoal({ onClose }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 12, color: BRAND.mute }}>
         <span>€930 uzkrāts</span><span>€1,500 mērķis</span>
       </div>
-      <button style={{
+      <button type="button" style={{
         marginTop: 14, background: BRAND.promo, color: '#fff', border: 0,
-        borderRadius: 999, padding: '10px 20px', fontWeight: 600, fontSize: 13,
+        borderRadius: 12, padding: '10px 20px', fontWeight: 600, fontSize: 13,
         cursor: 'pointer',
       }}>Pievienot mērķim</button>
     </div>
@@ -342,19 +346,19 @@ function PigIcon() {
 function TierCard({ tier, illustration, label, amount, subtitle }) {
   return (
     <div style={{
-      flex: 1, background: '#EAE6DB', borderRadius: 18, padding: '14px 14px 16px',
+      flex: 1, background: '#EAE6DB', borderRadius: 12, padding: '14px 14px 16px',
       display: 'flex', flexDirection: 'column', minHeight: 196,
       boxShadow: '0 1px 2px rgba(30,25,10,0.04), 0 4px 12px rgba(30,25,10,0.04)',
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         {illustration}
         <div style={{
-          fontSize: 44, fontWeight: 500, color: '#4B5F74', letterSpacing: '-1.5px',
+          fontSize: 44, fontWeight: 500, color: '#4B5F74', letterSpacing: 0,
           lineHeight: 1, marginTop: -2,
         }}>{tier}</div>
       </div>
       <div style={{ fontSize: 16, fontWeight: 600, marginTop: 10, textAlign: 'center' }}>{label}</div>
-      <div style={{ fontSize: 20, textAlign: 'center', marginTop: 6, color: BRAND.ink, letterSpacing: '-0.3px' }}>
+      <div style={{ fontSize: 20, textAlign: 'center', marginTop: 6, color: BRAND.ink, letterSpacing: 0 }}>
         {amount}
       </div>
       {subtitle && (
@@ -399,13 +403,13 @@ function PensijaScreen() {
       </div>
 
       {/* Transfer CTA row */}
-      <button style={{
+      <button type="button" style={{
         display: 'flex', alignItems: 'center', gap: 12, width: '100%',
         background: 'transparent', border: 0, padding: '16px 4px', cursor: 'pointer',
         textAlign: 'left',
       }}>
         <PigIcon/>
-        <span style={{ flex: 1, fontSize: 15, fontWeight: 500, letterSpacing: '-0.2px' }}>
+        <span style={{ flex: 1, fontSize: 15, fontWeight: 500, letterSpacing: 0 }}>
           Pārnāc uz INDEXO pensiju 2. līmeni
         </span>
         {Icon.chev(16, BRAND.promo)}
@@ -415,15 +419,15 @@ function PensijaScreen() {
 
       {/* Wellbeing card */}
       <div style={{
-        background: '#EAE6DB', borderRadius: 18, padding: '18px 18px 18px 18px',
+        background: '#EAE6DB', borderRadius: 12, padding: '18px 18px 18px 18px',
         boxShadow: '0 1px 2px rgba(30,25,10,0.04), 0 6px 16px rgba(30,25,10,0.04)',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div style={{ flex: 1, paddingRight: 8 }}>
-            <div style={{ fontSize: 19, fontWeight: 600, letterSpacing: '-0.3px' }}>
+            <div style={{ fontSize: 19, fontWeight: 600, letterSpacing: 0 }}>
               Tava nākotnes labklājība
             </div>
-            <div style={{ marginTop: 14, fontSize: 26, color: BRAND.promo, fontWeight: 600, letterSpacing: '-0.5px' }}>
+            <div style={{ marginTop: 14, fontSize: 26, color: BRAND.promo, fontWeight: 600, letterSpacing: 0 }}>
               0 <span style={{ fontSize: 18, fontWeight: 500 }}>€/mēnesī</span>
             </div>
             <div style={{ fontSize: 13, color: BRAND.mute, marginTop: 10, lineHeight: '18px' }}>
@@ -439,10 +443,10 @@ function PensijaScreen() {
           <div style={{ width: '24%', height: '100%', background: BRAND.promo, borderRadius: 3 }}/>
         </div>
 
-        <button style={{
+        <button type="button" style={{
           marginTop: 16, width: '100%', background: BRAND.accent, color: BRAND.ink,
           border: 0, borderRadius: 14, padding: '16px', fontSize: 16, fontWeight: 700,
-          letterSpacing: '-0.1px', cursor: 'pointer',
+          letterSpacing: 0, cursor: 'pointer',
         }}>Turpināt iesākto</button>
       </div>
 
@@ -455,7 +459,7 @@ function PensijaScreen() {
               display: 'grid', placeItems: 'center', flexShrink: 0, marginTop: 1,
               fontSize: 12, fontWeight: 600, color: BRAND.ink,
             }}>{i + 1}</div>
-            <div style={{ flex: 1, fontSize: 14.5, fontWeight: 600, lineHeight: '20px', letterSpacing: '-0.2px' }}>
+            <div style={{ flex: 1, fontSize: 14.5, fontWeight: 600, lineHeight: '20px', letterSpacing: 0 }}>
               {t}
             </div>
           </div>
@@ -485,12 +489,24 @@ function clamp(value, min, max) {
 
 const FLUXION_SETTINGS = {
   targetRate: 0.10,
-  minRate: 0.05,
+  minRate: 0.06,
   maxRate: 0.15,
   safetyBuffer: 300,
   payday: 25,
   fixedContribution: 180,
+  mode: 'dynamic',
+  taxOptimization: true,
+  paused: false,
+  stabilityCap: 160,
+  annualTaxLimit: 4000,
+  taxRefundRate: 0.20,
 };
+
+const RECURRING_OBLIGATIONS = [
+  { label: 'Īre', amount: 620 },
+  { label: 'Kredīts', amount: 180 },
+  { label: 'Abonementi', amount: 42 },
+];
 
 const FLUXION_HISTORY = [
   { month: 'Maijs', income: 1820, spending: 1520, balanceBefore: 340 },
@@ -554,21 +570,33 @@ const TIER1_SERVICE_YEARS = 31;
 const TIER1_TARGET_YEARS = 40;
 const NEXT_MILESTONE = 5000;
 
-function calculateDynamicContribution(month) {
+function calculateDynamicContribution(month, settings = FLUXION_SETTINGS, previousContribution = null, averageIncome = 0) {
   const afterSalary = month.balanceBefore + month.income;
-  const safeToInvest = Math.max(0, afterSalary - month.spending - FLUXION_SETTINGS.safetyBuffer);
-  const floor = month.income * FLUXION_SETTINGS.minRate;
-  const target = month.income * FLUXION_SETTINGS.targetRate;
-  const ceiling = month.income * FLUXION_SETTINGS.maxRate;
-  const fixedContribution = month.income > 0 ? FLUXION_SETTINGS.fixedContribution : 0;
+  const safeToInvest = Math.max(0, afterSalary - month.spending - settings.safetyBuffer);
+  const floor = month.income * settings.minRate;
+  const target = month.income * settings.targetRate;
+  const ceiling = month.income * settings.maxRate;
+  const fixedContribution = month.income > 0 ? settings.fixedContribution : 0;
+  const incomeDrop = averageIncome > 0 && month.income > 0 && month.income < averageIncome * 0.62;
   let contribution = 0;
   let reason = 'paused';
   let reasonTitle = 'Pauze bez riska';
   let reasonText = month.income <= 0
     ? 'Šajā mēnesī ienākumu nebija, tāpēc iemaksa netiek veikta un drošības rezerve saglabāta.'
-    : `Pēc tēriņiem vairs nepaliktu ${formatMoney(FLUXION_SETTINGS.safetyBuffer)}, tāpēc iemaksa apstājas.`;
+    : `Pēc tēriņiem vairs nepaliktu ${formatMoney(settings.safetyBuffer)}, tāpēc iemaksa apstājas.`;
 
-  if (month.income > 0 && safeToInvest > 0) {
+  if (incomeDrop) {
+    reasonText = 'Ienākumi būtiski nokritās pret vidējo līmeni, tāpēc iemaksa uz šo mēnesi tiek apturēta.';
+  } else if (settings.paused) {
+    reasonText = 'Iemaksas ir pauzētas. Aprēķins paliek redzams, bet izpilde nenotiek.';
+  } else if (settings.mode === 'fixed' && month.income > 0 && safeToInvest > 0) {
+    contribution = Math.min(fixedContribution, safeToInvest);
+    reason = contribution < fixedContribution ? 'reduced' : 'fixed';
+    reasonTitle = contribution < fixedContribution ? 'Fiksētā iemaksa samazināta' : 'Fiksētā iemaksa';
+    reasonText = contribution < fixedContribution
+      ? 'Fiksētā summa tiek samazināta, lai nepārkāptu drošības rezervi.'
+      : 'Tiek izpildīta lietotāja izvēlētā fiksētā mēneša iemaksa.';
+  } else if (month.income > 0 && safeToInvest > 0) {
     contribution = target;
     reason = 'target';
     reasonTitle = 'Mērķa iemaksa';
@@ -584,11 +612,21 @@ function calculateDynamicContribution(month) {
       reason = 'reduced';
       reasonTitle = 'Iemaksa zem mērķa';
       reasonText = 'Tēriņi šomēnes bija augstāki, tāpēc sistēma iemaksā tikai droši pieejamo daļu.';
-    } else if (safeToInvest > target + 250 && month.balanceBefore > FLUXION_SETTINGS.safetyBuffer * 1.2) {
+    } else if (safeToInvest > target + 250 && month.balanceBefore > settings.safetyBuffer * 1.2) {
       contribution = target + Math.min(ceiling - target, (safeToInvest - target) * 0.16);
       reason = 'boosted';
       reasonTitle = 'Pāri mērķim ar pārpalikumu';
       reasonText = 'Kontā paliek pietiekama rezerve, tāpēc iemaksa pacelta tuvāk griestiem.';
+    }
+  }
+
+  if (previousContribution !== null && contribution > 0 && previousContribution > 0) {
+    const capped = clamp(contribution, Math.max(0, previousContribution - settings.stabilityCap), previousContribution + settings.stabilityCap);
+    if (Math.round(capped) !== Math.round(contribution)) {
+      contribution = capped;
+      reason = 'capped';
+      reasonTitle = 'Stabilitātes limits';
+      reasonText = `Mēneša izmaiņa ierobežota līdz ${formatMoney(settings.stabilityCap)}, lai iemaksa nelēkātu pārāk strauji.`;
     }
   }
 
@@ -610,26 +648,68 @@ function calculateDynamicContribution(month) {
   };
 }
 
-const FLUXION_HISTORY_RESULTS = FLUXION_HISTORY.map(calculateDynamicContribution);
-const FLUXION_LAST_SIX = FLUXION_HISTORY_RESULTS.slice(-6);
-const FLUXION_TOTAL_DYNAMIC = FLUXION_HISTORY_RESULTS.reduce((sum, month) => sum + month.contribution, 0);
-const FLUXION_TOTAL_FIXED = FLUXION_HISTORY_RESULTS.reduce((sum, month) => sum + month.fixedContribution, 0);
-const FLUXION_DYNAMIC_ADVANTAGE = FLUXION_TOTAL_DYNAMIC - FLUXION_TOTAL_FIXED;
-const FLUXION_BOOSTED_MONTHS = FLUXION_HISTORY_RESULTS.filter((month) => month.reason === 'boosted').length;
-const FLUXION_PAUSED_MONTHS = FLUXION_HISTORY_RESULTS.filter((month) => month.reason === 'paused').length;
+function buildFluxionModel(settings = FLUXION_SETTINGS) {
+  const calculationSettings = { ...settings, paused: false };
+  const incomeMonths = FLUXION_HISTORY.filter(month => month.income > 0);
+  const averageIncome = Math.round(incomeMonths.reduce((sum, month) => sum + month.income, 0) / Math.max(1, incomeMonths.length));
+  const averageSpending = Math.round(FLUXION_HISTORY.reduce((sum, month) => sum + month.spending, 0) / FLUXION_HISTORY.length);
+  const history = [];
+  let previousContribution = null;
 
-let FLUXION_STREAK = 0;
-for (let i = FLUXION_HISTORY_RESULTS.length - 1; i >= 0; i -= 1) {
-  if (FLUXION_HISTORY_RESULTS[i].contribution > 0) FLUXION_STREAK += 1;
-  else break;
+  FLUXION_HISTORY.forEach((month) => {
+    const result = calculateDynamicContribution(month, calculationSettings, previousContribution, averageIncome);
+    history.push(result);
+    previousContribution = result.contribution;
+  });
+
+  const preview = calculateDynamicContribution({
+    month: 'Maijs',
+    income: 2140,
+    spending: 1680,
+    balanceBefore: 355,
+  }, calculationSettings, history[history.length - 1]?.contribution || null, averageIncome);
+
+  let streak = 0;
+  for (let i = history.length - 1; i >= 0; i -= 1) {
+    if (history[i].contribution > 0) streak += 1;
+    else break;
+  }
+
+  const totalDynamic = history.reduce((sum, month) => sum + month.contribution, 0);
+  const totalFixed = history.reduce((sum, month) => sum + month.fixedContribution, 0);
+  const taxBase = Math.min(totalDynamic, settings.annualTaxLimit);
+
+  return {
+    settings,
+    history,
+    lastSix: history.slice(-6),
+    totalDynamic,
+    totalFixed,
+    dynamicAdvantage: totalDynamic - totalFixed,
+    boostedMonths: history.filter((month) => month.reason === 'boosted').length,
+    pausedMonths: history.filter((month) => month.reason === 'paused').length,
+    cappedMonths: history.filter((month) => month.reason === 'capped').length,
+    streak,
+    preview,
+    averageIncome,
+    averageSpending,
+    obligationsTotal: RECURRING_OBLIGATIONS.reduce((sum, item) => sum + item.amount, 0),
+    taxBase,
+    taxRefund: settings.taxOptimization ? Math.round(taxBase * settings.taxRefundRate) : 0,
+    taxLeft: Math.max(0, settings.annualTaxLimit - taxBase),
+  };
 }
 
-const FLUXION_PREVIEW = calculateDynamicContribution({
-  month: 'Maijs',
-  income: 2140,
-  spending: 1680,
-  balanceBefore: 355,
-});
+const FLUXION_MODEL = buildFluxionModel(FLUXION_SETTINGS);
+const FLUXION_HISTORY_RESULTS = FLUXION_MODEL.history;
+const FLUXION_LAST_SIX = FLUXION_MODEL.lastSix;
+const FLUXION_TOTAL_DYNAMIC = FLUXION_MODEL.totalDynamic;
+const FLUXION_TOTAL_FIXED = FLUXION_MODEL.totalFixed;
+const FLUXION_DYNAMIC_ADVANTAGE = FLUXION_MODEL.dynamicAdvantage;
+const FLUXION_BOOSTED_MONTHS = FLUXION_MODEL.boostedMonths;
+const FLUXION_PAUSED_MONTHS = FLUXION_MODEL.pausedMonths;
+const FLUXION_STREAK = FLUXION_MODEL.streak;
+const FLUXION_PREVIEW = FLUXION_MODEL.preview;
 
 function TierIllustration1() {
   return (
@@ -744,11 +824,36 @@ function ConfigPill({ icon, label, value, dark = false }) {
             fontSize: 14,
             fontWeight: 700,
             color: dark ? '#fff' : BRAND.ink,
-            letterSpacing: '-0.2px',
+            letterSpacing: 0,
             whiteSpace: 'nowrap',
           }}>{value}</div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ModeButton({ label, active, onClick }) {
+  return (
+    <button type="button" aria-pressed={active} onClick={onClick} style={{
+      flex: 1,
+      minHeight: BRAND.minTouch,
+      border: 0,
+      borderRadius: 12,
+      cursor: 'pointer',
+      background: active ? BRAND.accent : '#F1ECDD',
+      color: active ? BRAND.promo : BRAND.ink,
+      fontSize: 13,
+      fontWeight: active ? 700 : 500,
+    }}>{label}</button>
+  );
+}
+
+function MiniSetting({ label, value }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, minWidth: 0 }}>
+      <span style={{ fontSize: 12.5, color: BRAND.mute, minWidth: 0, overflowWrap: 'anywhere' }}>{label}</span>
+      <span style={{ fontSize: 13, fontWeight: 700, color: BRAND.ink, textAlign: 'right', overflowWrap: 'anywhere' }}>{value}</span>
     </div>
   );
 }
@@ -768,7 +873,7 @@ function ProjectionChart({ selectedScenario }) {
   const areaPath = `${makePath(selectedLine)} L ${width} ${bottom} L 0 ${bottom} Z`;
 
   return (
-    <div style={{ marginTop: 16, padding: '18px 16px 12px', background: '#F7F3EA', borderRadius: 18 }}>
+    <div style={{ marginTop: 16, padding: '18px 16px 12px', background: '#F7F3EA', borderRadius: 12 }}>
       <svg width="100%" height="190" viewBox={`0 0 ${width} 190`} fill="none">
         <path d={areaPath} fill="rgba(229,201,58,0.12)"/>
         {[0.25, 0.5, 0.75].map((line, index) => (
@@ -806,7 +911,7 @@ function CompactTierCard({ tier, title, illustration, balance, monthly, note }) 
     <div style={{
       flex: 1,
       background: BRAND.card,
-      borderRadius: 18,
+      borderRadius: 12,
       padding: '14px 14px 16px',
       border: `1px solid ${BRAND.line}`,
       boxShadow: '0 1px 2px rgba(30,25,10,0.04), 0 4px 12px rgba(30,25,10,0.04)',
@@ -819,14 +924,14 @@ function CompactTierCard({ tier, title, illustration, balance, monthly, note }) 
         right: 12,
         fontSize: 48,
         lineHeight: 1,
-        letterSpacing: '-2px',
+        letterSpacing: 0,
         color: '#6B879D',
         opacity: 0.3,
         pointerEvents: 'none',
       }}>{tier}</div>
       {illustration}
-      <div style={{ marginTop: 10, fontSize: 15, fontWeight: 700, letterSpacing: '-0.3px' }}>{title}</div>
-      <div style={{ marginTop: 6, fontSize: 22, color: BRAND.promo, fontWeight: 700, letterSpacing: '-0.5px', lineHeight: 1.1 }}>
+      <div style={{ marginTop: 10, fontSize: 15, fontWeight: 700, letterSpacing: 0 }}>{title}</div>
+      <div style={{ marginTop: 6, fontSize: 22, color: BRAND.promo, fontWeight: 700, letterSpacing: 0, lineHeight: 1.1 }}>
         {balance}
       </div>
       <div style={{ marginTop: 4, fontSize: 12, color: BRAND.mute, lineHeight: '16px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{monthly}</div>
@@ -837,15 +942,16 @@ function CompactTierCard({ tier, title, illustration, balance, monthly, note }) 
 
 
 function ComparisonBar({ label, value, max, tone, detail }) {
+  const width = max > 0 ? Math.max(12, Math.round((value / max) * 100)) : 0;
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <div style={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.2px' }}>{label}</div>
+        <div style={{ fontSize: 14, fontWeight: 600, letterSpacing: 0 }}>{label}</div>
         <div style={{ fontSize: 22, fontWeight: 700, color: tone }}>{formatMoney(value)}</div>
       </div>
       <div style={{ marginTop: 10, height: 10, borderRadius: 999, background: '#EFE8D9', overflow: 'hidden' }}>
         <div style={{
-          width: `${Math.max(12, Math.round((value / max) * 100))}%`,
+          width: `${width}%`,
           height: '100%',
           background: tone,
           borderRadius: 999,
@@ -875,7 +981,7 @@ function LifestyleCard({ icon, label, cost, income }) {
         placeItems: 'center',
       }}>{icon}</div>
       <div style={{ marginTop: 10, fontSize: 12.5, fontWeight: 600, lineHeight: '16px' }}>{label}</div>
-      <div style={{ marginTop: 6, fontSize: 18, fontWeight: 700, color: BRAND.promo, letterSpacing: '-0.3px' }}>
+      <div style={{ marginTop: 6, fontSize: 18, fontWeight: 700, color: BRAND.promo, letterSpacing: 0 }}>
         {(income / cost).toFixed(1)}x
       </div>
       <div style={{ marginTop: 4, fontSize: 11.5, color: BRAND.mute }}>šodienas naudā</div>
@@ -898,7 +1004,7 @@ function StepRow({ number, title, body }) {
         fontWeight: 700,
       }}>{number}</div>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.2px' }}>{title}</div>
+        <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: 0 }}>{title}</div>
         <div style={{ marginTop: 4, fontSize: 13.5, color: BRAND.mute, lineHeight: '18px' }}>{body}</div>
       </div>
     </div>
@@ -908,7 +1014,7 @@ function StepRow({ number, title, body }) {
 function SubPageHeader({ title, onBack }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '16px 16px 8px' }}>
-      <button onClick={onBack} style={{
+      <button type="button" onClick={onBack} style={{
         background: 'transparent', border: 0, padding: '4px 8px 4px 2px', cursor: 'pointer',
         display: 'flex', alignItems: 'center', color: BRAND.promo, fontSize: 14, fontWeight: 500,
       }}>
@@ -917,7 +1023,7 @@ function SubPageHeader({ title, onBack }) {
         </svg>
         Atpakaļ
       </button>
-      <div style={{ flex: 1, fontSize: 16, fontWeight: 700, letterSpacing: '-0.3px', textAlign: 'center', paddingRight: 70 }}>
+      <div style={{ flex: 1, fontSize: 16, fontWeight: 700, letterSpacing: 0, textAlign: 'center', paddingRight: 70 }}>
         {title}
       </div>
     </div>
@@ -926,7 +1032,7 @@ function SubPageHeader({ title, onBack }) {
 
 function PensionNavRow({ icon, title, subtitle, value, onClick }) {
   return (
-    <button onClick={onClick} style={{
+    <button type="button" onClick={onClick} style={{
       width: '100%', background: 'transparent', border: 0, padding: '14px 0',
       cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left',
     }}>
@@ -936,7 +1042,7 @@ function PensionNavRow({ icon, title, subtitle, value, onClick }) {
         boxShadow: '0 1px 2px rgba(30,25,10,0.04)',
       }}>{icon}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: '-0.2px' }}>{title}</div>
+        <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: 0 }}>{title}</div>
         {subtitle && (
           <div style={{
             fontSize: 13, color: BRAND.mute, marginTop: 2, lineHeight: '17px',
@@ -954,60 +1060,93 @@ function PensionNavRow({ icon, title, subtitle, value, onClick }) {
   );
 }
 
-function PensionMain({ onNav, activated, scenario }) {
+function PensionMain({ onNav, activated, scenario, config, model, onConfigChange, reversed, onReverse }) {
   const selectedScenario = FUTURE_SCENARIOS[scenario];
   const totalMonthly = selectedScenario.tier1Monthly + selectedScenario.tier2Monthly + selectedScenario.tier3Monthly;
+  const preview = model.preview;
+  const nextContribution = reversed || config.paused ? 0 : preview.contribution;
+  const modeLabel = config.mode === 'dynamic' ? 'Dinamiskais' : 'Fiksēts';
 
   return (
     <div style={{ padding: '4px 16px 24px' }}>
       <div style={{
-        marginTop: 12, background: BRAND.card, borderRadius: 20,
+        marginTop: 12, background: BRAND.card, borderRadius: 12,
         padding: '18px', border: `1px solid ${BRAND.line}`,
         boxShadow: '0 1px 2px rgba(30,25,10,0.04), 0 6px 18px rgba(30,25,10,0.06)',
       }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: 12.5, color: BRAND.mute, letterSpacing: '-0.1px' }}>
-            {activated ? 'Nākamā automātiskā iemaksa' : 'Tiktu uzkrāts pēdējos 12 mēnešos'}
+          <div style={{ fontSize: 12.5, color: BRAND.mute, letterSpacing: 0 }}>
+            {activated ? (config.paused ? 'Automātiskā iemaksa pauzēta' : 'Nākamā automātiskā iemaksa') : 'Tiktu uzkrāts pēdējos 12 mēnešos'}
           </div>
-          <button onClick={() => onNav('analysis')} style={{
+          <button type="button" onClick={() => onNav('analysis')} style={{
             background: 'transparent', border: 0, cursor: 'pointer',
-            fontSize: 13, color: BRAND.promo, fontWeight: 500, padding: 0, letterSpacing: '-0.1px',
+            fontSize: 13, color: BRAND.promo, fontWeight: 500, padding: 0, letterSpacing: 0,
           }}>Analīze →</button>
         </div>
 
-        <div style={{ fontSize: 30, fontWeight: 700, color: BRAND.ink, letterSpacing: '-0.8px', marginTop: 6 }}>
-          {activated ? formatMoney(FLUXION_PREVIEW.contribution) : formatMoney(FLUXION_TOTAL_DYNAMIC)}
+        <div style={{ fontSize: 30, fontWeight: 700, color: BRAND.ink, letterSpacing: 0, marginTop: 6 }}>
+          {activated ? formatMoney(nextContribution) : formatMoney(model.totalDynamic)}
         </div>
         <div style={{ fontSize: 13, color: BRAND.mute, marginTop: 4, lineHeight: '18px' }}>
           {activated
-            ? `Automātiski ${FLUXION_SETTINGS.payday}. datumā · droši pieejams ${formatMoney(FLUXION_PREVIEW.safeToInvest)}`
-            : `${formatMoney(FLUXION_DYNAMIC_ADVANTAGE)} vairāk nekā ar fiksētu ${formatMoney(FLUXION_SETTINGS.fixedContribution)}/mēn.`}
+            ? reversed
+              ? 'Pēdējā iemaksa atgriezta 24h logā · nākamā izpilde netiek dublēta'
+              : config.paused
+                ? 'Pauze darbojas līdz brīdim, kad to atjauno'
+                : `${modeLabel} · automātiski ${config.payday}. datumā · droši pieejams ${formatMoney(preview.safeToInvest)}`
+            : `${formatMoney(model.dynamicAdvantage)} vairāk nekā ar fiksētu ${formatMoney(config.fixedContribution)}/mēn.`}
         </div>
 
         {activated ? (
-          <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-            <ConfigPill icon={<TrendIcon/>} label="Mērķis" value={formatPercent(FLUXION_SETTINGS.targetRate)}/>
-            <ConfigPill icon={<ShieldIcon/>} label="Buferis" value={formatMoney(FLUXION_SETTINGS.safetyBuffer)}/>
-          </div>
+          <>
+            <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+              <ConfigPill icon={<TrendIcon/>} label="Grīda/griesti" value={`${formatPercent(config.minRate)}-${formatPercent(config.maxRate)}`}/>
+              <ConfigPill icon={<ShieldIcon/>} label="Buferis" value={formatMoney(config.safetyBuffer)}/>
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+              <ModeButton label="Fiksēts" active={config.mode === 'fixed'} onClick={() => onConfigChange({ mode: 'fixed' })}/>
+              <ModeButton label="Dinamiskais" active={config.mode === 'dynamic'} onClick={() => onConfigChange({ mode: 'dynamic' })}/>
+            </div>
+            <div style={{ marginTop: 12, background: '#FAF9F8', borderRadius: 12, padding: '12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <MiniSetting label="Nodokļu optimizācija" value={config.taxOptimization ? `${formatMoney(model.taxRefund)} atmaksa` : 'Izslēgta'}/>
+              <MiniSetting label="Paziņojums" value="2 dienas pirms"/>
+              <MiniSetting label="Stabilitātes limits" value={`${formatMoney(config.stabilityCap)}/mēn.`}/>
+              <MiniSetting label="Atkārtotie maksājumi" value={formatMoney(model.obligationsTotal)}/>
+              <div style={{ display: 'flex', gap: 8, marginTop: 2 }}>
+                <button type="button" aria-pressed={config.paused} onClick={() => onConfigChange({ paused: !config.paused })} style={{
+                  flex: 1, border: 0, borderRadius: 10, minHeight: 44, background: config.paused ? BRAND.accent : '#EAE6DB',
+                  color: BRAND.promo, fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                }}>{config.paused ? 'Atjaunot' : 'Pauzēt'}</button>
+                <button type="button" onClick={onReverse} disabled={reversed || config.paused} style={{
+                  flex: 1, border: 0, borderRadius: 10, minHeight: 44, background: reversed || config.paused ? BRAND.line : '#EAE6DB',
+                  color: reversed || config.paused ? BRAND.mute : BRAND.ink, fontSize: 13, fontWeight: 700, cursor: reversed || config.paused ? 'not-allowed' : 'pointer',
+                }}>{reversed ? 'Atgriezta' : 'Atgriezt 24h'}</button>
+                <button type="button" aria-pressed={config.taxOptimization} onClick={() => onConfigChange({ taxOptimization: !config.taxOptimization })} style={{
+                  flex: 1, border: 0, borderRadius: 10, minHeight: 44, background: '#EAE6DB',
+                  color: BRAND.ink, fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                }}>{config.taxOptimization ? 'Nodokļi' : 'Bez nod.'}</button>
+              </div>
+            </div>
+          </>
         ) : (
-          <button onClick={() => onNav('onboarding3')} style={{
+          <button type="button" onClick={() => onNav('onboarding3')} style={{
             marginTop: 16, width: '100%', border: 0, borderRadius: 14,
             padding: '14px', background: BRAND.accent, color: BRAND.ink,
-            fontSize: 15, fontWeight: 700, cursor: 'pointer', letterSpacing: '-0.1px',
+            fontSize: 15, fontWeight: 700, cursor: 'pointer', letterSpacing: 0,
           }}>
-            Iestatīt 3. pensiju
+            Set up 3rd pillar pension
           </button>
         )}
       </div>
 
       {/* Section header */}
-      <div style={{ marginTop: 24, marginBottom: 12, fontSize: 18, fontWeight: 700, letterSpacing: '-0.3px' }}>
+      <div style={{ marginTop: 24, marginBottom: 12, fontSize: 18, fontWeight: 700, letterSpacing: 0 }}>
         Tavi pensiju līmeņi
       </div>
 
       {/* Tier 1 — State pension */}
       <div style={{
-        background: BRAND.card, borderRadius: 18, padding: '16px',
+        background: BRAND.card, borderRadius: 12, padding: '16px',
         border: `1px solid ${BRAND.line}`,
         boxShadow: '0 1px 2px rgba(30,25,10,0.04), 0 4px 12px rgba(30,25,10,0.04)',
       }}>
@@ -1021,7 +1160,7 @@ function PensionMain({ onNav, activated, scenario }) {
               }}>1</div>
               <div style={{ fontSize: 15, fontWeight: 600 }}>Valsts pensija</div>
             </div>
-            <div style={{ marginTop: 10, fontSize: 26, fontWeight: 700, color: BRAND.promo, letterSpacing: '-0.6px' }}>
+            <div style={{ marginTop: 10, fontSize: 26, fontWeight: 700, color: BRAND.promo, letterSpacing: 0 }}>
               {formatMoney(selectedScenario.tier1Monthly)}<span style={{ fontSize: 14, fontWeight: 500, color: BRAND.mute }}>/mēn.</span>
             </div>
             <div style={{ marginTop: 10, height: 4, borderRadius: 2, background: BRAND.line, overflow: 'hidden', maxWidth: 180 }}>
@@ -1055,12 +1194,12 @@ function PensionMain({ onNav, activated, scenario }) {
 
       {/* Total projected pension summary */}
       <div style={{
-        marginTop: 10, background: '#EAE6DB', borderRadius: 18, padding: '16px 18px',
+        marginTop: 10, background: '#EAE6DB', borderRadius: 12, padding: '16px 18px',
         boxShadow: '0 1px 2px rgba(30,25,10,0.04), 0 4px 12px rgba(30,25,10,0.04)',
       }}>
-        <div style={{ fontSize: 12.5, color: BRAND.mute, letterSpacing: '-0.1px' }}>Kopā prognozētā pensija</div>
+        <div style={{ fontSize: 12.5, color: BRAND.mute, letterSpacing: 0 }}>Kopā prognozētā pensija</div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 4 }}>
-          <div style={{ fontSize: 30, fontWeight: 700, color: BRAND.promo, letterSpacing: '-0.8px' }}>
+          <div style={{ fontSize: 30, fontWeight: 700, color: BRAND.promo, letterSpacing: 0 }}>
             {formatMoney(totalMonthly)}
           </div>
           <div style={{ fontSize: 14, color: BRAND.mute }}>/mēnesī šodienas naudā</div>
@@ -1090,7 +1229,7 @@ function PensionMain({ onNav, activated, scenario }) {
       <PensionNavRow
         icon={<TrophyIcon/>}
         title="Mērķi un sasniegumi"
-        subtitle={`Streak: ${FLUXION_STREAK} mēn. · Nākamais milestone: ${formatMoney(NEXT_MILESTONE - TIER3_BALANCE)}`}
+        subtitle={`Streak: ${model.streak} mēn. · Nākamais milestone: ${formatMoney(NEXT_MILESTONE - TIER3_BALANCE)}`}
         onClick={() => onNav('goals')}
       />
     </div>
@@ -1117,9 +1256,9 @@ function MonthlyBarChart({ months, selectedIndex, onSelect }) {
           const spH = Math.round((month.spending / maxVal) * H);
           const coH = month.contribution > 0 ? Math.max(4, Math.round((month.contribution / maxVal) * H)) : 0;
           return (
-            <button key={month.month} onClick={() => onSelect(index)} style={{
+            <button type="button" key={month.month} aria-label={`${month.month}: ienākumi ${formatMoney(month.income)}, tēriņi ${formatMoney(month.spending)}, iemaksa ${formatMoney(month.contribution)}`} aria-pressed={active} onClick={() => onSelect(index)} style={{
               flex: 1, background: 'transparent', border: 0, padding: 0, cursor: 'pointer',
-              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: 44,
             }}>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: H }}>
                 <div style={{ width: 9, height: incH, borderRadius: '3px 3px 0 0', background: active ? '#8A8480' : '#C8C1B4' }}/>
@@ -1138,8 +1277,8 @@ function MonthlyBarChart({ months, selectedIndex, onSelect }) {
   );
 }
 
-function PensionAnalysis({ onBack, selectedMonthIndex, setSelectedMonthIndex }) {
-  const selectedMonth = FLUXION_LAST_SIX[selectedMonthIndex];
+function PensionAnalysis({ onBack, selectedMonthIndex, setSelectedMonthIndex, model, config }) {
+  const selectedMonth = model.lastSix[selectedMonthIndex];
   const diff = selectedMonth.contribution - selectedMonth.fixedContribution;
   return (
     <div>
@@ -1147,13 +1286,13 @@ function PensionAnalysis({ onBack, selectedMonthIndex, setSelectedMonthIndex }) 
       <div style={{ padding: '8px 16px 24px', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
         <div>
-          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.3px' }}>Pēdējie 6 mēneši</div>
-          <MonthlyBarChart months={FLUXION_LAST_SIX} selectedIndex={selectedMonthIndex} onSelect={setSelectedMonthIndex}/>
+          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: 0 }}>Pēdējie 6 mēneši</div>
+          <MonthlyBarChart months={model.lastSix} selectedIndex={selectedMonthIndex} onSelect={setSelectedMonthIndex}/>
 
           <div style={{ marginTop: 16, background: '#F7F2E6', borderRadius: 16, padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.ink }}>{selectedMonth.month}</div>
-              <div style={{ fontSize: 26, fontWeight: 700, color: BRAND.promo, letterSpacing: '-0.5px' }}>
+              <div style={{ fontSize: 26, fontWeight: 700, color: BRAND.promo, letterSpacing: 0 }}>
                 {formatMoney(selectedMonth.contribution)}
               </div>
             </div>
@@ -1180,13 +1319,13 @@ function PensionAnalysis({ onBack, selectedMonthIndex, setSelectedMonthIndex }) 
         </div>
 
         <div>
-          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.3px' }}>Dinamiskais vs fiksētais</div>
+          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: 0 }}>Dinamiskais vs fiksētais</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 16 }}>
-            <ComparisonBar label="Dinamiskais" value={FLUXION_TOTAL_DYNAMIC} max={FLUXION_TOTAL_DYNAMIC} tone={BRAND.promo} detail={`${FLUXION_BOOSTED_MONTHS} mēnešos iemaksa pārsniedza mērķi`}/>
-            <ComparisonBar label="Fiksēta iemaksa" value={FLUXION_TOTAL_FIXED} max={FLUXION_TOTAL_DYNAMIC} tone="#C8C1B4" detail={`${formatMoney(FLUXION_SETTINGS.fixedContribution)}/mēn. ar ienākumiem`}/>
+            <ComparisonBar label="Dinamiskais" value={model.totalDynamic} max={model.totalDynamic} tone={BRAND.promo} detail={`${model.boostedMonths} mēnešos iemaksa pārsniedza mērķi`}/>
+            <ComparisonBar label="Fiksēta iemaksa" value={model.totalFixed} max={model.totalDynamic} tone="#C8C1B4" detail={`${formatMoney(config.fixedContribution)}/mēn. ar ienākumiem`}/>
           </div>
           <div style={{ marginTop: 12, fontSize: 13, color: BRAND.mute, lineHeight: '18px' }}>
-            {formatMoney(FLUXION_DYNAMIC_ADVANTAGE)} papildu · {FLUXION_PAUSED_MONTHS} mēnesī apstājās automātiski
+            {formatMoney(model.dynamicAdvantage)} papildu · {model.pausedMonths} mēnesī apstājās automātiski · {model.cappedMonths} stabilizēti
           </div>
         </div>
 
@@ -1209,14 +1348,14 @@ function PensionProjection({ onBack, scenario, setScenario }) {
 
         <div>
           <div style={{ fontSize: 12.5, color: BRAND.mute }}>Prognozētā pensija 67 gados</div>
-          <div style={{ fontSize: 34, fontWeight: 700, color: BRAND.promo, letterSpacing: '-0.8px', marginTop: 4 }}>
+          <div style={{ fontSize: 34, fontWeight: 700, color: BRAND.promo, letterSpacing: 0, marginTop: 4 }}>
             {formatMoney(s.todayMoneyMonthly)}<span style={{ fontSize: 16, fontWeight: 500, color: BRAND.mute }}>/mēn.</span>
           </div>
           <div style={{ fontSize: 12.5, color: BRAND.mute, marginTop: 3 }}>šodienas naudā · {s.note}</div>
           <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
             {SCENARIO_ORDER.map((key) => (
-              <button key={key} onClick={() => setScenario(key)} style={{
-                flex: 1, border: 0, borderRadius: 12, padding: '10px 6px', cursor: 'pointer',
+              <button type="button" key={key} aria-pressed={key === scenario} onClick={() => setScenario(key)} style={{
+                flex: 1, border: 0, borderRadius: 12, padding: '10px 6px', minHeight: 44, cursor: 'pointer',
                 background: key === scenario ? BRAND.accent : BRAND.line,
                 fontSize: 13, fontWeight: 700, color: BRAND.ink,
               }}>
@@ -1228,7 +1367,7 @@ function PensionProjection({ onBack, scenario, setScenario }) {
         </div>
 
         <div>
-          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.3px', marginBottom: 14 }}>Sadalījums</div>
+          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: 0, marginBottom: 14 }}>Sadalījums</div>
           <div style={{ display: 'flex', height: 8, borderRadius: 4, overflow: 'hidden' }}>
             <div style={{ width: `${t1w}%`, background: '#C8C1B4' }}/>
             <div style={{ width: `${t2w}%`, background: BRAND.promo, opacity: 0.45, marginLeft: 2 }}/>
@@ -1254,7 +1393,7 @@ function PensionProjection({ onBack, scenario, setScenario }) {
   );
 }
 
-function PensionGoals({ onBack, scenario }) {
+function PensionGoals({ onBack, scenario, model, config }) {
   const selectedScenario = FUTURE_SCENARIOS[scenario];
   const goalProgress = clamp(selectedScenario.todayMoneyMonthly / FUTURE_GOAL, 0, 1);
   const gapToGoal = Math.max(0, FUTURE_GOAL - selectedScenario.todayMoneyMonthly);
@@ -1265,10 +1404,10 @@ function PensionGoals({ onBack, scenario }) {
     <div>
       <SubPageHeader title="Mērķi un sasniegumi" onBack={onBack}/>
       <div style={{ padding: '8px 16px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ background: BRAND.card, borderRadius: 20, padding: '18px', border: `1px solid ${BRAND.line}` }}>
+        <div style={{ background: BRAND.card, borderRadius: 12, padding: '18px', border: `1px solid ${BRAND.line}` }}>
           <div style={{ fontSize: 12.5, color: BRAND.mute }}>Pensijas mērķis</div>
           <div style={{ marginTop: 6 }}>
-            <span style={{ fontSize: 28, fontWeight: 700, color: BRAND.promo, letterSpacing: '-0.7px' }}>
+            <span style={{ fontSize: 28, fontWeight: 700, color: BRAND.promo, letterSpacing: 0 }}>
               {formatMoney(selectedScenario.todayMoneyMonthly)}
             </span>
             <span style={{ fontSize: 15, color: BRAND.mute, fontWeight: 500 }}> / {formatMoney(FUTURE_GOAL)} mēnesī</span>
@@ -1282,12 +1421,12 @@ function PensionGoals({ onBack, scenario }) {
         </div>
 
         <div style={{ display: 'flex', gap: 10 }}>
-          <ConfigPill icon={<TrophyIcon/>} label="Streak" value={`${FLUXION_STREAK} mēneši`}/>
+          <ConfigPill icon={<TrophyIcon/>} label="Streak" value={`${model.streak} mēneši`}/>
           <ConfigPill icon={<PigIcon/>} label="Nākamais €5000" value={formatMoney(milestoneLeft)}/>
         </div>
 
-        <div style={{ background: BRAND.card, borderRadius: 20, padding: '18px', border: `1px solid ${BRAND.line}` }}>
-          <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.2px' }}>Ko varēsi atļauties</div>
+        <div style={{ background: BRAND.card, borderRadius: 12, padding: '18px', border: `1px solid ${BRAND.line}` }}>
+          <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: 0 }}>Ko varēsi atļauties</div>
           <div style={{ fontSize: 12.5, color: BRAND.mute, marginTop: 3 }}>Pensija pret reālajām izmaksām šodien</div>
           <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
             <LifestyleCard icon={<CarIcon/>} label="BMW 3 līzings" cost={790} income={selectedScenario.todayMoneyMonthly}/>
@@ -1296,10 +1435,10 @@ function PensionGoals({ onBack, scenario }) {
           </div>
         </div>
 
-        <div style={{ background: BRAND.card, borderRadius: 20, padding: '18px', border: `1px solid ${BRAND.line}` }}>
-          <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.2px' }}>Kā darbojas dinamiskā iemaksa</div>
+        <div style={{ background: BRAND.card, borderRadius: 12, padding: '18px', border: `1px solid ${BRAND.line}` }}>
+          <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: 0 }}>Kā darbojas dinamiskā iemaksa</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 16 }}>
-            <StepRow number={1} title="Atklāj" body={`"Tu jau būtu uzkrājis ${formatMoney(FLUXION_TOTAL_DYNAMIC)}" — parādās sākumlapā.`}/>
+            <StepRow number={1} title="Atklāj" body={`"Tu jau būtu uzkrājis ${formatMoney(model.totalDynamic)}" — parādās sākumlapā.`}/>
             <StepRow number={2} title="Pielāgo" body="Nosaki mērķa procentu, drošības buferi, diapazonu un iemaksas datumu."/>
             <StepRow number={3} title="Automatizē" body="Katru mēnesi sistēma aprēķina drošo iemaksu pēc ienākumiem un tēriņiem."/>
             <StepRow number={4} title="Saņem atskaiti" body="Pēc katras iemaksas redzi summu, iemeslu un ietekmi uz nākotnes pensiju."/>
@@ -1309,8 +1448,8 @@ function PensionGoals({ onBack, scenario }) {
             border: `1px solid ${BRAND.line}`, padding: '14px 16px',
           }}>
             <div style={{ fontSize: 11.5, textTransform: 'uppercase', letterSpacing: 1, color: BRAND.mute }}>Ikmēneša atskaite</div>
-            <div style={{ marginTop: 6, fontSize: 14, fontWeight: 600, letterSpacing: '-0.2px', lineHeight: '20px', color: BRAND.ink }}>
-              Šomēnes tiktu novirzīti {formatMoney(FLUXION_PREVIEW.contribution)}, jo pēc algas un tēriņiem paliek {formatMoney(FLUXION_PREVIEW.safeToInvest)} droši ieguldāmas naudas.
+            <div style={{ marginTop: 6, fontSize: 14, fontWeight: 600, letterSpacing: 0, lineHeight: '20px', color: BRAND.ink }}>
+              Šomēnes tiktu novirzīti {formatMoney(model.preview.contribution)}, jo pēc algas un tēriņiem paliek {formatMoney(model.preview.safeToInvest)} droši ieguldāmas naudas. Nodokļu optimizācija prognozē {formatMoney(model.taxRefund)} atmaksu.
             </div>
           </div>
         </div>
@@ -1321,245 +1460,326 @@ function PensionGoals({ onBack, scenario }) {
 
 function BackChev({ onClick }) {
   return (
-    <button onClick={onClick} style={{
+    <button type="button" onClick={onClick} style={{
       background: 'transparent', border: 0, padding: '4px 8px 4px 0', cursor: 'pointer',
       display: 'flex', alignItems: 'center', color: BRAND.promo, fontSize: 14, fontWeight: 500,
     }}>
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
         <path d="M12 5l-5 5 5 5" stroke={BRAND.promo} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
-      Atpakaļ
+      Back
     </button>
   );
 }
 
-function PensionOnboarding({ onBack, onComplete }) {
-  const [step, setStep] = React.useState(0);
-  const [goalMonthly, setGoalMonthly] = React.useState(1200);
-  const [targetPct, setTargetPct] = React.useState(10);
-  const [buffer, setBuffer] = React.useState(300);
-  const [payday, setPayday] = React.useState(25);
-
-  const STEPS = 4;
-  const tier1Est = 620;
-  const tier2Est = 250;
-  const tier3Needed = Math.max(0, goalMonthly - tier1Est - tier2Est);
-
-  function StepBar() {
-    return (
-      <div style={{ display: 'flex', gap: 5, padding: '10px 16px 0' }}>
-        {Array.from({ length: STEPS }).map((_, i) => (
+function OnboardingShell({ step, total, eyebrow, title, subtitle, onBack, children, onNext, nextLabel }) {
+  return (
+    <div style={{
+      minHeight: 600,
+      boxSizing: 'border-box',
+      padding: '12px 16px 14px',
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'visible',
+    }}>
+      <div style={{ height: 30, display: 'flex', alignItems: 'center' }}>
+        <BackChev onClick={onBack}/>
+      </div>
+      <div style={{ display: 'flex', gap: 5, marginTop: 8 }}>
+        {Array.from({ length: total }).map((_, i) => (
           <div key={i} style={{
-            flex: 1, height: 3, borderRadius: 2,
+            flex: 1,
+            height: 3,
+            borderRadius: 2,
             background: i <= step ? BRAND.ink : BRAND.line,
-          }}/>
+          }} aria-hidden="true"/>
         ))}
       </div>
-    );
-  }
-
-  function PrimaryBtn({ label, onPress }) {
-    return (
-      <button onClick={onPress || (() => setStep(s => s + 1))} style={{
-        width: '100%', border: 0, borderRadius: 14, padding: '15px',
-        background: BRAND.accent, color: BRAND.ink,
-        fontSize: 15, fontWeight: 700, cursor: 'pointer', letterSpacing: '-0.1px', marginTop: 28,
-      }}>{label || 'Tālāk'}</button>
-    );
-  }
-
-  /* ── Step 0: Hook ── */
-  if (step === 0) return (
-    <div>
-      <div style={{ padding: '16px 16px 0' }}><BackChev onClick={onBack}/></div>
-      <StepBar/>
-      <div style={{ padding: '24px 16px 32px' }}>
-        <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: 1.2, color: BRAND.mute, textTransform: 'uppercase' }}>3. pensija</div>
-        <div style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.6px', lineHeight: '32px', marginTop: 8 }}>
-          Tu nekad nevajadzēs<br/>mainīt iemaksu pats
-        </div>
-        <div style={{ marginTop: 12, fontSize: 14, color: BRAND.mute, lineHeight: '21px' }}>
-          Dinamiskā iemaksa analizē tavus ienākumus katru mēnesi — vairāk labos, mazāk sarežģītajos, un pauze ja nav ienākumu.
-        </div>
-
-        <div style={{ marginTop: 28, background: '#EAE6DB', borderRadius: 20, padding: '20px' }}>
-          <div style={{ fontSize: 12.5, color: BRAND.mute }}>Pamatojoties uz pēdējiem 12 mēnešiem</div>
-          <div style={{ fontSize: 32, fontWeight: 700, color: BRAND.promo, letterSpacing: '-0.8px', marginTop: 6 }}>
-            {formatMoney(FLUXION_TOTAL_DYNAMIC)}
-          </div>
-          <div style={{ fontSize: 13, color: BRAND.mute, marginTop: 3 }}>jau varētu būt uzkrāts tavā 3. pensijā</div>
-
-          <div style={{ marginTop: 18, height: 1, background: BRAND.line }}/>
-
-          <div style={{ marginTop: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-            <div>
-              <div style={{ fontSize: 11, color: BRAND.mute, textTransform: 'uppercase', letterSpacing: 0.8 }}>Dinamiskais</div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: BRAND.ink, marginTop: 4 }}>{formatMoney(FLUXION_TOTAL_DYNAMIC)}</div>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 11, color: BRAND.mute, textTransform: 'uppercase', letterSpacing: 0.8 }}>Fiksēts</div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: BRAND.mute, marginTop: 4 }}>{formatMoney(FLUXION_TOTAL_FIXED)}</div>
-            </div>
-          </div>
-
-          <div style={{ marginTop: 14, height: 6, borderRadius: 3, background: BRAND.line, overflow: 'hidden' }}>
-            <div style={{ width: `${Math.round((FLUXION_TOTAL_DYNAMIC / (FLUXION_TOTAL_DYNAMIC * 1.15)) * 100)}%`, height: '100%', background: BRAND.promo, borderRadius: 3 }}/>
-          </div>
-          <div style={{ marginTop: 6, fontSize: 12.5, color: BRAND.mute }}>
-            {formatMoney(FLUXION_DYNAMIC_ADVANTAGE)} vairāk nekā ar fiksētu iemaksu
-          </div>
-        </div>
-
-        <PrimaryBtn label="Sākt iestatīšanu"/>
+      <div style={{ marginTop: 18 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: BRAND.mute, textTransform: 'uppercase' }}>{eyebrow}</div>
+        <div style={{ fontSize: 24, fontWeight: 700, lineHeight: '29px', marginTop: 6 }}>{title}</div>
+        {subtitle && <div style={{ fontSize: 13, color: BRAND.mute, lineHeight: '18px', marginTop: 6 }}>{subtitle}</div>}
       </div>
+      <div style={{ flex: 1, minHeight: 0, marginTop: 16 }}>
+        {children}
+      </div>
+      <button type="button" onClick={onNext} style={{
+        width: '100%',
+        minHeight: 50,
+        border: 0,
+        borderRadius: 15,
+        background: BRAND.accent,
+        color: BRAND.promo,
+        fontSize: 15,
+        fontWeight: 700,
+        cursor: 'pointer',
+        flexShrink: 0,
+      }}>{nextLabel || 'Continue'}</button>
     </div>
   );
+}
 
-  /* ── Step 1: Goal ── */
-  if (step === 1) return (
-    <div>
-      <div style={{ padding: '16px 16px 0' }}><BackChev onClick={() => setStep(0)}/></div>
-      <StepBar/>
-      <div style={{ padding: '24px 16px 32px' }}>
-        <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: 1.2, color: BRAND.mute, textTransform: 'uppercase' }}>Mērķis</div>
-        <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.5px', marginTop: 8 }}>Kādu pensiju tu vēlies?</div>
-        <div style={{ fontSize: 14, color: BRAND.mute, marginTop: 8, lineHeight: '20px' }}>
-          Nosaki mērķi — mēs parādīsim, cik daudz 3. pensijā vēl vajag.
-        </div>
-
-        <div style={{ marginTop: 32, textAlign: 'center' }}>
-          <div style={{ fontSize: 52, fontWeight: 700, color: BRAND.promo, letterSpacing: '-2px', lineHeight: 1 }}>
-            {formatMoney(goalMonthly)}
-          </div>
-          <div style={{ fontSize: 14, color: BRAND.mute, marginTop: 6 }}>mēnesī pensijā</div>
-        </div>
-
-        <div style={{ marginTop: 24 }}>
-          <input type="range" min={500} max={3000} step={50} value={goalMonthly}
-            onChange={e => setGoalMonthly(Number(e.target.value))}
-            style={{ width: '100%', accentColor: BRAND.ink, cursor: 'pointer' }}/>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-            <span style={{ fontSize: 12, color: BRAND.mute }}>€500</span>
-            <span style={{ fontSize: 12, color: BRAND.mute }}>€3 000</span>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 24, background: '#EAE6DB', borderRadius: 18, padding: '16px 18px' }}>
-          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Kā tas tiek segts</div>
-          {[
-            { label: '1. līmenis · Valsts', amount: tier1Est, dot: '#C8C1B4', op: 1 },
-            { label: '2. līmenis · Fonds', amount: tier2Est, dot: BRAND.promo, op: 0.4 },
-            { label: '3. līmenis · Tu ieguldi', amount: tier3Needed, dot: BRAND.promo, op: 1 },
-          ].map(({ label, amount, dot, op }) => (
-            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-              <div style={{ width: 8, height: 8, borderRadius: 2, background: dot, opacity: op, flexShrink: 0 }}/>
-              <div style={{ flex: 1, fontSize: 13, color: BRAND.mute }}>{label}</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: BRAND.ink }}>{formatMoney(amount)}/mēn.</div>
-            </div>
-          ))}
-        </div>
-
-        <PrimaryBtn label="Tālāk"/>
-      </div>
-    </div>
-  );
-
-  /* ── Step 2: Dynamic settings ── */
-  if (step === 2) return (
-    <div>
-      <div style={{ padding: '16px 16px 0' }}><BackChev onClick={() => setStep(1)}/></div>
-      <StepBar/>
-      <div style={{ padding: '24px 16px 32px' }}>
-        <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: 1.2, color: BRAND.mute, textTransform: 'uppercase' }}>Iestatīšana</div>
-        <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.5px', marginTop: 8 }}>Dinamiskā iemaksa</div>
-
-        <div style={{ marginTop: 14, background: '#EAE6DB', borderRadius: 14, padding: '14px 16px' }}>
-          <div style={{ fontSize: 13.5, lineHeight: '20px', color: BRAND.ink }}>
-            Pēc iestatīšanas sistēma pati aprēķina drošo iemaksu katru mēnesi.{' '}
-            <strong>Tev to nekad nevajadzēs mainīt pašam.</strong>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 28 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-            <div style={{ fontSize: 14, fontWeight: 600 }}>Mērķa iemaksa</div>
-            <div style={{ fontSize: 22, fontWeight: 700, color: BRAND.promo }}>{targetPct}%</div>
-          </div>
-          <div style={{ fontSize: 12.5, color: BRAND.mute, marginTop: 2 }}>no ienākumiem katru mēnesi</div>
-          <input type="range" min={3} max={20} step={1} value={targetPct}
-            onChange={e => setTargetPct(Number(e.target.value))}
-            style={{ width: '100%', marginTop: 12, accentColor: BRAND.ink, cursor: 'pointer' }}/>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-            <span style={{ fontSize: 11, color: BRAND.mute }}>3%</span>
-            <span style={{ fontSize: 11, color: BRAND.mute }}>Diapazons: {Math.max(1, targetPct - 4)}%–{Math.min(25, targetPct + 5)}%</span>
-            <span style={{ fontSize: 11, color: BRAND.mute }}>20%</span>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 24 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-            <div style={{ fontSize: 14, fontWeight: 600 }}>Drošības rezerve</div>
-            <div style={{ fontSize: 22, fontWeight: 700, color: BRAND.promo }}>{formatMoney(buffer)}</div>
-          </div>
-          <div style={{ fontSize: 12.5, color: BRAND.mute, marginTop: 2 }}>minimums kontā pirms iemaksas</div>
-          <input type="range" min={100} max={1000} step={50} value={buffer}
-            onChange={e => setBuffer(Number(e.target.value))}
-            style={{ width: '100%', marginTop: 12, accentColor: BRAND.ink, cursor: 'pointer' }}/>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-            <span style={{ fontSize: 11, color: BRAND.mute }}>€100</span>
-            <span style={{ fontSize: 11, color: BRAND.mute }}>€1 000</span>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 24 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>Iemaksas datums</div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            {[1, 5, 10, 15, 20, 25, 28].map(d => (
-              <button key={d} onClick={() => setPayday(d)} style={{
-                flex: 1, height: 40, borderRadius: 10, border: 0, cursor: 'pointer',
-                background: payday === d ? BRAND.accent : BRAND.line,
-                fontSize: 13, fontWeight: payday === d ? 700 : 400, color: BRAND.ink,
-              }}>{d}.</button>
-            ))}
-          </div>
-        </div>
-
-        <PrimaryBtn label="Tālāk"/>
-      </div>
-    </div>
-  );
-
-  /* ── Step 3: Confirm ── */
+function OnboardingCard({ children, style = {} }) {
   return (
-    <div>
-      <div style={{ padding: '16px 16px 0' }}><BackChev onClick={() => setStep(2)}/></div>
-      <StepBar/>
-      <div style={{ padding: '24px 16px 32px' }}>
-        <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: 1.2, color: BRAND.mute, textTransform: 'uppercase' }}>Gatavs</div>
-        <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.5px', marginTop: 8 }}>Apstiprini iestatījumus</div>
+    <div style={{
+      background: BRAND.card,
+      borderRadius: 12,
+      padding: '16px',
+      boxShadow: '0 2px 8px rgba(17,23,19,0.08)',
+      ...style,
+    }}>{children}</div>
+  );
+}
 
-        <div style={{ marginTop: 24, background: '#EAE6DB', borderRadius: 20, padding: '20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {[
-            { label: 'Pensijas mērķis', value: `${formatMoney(goalMonthly)}/mēn.` },
-            { label: 'Mērķa iemaksa', value: `${targetPct}% no ienākumiem` },
-            { label: 'Diapazons', value: `${Math.max(1, targetPct - 4)}%–${Math.min(25, targetPct + 5)}%` },
-            { label: 'Drošības rezerve', value: formatMoney(buffer) },
-            { label: 'Iemaksas datums', value: `${payday}. katru mēnesi` },
-          ].map(({ label, value }) => (
-            <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: 13.5, color: BRAND.mute }}>{label}</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: BRAND.ink }}>{value}</div>
-            </div>
-          ))}
-        </div>
+function DynamicPensionOnboarding({ onBack, onComplete, initialConfig = FLUXION_SETTINGS, model = FLUXION_MODEL }) {
+  const [step, setStep] = React.useState(0);
+  const [mode, setMode] = React.useState(initialConfig.mode || 'dynamic');
+  const [salaryAccount] = React.useState('Main account');
+  const [salary] = React.useState(model.averageIncome || 2000);
+  const [salaryDate] = React.useState('25th of each month');
+  const [accountBalance] = React.useState(2300);
+  const [targetPct, setTargetPct] = React.useState(Math.min(10, Math.max(1, Math.round((initialConfig.targetRate || 0.03) * 100))));
+  const [buffer, setBuffer] = React.useState(initialConfig.safetyBuffer || 500);
+  const [customBuffer, setCustomBuffer] = React.useState(initialConfig.safetyBuffer || 500);
+  const [maxContribution, setMaxContribution] = React.useState(150);
+  const [skipBelow, setSkipBelow] = React.useState(10);
+  const [taxOption, setTaxOption] = React.useState('ask');
+  const [notifyBefore, setNotifyBefore] = React.useState(true);
+  const [allowReversal, setAllowReversal] = React.useState(true);
+  const [monthlySummary, setMonthlySummary] = React.useState(true);
+  const [taxReminders, setTaxReminders] = React.useState(true);
 
-        <div style={{ marginTop: 16, fontSize: 13, color: BRAND.mute, lineHeight: '18px', textAlign: 'center' }}>
-          Iestatījumus var mainīt jebkurā laikā sadaļā "Ikmēneša analīze".
-        </div>
+  const STEPS = 11;
+  const recentMonths = model.history.slice(-6);
+  const recentBalances = recentMonths.map(month => month.endBalance);
+  const lowestRecentBalance = Math.min(...recentBalances);
+  const averageRecentBalance = Math.round(recentBalances.reduce((sum, value) => sum + value, 0) / Math.max(1, recentBalances.length));
+  const balanceTrend = recentBalances.length > 1 ? recentBalances[recentBalances.length - 1] - recentBalances[0] : 0;
+  const balanceRiskAdjustment = lowestRecentBalance < buffer ? Math.max(0, buffer - lowestRecentBalance) : 0;
+  const baseContribution = Math.round(salary * (targetPct / 100));
+  const expectedSpending = model.averageSpending;
+  const recurringPayments = model.obligationsTotal;
+  const balanceAfterPlannedOutflows = accountBalance - expectedSpending - recurringPayments;
+  const safeAvailable = Math.max(0, balanceAfterPlannedOutflows - buffer - balanceRiskAdjustment);
+  const estimatedContribution = Math.min(baseContribution, maxContribution, safeAvailable);
+  const finalContribution = Math.max(0, estimatedContribution < skipBelow ? 0 : estimatedContribution);
+  const maxEligibleContribution = Math.round(Math.min(4000, salary * 12 * 0.1));
+  const alreadyContributed = model.totalDynamic;
+  const remainingThisYear = Math.max(0, maxEligibleContribution - alreadyContributed);
+  const suggestedMonthly = Math.round(remainingThisYear / 12);
+  const taxOptimization = taxOption !== 'keep';
 
-        <PrimaryBtn label="Aktivizēt 3. pensiju" onPress={onComplete}/>
+  const SectionLabel = ({ children }) => (
+    <div style={{ fontSize: 13, fontWeight: 700, color: BRAND.ink, marginBottom: 8 }}>{children}</div>
+  );
+
+  const Option = ({ title, body, active, onClick, recommended }) => (
+    <button type="button" aria-pressed={active} onClick={onClick} style={{
+      width: '100%', textAlign: 'left', border: `1px solid ${active ? BRAND.promo : BRAND.line}`,
+      background: active ? '#F1ECDD' : BRAND.card, borderRadius: 12, padding: '14px 16px',
+      cursor: 'pointer', minHeight: 74, marginTop: 8,
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
+        <span style={{ fontSize: 15, fontWeight: 700, color: BRAND.ink }}>{title}</span>
+        {recommended && <span style={{ fontSize: 12, fontWeight: 700, color: BRAND.promo }}>Recommended</span>}
       </div>
-    </div>
+      <div style={{ fontSize: 13, color: BRAND.mute, lineHeight: '18px', marginTop: 4 }}>{body}</div>
+    </button>
+  );
+
+  const ToggleRow = ({ label, checked, onChange }) => (
+    <label style={{ minHeight: BRAND.minTouch, display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: BRAND.ink, cursor: 'pointer' }}>
+      <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)} style={{ width: 18, height: 18, accentColor: BRAND.promo }}/>
+      <span>{label}</span>
+    </label>
+  );
+
+  function finish() {
+    onComplete({
+      goalMonthly: 1200,
+      targetRate: targetPct / 100,
+      minRate: Math.max(0.01, (targetPct - 2) / 100),
+      maxRate: Math.min(0.15, (targetPct + 2) / 100),
+      safetyBuffer: buffer,
+      payday: 25,
+      fixedContribution: maxContribution,
+      mode: mode === 'fixed' ? 'fixed' : 'dynamic',
+      taxOptimization,
+      maxMonthlyContribution: maxContribution,
+      skipContributionBelow: skipBelow,
+      notifyBefore,
+      allowReversal,
+      monthlySummary,
+      taxReminders,
+      paused: false,
+    });
+  }
+
+  if (step === 0) return (
+    <OnboardingShell step={step} total={STEPS} eyebrow="Dynamic 3rd pillar pension" title="Set up your 3rd pillar pension" subtitle="Choose what percentage of your salary you want to invest. The app adjusts or skips contributions based on your salary, account balance, spending, and safety buffer." onBack={onBack} onNext={() => setStep(1)} nextLabel="Get started">
+      <OnboardingCard>
+        <MiniSetting label="Contribution type" value="Dynamic 3rd pillar"/>
+        <MiniSetting label="Checks before investing" value="Salary, balance, spending"/>
+        <MiniSetting label="Control" value="Notification before investing"/>
+      </OnboardingCard>
+    </OnboardingShell>
+  );
+
+  if (step === 1) return (
+    <OnboardingShell step={step} total={STEPS} eyebrow="Contribution mode" title="Choose how you want to contribute" onBack={() => setStep(0)} onNext={() => setStep(2)}>
+      <Option title="Fixed" body="Same amount every month." active={mode === 'fixed'} onClick={() => setMode('fixed')}/>
+      <Option title="Dynamic" body="Contributes a percentage of your salary and adjusts based on your financial situation." active={mode === 'dynamic'} onClick={() => setMode('dynamic')} recommended/>
+      <Option title="Tax target" body="Helps you reach the yearly amount needed for the maximum eligible tax benefit." active={mode === 'tax'} onClick={() => { setMode('tax'); setTaxOption('adjust'); }}/>
+    </OnboardingShell>
+  );
+
+  if (step === 2) return (
+    <OnboardingShell step={step} total={STEPS} eyebrow="Salary account" title="Choose your salary account" subtitle="This account will be used to detect your salary, spending, recurring payments, and available balance." onBack={() => setStep(1)} onNext={() => setStep(3)}>
+      <OnboardingCard>
+        <MiniSetting label="Account" value={salaryAccount}/>
+        <MiniSetting label="Detected salary" value={formatMoney(salary)}/>
+        <MiniSetting label="Detected salary date" value={salaryDate}/>
+        <MiniSetting label="Account balance" value={formatMoney(accountBalance)}/>
+      </OnboardingCard>
+      <div style={{ marginTop: 12, fontSize: 13, lineHeight: '18px', color: BRAND.mute }}>If no salary is detected, no contribution is made.</div>
+    </OnboardingShell>
+  );
+
+  if (step === 3) return (
+    <OnboardingShell step={step} total={STEPS} eyebrow="Salary percentage" title="Choose your contribution percentage" subtitle="This starts from salary, then checks current balance, expected spending, recurring payments, and recent balance history before investing." onBack={() => setStep(2)} onNext={() => setStep(4)}>
+      <label htmlFor="target-percent" style={{ display: 'block', fontSize: 14, fontWeight: 700 }}>Slider from 1% to 10% of salary</label>
+      <input id="target-percent" type="range" min={1} max={10} step={1} value={targetPct} aria-valuetext={`${targetPct}% of salary`} onChange={e => setTargetPct(Number(e.target.value))} style={{ width: '100%', marginTop: 12, accentColor: BRAND.promo, cursor: 'pointer' }}/>
+      <OnboardingCard style={{ marginTop: 16 }}>
+        <MiniSetting label="Salary" value={formatMoney(salary)}/>
+        <MiniSetting label="Selected rate" value={`${targetPct}%`}/>
+        <MiniSetting label="Starting contribution" value={formatMoney(baseContribution)}/>
+      </OnboardingCard>
+      <OnboardingCard style={{ marginTop: 12, boxShadow: 'none', background: '#F1ECDD' }}>
+        <MiniSetting label="Current account balance" value={formatMoney(accountBalance)}/>
+        <MiniSetting label="Avg. past spending" value={formatMoney(expectedSpending)}/>
+        <MiniSetting label="Upcoming recurring payments" value={formatMoney(recurringPayments)}/>
+        <MiniSetting label="Average recent balance" value={formatMoney(averageRecentBalance)}/>
+        <MiniSetting label="Lowest recent balance" value={formatMoney(lowestRecentBalance)}/>
+        <MiniSetting label="Estimated safe contribution" value={formatMoney(finalContribution)}/>
+      </OnboardingCard>
+    </OnboardingShell>
+  );
+
+  if (step === 4) return (
+    <OnboardingShell step={step} total={STEPS} eyebrow="Safety balance" title="Set your minimum balance" subtitle="The app will not invest if your account would fall below this amount." onBack={() => setStep(3)} onNext={() => setStep(5)}>
+      <div role="group" aria-label="Minimum balance options" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+        {[300, 500, 1000].map(amount => <ModeButton key={amount} label={formatMoney(amount)} active={buffer === amount} onClick={() => setBuffer(amount)}/>)}
+        <ModeButton label="Custom amount" active={buffer === customBuffer && ![300, 500, 1000].includes(buffer)} onClick={() => setBuffer(customBuffer)}/>
+      </div>
+      <label style={{ display: 'block', marginTop: 14, fontSize: 13, color: BRAND.mute }}>
+        Custom amount
+        <input type="number" min={0} value={customBuffer} onChange={e => { const next = Number(e.target.value); setCustomBuffer(next); setBuffer(next); }} style={{ width: '100%', marginTop: 6, minHeight: 44, border: `1px solid ${BRAND.line}`, borderRadius: 10, padding: '0 12px', font: 'inherit' }}/>
+      </label>
+      <OnboardingCard style={{ marginTop: 14, boxShadow: 'none', background: '#F1ECDD' }}>
+        <MiniSetting label="Minimum balance" value={formatMoney(buffer)}/>
+        <div style={{ marginTop: 8, fontSize: 13, color: BRAND.mute, lineHeight: '18px' }}>If your balance would drop below {formatMoney(buffer)}, the contribution is skipped.</div>
+      </OnboardingCard>
+    </OnboardingShell>
+  );
+
+  if (step === 5) return (
+    <OnboardingShell step={step} total={STEPS} eyebrow="Contribution limit" title="Set your maximum monthly contribution" subtitle="This protects you from contributing more than you are comfortable with, even if your salary increases." onBack={() => setStep(4)} onNext={() => setStep(6)}>
+      <label style={{ display: 'block', fontSize: 14, fontWeight: 700 }}>Never contribute more than per month
+        <input type="number" min={0} value={maxContribution} onChange={e => setMaxContribution(Number(e.target.value))} style={{ width: '100%', marginTop: 8, minHeight: 44, border: `1px solid ${BRAND.line}`, borderRadius: 10, padding: '0 12px', font: 'inherit' }}/>
+      </label>
+      <label style={{ display: 'block', marginTop: 14, fontSize: 13, color: BRAND.mute }}>Skip contribution if calculated amount is below
+        <input type="number" min={0} value={skipBelow} onChange={e => setSkipBelow(Number(e.target.value))} style={{ width: '100%', marginTop: 6, minHeight: 44, border: `1px solid ${BRAND.line}`, borderRadius: 10, padding: '0 12px', font: 'inherit' }}/>
+      </label>
+      <OnboardingCard style={{ marginTop: 14 }}>
+        <MiniSetting label="Salary" value={formatMoney(5000)}/>
+        <MiniSetting label="Selected rate" value="5%"/>
+        <MiniSetting label="Base contribution" value={formatMoney(250)}/>
+        <MiniSetting label="Maximum limit" value={formatMoney(maxContribution)}/>
+        <MiniSetting label="Final contribution" value={formatMoney(Math.min(250, maxContribution))}/>
+      </OnboardingCard>
+    </OnboardingShell>
+  );
+
+  if (step === 6) return (
+    <OnboardingShell step={step} total={STEPS} eyebrow="Tax benefit" title="Optimize your tax benefit" subtitle="Based on your income, the app estimates how much you can contribute this year to reach the maximum eligible tax benefit." onBack={() => setStep(5)} onNext={() => setStep(7)}>
+      <OnboardingCard>
+        <MiniSetting label="Estimated yearly income" value={formatMoney(salary * 12)}/>
+        <MiniSetting label="Maximum eligible contribution" value={formatMoney(maxEligibleContribution)}/>
+        <MiniSetting label="Already contributed" value={formatMoney(alreadyContributed)}/>
+        <MiniSetting label="Remaining this year" value={formatMoney(remainingThisYear)}/>
+        <MiniSetting label="Suggested monthly amount" value={formatMoney(suggestedMonthly)}/>
+      </OnboardingCard>
+      <Option title="Keep my selected percentage" body="Use the selected salary percentage without automatic tax-target changes." active={taxOption === 'keep'} onClick={() => setTaxOption('keep')}/>
+      <Option title="Adjust contributions to reach tax target" body="Increase or reduce monthly contributions to aim for the eligible yearly amount." active={taxOption === 'adjust'} onClick={() => setTaxOption('adjust')}/>
+      <Option title="Ask me before increasing contributions" body="Send a confirmation before any tax-driven increase is applied." active={taxOption === 'ask'} onClick={() => setTaxOption('ask')}/>
+    </OnboardingShell>
+  );
+
+  if (step === 7) return (
+    <OnboardingShell step={step} total={STEPS} eyebrow="Preview" title="Your next contribution estimate" onBack={() => setStep(6)} onNext={() => setStep(8)}>
+      <OnboardingCard>
+        <MiniSetting label="Detected salary" value={formatMoney(salary)}/>
+        <MiniSetting label="Selected rate" value={`${targetPct}%`}/>
+        <MiniSetting label="Base contribution" value={formatMoney(baseContribution)}/>
+      </OnboardingCard>
+      <OnboardingCard style={{ marginTop: 12 }}>
+        <MiniSetting label="Current balance" value={formatMoney(accountBalance)}/>
+        <MiniSetting label="Expected spending" value={`${formatMoney(expectedSpending)} avg.`}/>
+        <MiniSetting label="Upcoming recurring payments" value={formatMoney(recurringPayments)}/>
+        <MiniSetting label="Safety balance" value={formatMoney(buffer)}/>
+        <MiniSetting label="Average recent balance" value={formatMoney(averageRecentBalance)}/>
+        <MiniSetting label="Lowest recent balance" value={formatMoney(lowestRecentBalance)}/>
+        <MiniSetting label="Balance trend" value={balanceTrend >= 0 ? `+${formatMoney(balanceTrend)}` : formatMoney(balanceTrend)}/>
+        <MiniSetting label="Past-balance adjustment" value={formatMoney(balanceRiskAdjustment)}/>
+        <MiniSetting label="Safe available amount" value={formatMoney(safeAvailable)}/>
+        <MiniSetting label="Estimated contribution" value={formatMoney(finalContribution)}/>
+      </OnboardingCard>
+      <OnboardingCard style={{ marginTop: 12, boxShadow: 'none', background: '#F1ECDD' }}>
+        <MiniSetting label="No salary detected" value={formatMoney(0)}/>
+        <MiniSetting label="Balance below safety limit" value={formatMoney(0)}/>
+        <MiniSetting label="Large one-time inflow" value="No auto-increase"/>
+      </OnboardingCard>
+    </OnboardingShell>
+  );
+
+  if (step === 8) return (
+    <OnboardingShell step={step} total={STEPS} eyebrow="Notifications" title="Stay in control" subtitle="Before each contribution, you will receive a notification with the planned amount." onBack={() => setStep(7)} onNext={() => setStep(9)}>
+      <OnboardingCard>
+        <SectionLabel>Settings</SectionLabel>
+        <ToggleRow label="Notify me 2 days before salary day" checked={notifyBefore} onChange={setNotifyBefore}/>
+        <ToggleRow label="Allow 24-hour reversal after contribution" checked={allowReversal} onChange={setAllowReversal}/>
+        <ToggleRow label="Send monthly pension summary" checked={monthlySummary} onChange={setMonthlySummary}/>
+        <ToggleRow label="Send occasional tax benefit reminders" checked={taxReminders} onChange={setTaxReminders}/>
+      </OnboardingCard>
+    </OnboardingShell>
+  );
+
+  if (step === 9) return (
+    <OnboardingShell step={step} total={STEPS} eyebrow="Review" title="Review your setup" onBack={() => setStep(8)} onNext={() => setStep(10)} nextLabel="Activate dynamic contributions">
+      <OnboardingCard>
+        <MiniSetting label="Mode" value={mode === 'fixed' ? 'Fixed' : mode === 'tax' ? 'Tax target' : 'Dynamic'}/>
+        <MiniSetting label="Salary account" value={salaryAccount}/>
+        <MiniSetting label="Target contribution" value={`${targetPct}% of salary`}/>
+        <MiniSetting label="Minimum balance" value={formatMoney(buffer)}/>
+        <MiniSetting label="Maximum monthly contribution" value={formatMoney(maxContribution)}/>
+        <MiniSetting label="Tax optimization" value={taxOptimization ? 'Enabled' : 'Disabled'}/>
+        <MiniSetting label="Notification" value={notifyBefore ? '2 days before salary day' : 'Disabled'}/>
+        <MiniSetting label="24-hour reversal" value={allowReversal ? 'Enabled' : 'Disabled'}/>
+      </OnboardingCard>
+      <button type="button" onClick={() => setStep(1)} style={{ width: '100%', minHeight: 48, marginTop: 12, border: `1px solid ${BRAND.line}`, borderRadius: 12, background: BRAND.card, color: BRAND.ink, fontWeight: 700, cursor: 'pointer' }}>
+        Edit settings
+      </button>
+    </OnboardingShell>
+  );
+
+  return (
+    <OnboardingShell step={step} total={STEPS} eyebrow="Active" title="Your dynamic 3rd pillar plan is active" subtitle="Your first contribution will be calculated before your next salary date. You will be notified before anything is invested." onBack={() => setStep(9)} onNext={finish} nextLabel="View pension dashboard">
+      <OnboardingCard>
+        <MiniSetting label="Next salary date" value={salaryDate}/>
+        <MiniSetting label="Expected contribution range" value={`${formatMoney(0)} to ${formatMoney(Math.min(baseContribution, maxContribution))}`}/>
+        <MiniSetting label="Current pension projection" value={`${formatMoney(FUTURE_SCENARIOS.balanced.todayMoneyMonthly)}/month`}/>
+      </OnboardingCard>
+    </OnboardingShell>
   );
 }
 
@@ -1568,33 +1788,53 @@ function FluxionPensijaScreen() {
   const [activated, setActivated] = React.useState(false);
   const [scenario, setScenario] = React.useState('balanced');
   const [selectedMonthIndex, setSelectedMonthIndex] = React.useState(FLUXION_LAST_SIX.length - 1);
+  const [config, setConfig] = React.useState(FLUXION_SETTINGS);
+  const [reversed, setReversed] = React.useState(false);
+  const model = React.useMemo(() => buildFluxionModel(config), [config]);
+
+  React.useEffect(() => {
+    const scrollParent = document.querySelector('[data-app-scroll="true"]');
+    if (scrollParent) scrollParent.scrollTop = 0;
+  }, [pensionView]);
+
+  function updateConfig(patch) {
+    setConfig(current => ({ ...current, ...patch }));
+    if ('mode' in patch || 'paused' in patch) setReversed(false);
+  }
 
   if (pensionView === 'onboarding3') {
     return (
-      <PensionOnboarding
+      <DynamicPensionOnboarding
+        initialConfig={config}
+        model={model}
         onBack={() => setPensionView('main')}
-        onComplete={() => { setActivated(true); setPensionView('main'); }}
+        onComplete={(nextConfig) => {
+          setConfig(current => ({ ...current, ...nextConfig }));
+          setActivated(true);
+          setReversed(false);
+          setPensionView('main');
+        }}
       />
     );
   }
   if (pensionView === 'analysis') {
-    return <PensionAnalysis onBack={() => setPensionView('main')} selectedMonthIndex={selectedMonthIndex} setSelectedMonthIndex={setSelectedMonthIndex}/>;
+    return <PensionAnalysis onBack={() => setPensionView('main')} selectedMonthIndex={selectedMonthIndex} setSelectedMonthIndex={setSelectedMonthIndex} model={model} config={config}/>;
   }
   if (pensionView === 'projection') {
     return <PensionProjection onBack={() => setPensionView('main')} scenario={scenario} setScenario={setScenario}/>;
   }
   if (pensionView === 'goals') {
-    return <PensionGoals onBack={() => setPensionView('main')} scenario={scenario}/>;
+    return <PensionGoals onBack={() => setPensionView('main')} scenario={scenario} model={model} config={config}/>;
   }
-  return <PensionMain onNav={setPensionView} activated={activated} scenario={scenario}/>;
+  return <PensionMain onNav={setPensionView} activated={activated} scenario={scenario} config={config} model={model} onConfigChange={updateConfig} reversed={reversed} onReverse={() => setReversed(true)}/>;
 }
 
 
 function NavItem({ icon, label, active, onClick }) {
   return (
-    <button onClick={onClick} style={{
+    <button type="button" aria-current={active ? 'page' : undefined} onClick={onClick} style={{
       flex: 1, background: 'transparent', border: 0, cursor: 'pointer',
-      display: 'flex', alignItems: 'center', gap: 10, padding: '6px 10px',
+      display: 'flex', alignItems: 'center', gap: 10, padding: '6px 10px', minHeight: 48,
     }}>
       <div style={{
         width: 34, height: 34, borderRadius: '50%',
@@ -1624,9 +1864,9 @@ function Home({ tweaks }) {
   return (
     <div style={{
       background: BRAND.bg, height: '100%', display: 'flex', flexDirection: 'column',
-      overflow: 'hidden', fontFamily: '"Inter", system-ui, sans-serif', color: BRAND.ink,
+      overflow: 'hidden', fontFamily: '"Gibson", "IBM Plex Sans", "Aptos", system-ui, sans-serif', color: BRAND.ink,
     }}>
-      <div style={{ flex: 1, overflowY: 'auto', paddingTop: 60 }}>
+      <div data-app-scroll="true" style={{ flex: 1, overflowY: 'auto', paddingTop: 60 }}>
       {/* ——— Header ——— */}
       <div style={{ padding: '12px 20px 4px', display: 'flex', alignItems: 'center', gap: 14 }}>
         <div style={{
@@ -1634,16 +1874,16 @@ function Home({ tweaks }) {
           color: '#fff', fontWeight: 600, fontSize: 14, letterSpacing: 0.5,
           display: 'grid', placeItems: 'center', flexShrink: 0,
         }}>ES</div>
-        <div style={{ flex: 1, fontSize: 17, fontWeight: 600, letterSpacing: '-0.3px' }}>
+        <div style={{ flex: 1, fontSize: 17, fontWeight: 600, letterSpacing: 0 }}>
           Edvards Markuss Selikovs
         </div>
-        <button style={{ background: 'transparent', border: 0, padding: 4, cursor: 'pointer' }}>
+        <button type="button" aria-label="Atvērt ziņojumus" style={{ background: 'transparent', border: 0, padding: 4, cursor: 'pointer', minWidth: BRAND.minTouch, minHeight: BRAND.minTouch }}>
           {Icon.chat(24)}
         </button>
       </div>
 
       {/* ——— Tabs ——— */}
-      <div style={{ display: 'flex', padding: '12px 16px 0', borderBottom: `1px solid ${BRAND.line}` }}>
+      <div role="tablist" aria-label="Sadaļas" style={{ display: 'flex', padding: '12px 16px 0', borderBottom: `1px solid ${BRAND.line}` }}>
         {tabs.map(t => (
           <Tab key={t} label={t} active={tab === t} onClick={() => setTab(t)} />
         ))}
@@ -1654,7 +1894,7 @@ function Home({ tweaks }) {
       {/* ——— Account card ——— */}
       <div style={{ padding: '16px 16px 0' }}>
         <div style={{
-          background: '#EAE6DB', borderRadius: 18, padding: '16px 20px',
+          background: '#EAE6DB', borderRadius: 12, padding: '16px 20px',
           position: 'relative', overflow: 'hidden', minHeight: 150,
           boxShadow: '0 1px 2px rgba(30,25,10,0.04), 0 6px 16px rgba(30,25,10,0.05)',
         }}>
@@ -1663,7 +1903,7 @@ function Home({ tweaks }) {
             <div style={{ fontSize: 15, fontWeight: 600 }}>Norēķinu konts</div>
             <div style={{
               fontSize: 11.5, color: BRAND.mute, marginTop: 2, display: 'flex', alignItems: 'center', gap: 3,
-              letterSpacing: '-0.1px', whiteSpace: 'nowrap',
+              letterSpacing: 0, whiteSpace: 'nowrap',
             }}>
               LV82 LMNX 1001 0100 6535 1
               <span style={{ marginLeft: 2, display: 'inline-flex' }}>{Icon.chev(10, BRAND.mute, 2.9)}</span>
@@ -1673,11 +1913,11 @@ function Home({ tweaks }) {
               marginTop: 14, display: 'inline-flex', alignItems: 'baseline', gap: 2,
               borderBottom: `3px solid ${BRAND.accent}`, paddingBottom: 2,
             }}>
-              <span style={{ fontSize: 30, fontWeight: 500, letterSpacing: '-0.8px' }}>€</span>
+              <span style={{ fontSize: 30, fontWeight: 500, letterSpacing: 0 }}>€</span>
               <span style={{
-                fontSize: 46, fontWeight: 500, lineHeight: '46px', letterSpacing: '-1.2px',
+                fontSize: 46, fontWeight: 500, lineHeight: '46px', letterSpacing: 0,
               }}>0</span>
-              <span style={{ fontSize: 22, fontWeight: 500, letterSpacing: '-0.4px', marginLeft: 2 }}>.00</span>
+              <span style={{ fontSize: 22, fontWeight: 500, letterSpacing: 0, marginLeft: 2 }}>.00</span>
             </div>
 
             <div style={{
@@ -1692,9 +1932,9 @@ function Home({ tweaks }) {
 
       {/* ——— Quick actions ——— */}
       <div style={{ display: 'flex', padding: '20px 20px 6px', gap: 8 }}>
-        <QuickAction icon={Icon.card()} label="Izveidot karti"/>
-        <QuickAction icon={Icon.send()} label={<>Sūtīt,<br/>pieprasīt</>}/>
-        <QuickAction icon={Icon.chart()} label="Papildināt"/>
+        <QuickAction icon={Icon.card()} label="Izveidot karti" ariaLabel="Izveidot karti"/>
+        <QuickAction icon={Icon.send()} label={<>Sūtīt,<br/>pieprasīt</>} ariaLabel="Sūtīt vai pieprasīt"/>
+        <QuickAction icon={Icon.chart()} label="Papildināt" ariaLabel="Papildināt"/>
       </div>
 
       {/* ——— Promo carousel ——— */}
@@ -1705,13 +1945,20 @@ function Home({ tweaks }) {
           {currentPromo === 'goal' && <PromoGoal onClose={() => setDismissed(true)}/>}
 
           {tweaks.promo === 'auto' && (
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 14 }}>
+            <div role="group" aria-label="Piedāvājumu karuselis" style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 14 }}>
               {promos.map((_, i) => (
-                <button key={i} onClick={() => setPromo(i)} style={{
-                  width: i === promo ? 18 : 6, height: 6, borderRadius: 3,
-                  background: i === promo ? BRAND.ink : '#CFCABD', border: 0, cursor: 'pointer',
-                  transition: 'width 0.25s',
-                }}/>
+                <button type="button" key={i} aria-label={`Rādīt ${i + 1}. piedāvājumu`} aria-pressed={i === promo} onClick={() => setPromo(i)} style={{
+                  width: 18, height: 18, borderRadius: 9, padding: 0,
+                  background: 'transparent', border: 0, cursor: 'pointer',
+                  display: 'grid', placeItems: 'center',
+                }}>
+                  <span aria-hidden="true" style={{
+                    width: 6, height: 6, borderRadius: 3,
+                    background: i === promo ? BRAND.ink : '#CFCABD',
+                    transform: i === promo ? 'scaleX(3)' : 'scaleX(1)',
+                    transition: 'transform 0.25s',
+                  }}/>
+                </button>
               ))}
             </div>
           )}
@@ -1721,7 +1968,7 @@ function Home({ tweaks }) {
       {/* ——— Transactions ——— */}
       <div style={{ padding: '28px 20px 0' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.3px' }}>Darījumi</div>
+          <div style={{ fontSize: 18, fontWeight: 600, letterSpacing: 0 }}>Darījumi</div>
           {Icon.dots()}
         </div>
         <div style={{ fontSize: 14, color: BRAND.mute, marginTop: 8 }}>
@@ -1734,7 +1981,7 @@ function Home({ tweaks }) {
       {/* ——— Quick contacts ——— */}
       <div style={{ padding: '20px 20px 0' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.3px' }}>Ātrie kontakti</div>
+          <div style={{ fontSize: 18, fontWeight: 600, letterSpacing: 0 }}>Ātrie kontakti</div>
           {Icon.dots()}
         </div>
       </div>
@@ -1750,9 +1997,9 @@ function Home({ tweaks }) {
       {/* ——— Bottom nav ——— */}
       <div style={{ flexShrink: 0, padding: '10px 12px 18px' }}>
         <div style={{
-          background: BRAND.card, borderRadius: 34,
+          background: BRAND.card, borderRadius: 16,
           padding: '7px 8px', display: 'flex', gap: 0, alignItems: 'center',
-          boxShadow: '0 2px 3px rgba(30,25,10,0.05), 0 12px 18px rgba(30,25,10,0.18), 0 1px 0 rgba(255,255,255,0.75) inset',
+          boxShadow: '0 2px 8px rgba(17,23,19,0.10)',
         }}>
           <NavItem icon={Icon.home(nav === 'Home')} label="Sākums"
                    active={nav === 'Home'} onClick={() => setNav('Home')}/>
