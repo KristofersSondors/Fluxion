@@ -9,6 +9,10 @@ const slides = [
   { id: "issue", component: IssueSlide },
   { id: "solution", component: SolutionSlide },
   { id: "prototype", component: PrototypeSlide },
+  { id: "operating", component: OperatingSlide },
+  { id: "bank", component: BankActionSlide },
+  { id: "selling", component: SellingPointsSlide },
+  { id: "close", component: ClosingSlide },
 ];
 
 function TitleSlide() {
@@ -29,11 +33,16 @@ function IssueSlide() {
   ];
 
   return h("section", { className: "slide slide-yellow slide-issue" },
-    h("div", { className: "argument" },
+    h("div", { className: "issue-layout" },
+      h("div", { className: "argument issue-copy" },
       h("h1", null, "Fixed pension payments do not fit real income."),
       h("ul", { className: "argument-list" },
         items.map((item) => h("li", { key: item }, item))
       )
+      )
+    ),
+    h("div", { className: "issue-visual", "aria-hidden": "true" },
+      h("img", { src: "../Roper.png", alt: "" })
     )
   );
 }
@@ -48,10 +57,12 @@ function SolutionSlide() {
   ];
 
   return h("section", { className: "slide slide-yellow slide-solution" },
-    h("div", { className: "argument" },
-      h("h1", null, "Fixed pension payments do not fit real income."),
+    h("div", { className: "solution-layout" },
+      h("div", { className: "argument solution-copy" },
+      h("h1", null, "Fluxion adapts pension savings to real life."),
       h("ul", { className: "argument-list" },
         items.map((item) => h("li", { key: item }, item))
+      )
       )
     )
   );
@@ -61,19 +72,26 @@ function PrototypeSlide({ prototypeStep = 0 }) {
   const [ctaCompleted, setCtaCompleted] = useState(prototypeStep > 1);
   const [showContributionAfterMode, setShowContributionAfterMode] = useState(prototypeStep > 2);
   const [showBufferAfterContinue, setShowBufferAfterContinue] = useState(false);
+  const [showFinalAfterLimit, setShowFinalAfterLimit] = useState(prototypeStep >= 6);
   const clickStarted = prototypeStep === 1 && !ctaCompleted;
   const centered = prototypeStep > 1 || ctaCompleted;
   const showOnboarding = centered;
   const showContributionScreen = (prototypeStep === 2 && showContributionAfterMode) || (prototypeStep >= 3 && prototypeStep < 4) || (prototypeStep === 4 && !showBufferAfterContinue);
   const sliderDragged = prototypeStep >= 3 && (prototypeStep < 4 || (prototypeStep === 4 && !showBufferAfterContinue));
   const showBufferScreen = prototypeStep >= 5 || (prototypeStep === 4 && showBufferAfterContinue);
+  const showFinalScreen = prototypeStep === 6 && showFinalAfterLimit;
   const phoneLeft = prototypeStep >= 5 || (prototypeStep === 4 && showBufferAfterContinue);
+  const phoneRightExplain = showContributionScreen && !phoneLeft && prototypeStep <= 4;
+  const showLeftExplainLayer = (showContributionScreen && !phoneLeft && prototypeStep <= 4) || (prototypeStep === 4 && showBufferAfterContinue);
   const modeContinueClicked = prototypeStep === 2 && !showContributionAfterMode;
   const contributionContinueClicked = prototypeStep === 4 && !showBufferAfterContinue;
+  const monthlyLimitContinueClicked = prototypeStep === 6 && !showFinalAfterLimit;
   const bufferClicked = prototypeStep === 5;
   const [showMonthlyLimitScreen, setShowMonthlyLimitScreen] = useState(false);
+  const monthlyLimitVisible = showMonthlyLimitScreen || prototypeStep >= 6;
   const centerOffset = typeof window === "undefined" ? 0 : Math.round(window.innerWidth * -0.19);
   const leftOffset = typeof window === "undefined" ? 0 : Math.round(window.innerWidth * -0.32);
+  const rightOffset = typeof window === "undefined" ? 0 : Math.round(window.innerWidth * -0.02);
 
   useEffect(() => {
     if (prototypeStep === 0) {
@@ -116,15 +134,28 @@ function PrototypeSlide({ prototypeStep = 0 }) {
   }, [prototypeStep]);
 
   useEffect(() => {
-    if (!bufferClicked) {
+    if (!bufferClicked && prototypeStep < 6) {
       setShowMonthlyLimitScreen(false);
+      return undefined;
+    }
+    if (prototypeStep >= 6) {
+      setShowMonthlyLimitScreen(true);
       return undefined;
     }
     const timer = window.setTimeout(() => setShowMonthlyLimitScreen(true), 1250);
     return () => window.clearTimeout(timer);
-  }, [bufferClicked]);
+  }, [bufferClicked, prototypeStep]);
 
-  return h("section", { className: `slide prototype-slide${centered ? " is-clicked" : ""}${showOnboarding ? " is-onboarding" : ""}${phoneLeft ? " is-left-explain" : ""}` },
+  useEffect(() => {
+    if (prototypeStep !== 6) {
+      setShowFinalAfterLimit(false);
+      return undefined;
+    }
+    const timer = window.setTimeout(() => setShowFinalAfterLimit(true), 820);
+    return () => window.clearTimeout(timer);
+  }, [prototypeStep]);
+
+  return h("section", { className: `slide prototype-slide${centered ? " is-clicked" : ""}${showOnboarding ? " is-onboarding" : ""}${phoneLeft ? " is-left-explain" : ""}${phoneRightExplain ? " is-right-explain" : ""}` },
     h(motion.div, {
       className: "prototype-copy",
       initial: { x: -34 },
@@ -147,9 +178,12 @@ function PrototypeSlide({ prototypeStep = 0 }) {
       animate: { x: 0, opacity: 1 },
       transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
     }, "Fluxion keeps the setup understandable by explaining each financial safety choice at the moment it matters.") : null,
+    showLeftExplainLayer ? h("div", {
+      className: "left-explanation-panel",
+    }, "Fluxion turns pension saving into a monthly amount that adapts before the user commits.") : null,
     h(motion.div, {
       className: "phone-stage",
-      animate: phoneLeft ? { x: leftOffset } : centered ? { x: centerOffset } : { x: 0 },
+      animate: phoneLeft ? { x: leftOffset } : phoneRightExplain ? { x: rightOffset } : centered ? { x: centerOffset } : { x: 0 },
       transition: { duration: 0.82, ease: [0.16, 1, 0.3, 1] },
     },
       h(motion.div, {
@@ -159,11 +193,10 @@ function PrototypeSlide({ prototypeStep = 0 }) {
         transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
       },
         showOnboarding
-          ? h(OnboardingPhoneScreen2, { modeContinueClicked, contributionContinueClicked, showContributionScreen, sliderDragged, showBufferScreen, bufferClicked, showMonthlyLimitScreen })
+          ? h(OnboardingPhoneScreen2, { modeContinueClicked, contributionContinueClicked, monthlyLimitContinueClicked, showContributionScreen, sliderDragged, showSliderCursor: prototypeStep === 3, showBufferScreen, bufferClicked, showMonthlyLimitScreen: monthlyLimitVisible, showFinalScreen })
           : h(PensionPhoneScreen, { clicked: clickStarted }),
         clickStarted ? h(CtaCursor) : null,
-        prototypeStep === 3 ? h(SliderCursor) : null,
-        (modeContinueClicked || contributionContinueClicked) ? h(ContinueCursor) : null,
+        (modeContinueClicked || contributionContinueClicked || monthlyLimitContinueClicked) ? h(ContinueCursor) : null,
         bufferClicked && !showMonthlyLimitScreen ? h(BufferCursor) : null
       )
     )
@@ -298,7 +331,7 @@ function OnboardingPhoneScreen() {
   );
 }
 
-function OnboardingPhoneScreen2({ modeContinueClicked, contributionContinueClicked, showContributionScreen, sliderDragged, showBufferScreen, bufferClicked, showMonthlyLimitScreen }) {
+function OnboardingPhoneScreen2({ modeContinueClicked, contributionContinueClicked, monthlyLimitContinueClicked, showContributionScreen, sliderDragged, showSliderCursor, showBufferScreen, bufferClicked, showMonthlyLimitScreen, showFinalScreen }) {
   return h(React.Fragment, null,
     h("div", { className: "status-bar" },
       h("span", null, "9:41"),
@@ -315,9 +348,9 @@ function OnboardingPhoneScreen2({ modeContinueClicked, contributionContinueClick
       transition: { duration: 0.42, ease: [0.22, 1, 0.36, 1] },
     },
       showBufferScreen
-        ? showMonthlyLimitScreen ? h(MonthlyLimitScreen) : h(BufferScreen, { bufferClicked })
+        ? showFinalScreen ? h(FinalOnboardingScreen) : showMonthlyLimitScreen ? h(MonthlyLimitScreen, { continueClicked: monthlyLimitContinueClicked }) : h(BufferScreen, { bufferClicked })
         : showContributionScreen
-          ? h(ContributionScreen2, { sliderDragged, continueClicked: contributionContinueClicked })
+          ? h(ContributionScreen2, { sliderDragged, showSliderCursor, continueClicked: contributionContinueClicked })
           : h(ContributionModeScreen, { continueClicked: modeContinueClicked })
     ),
     h("div", { className: "home-indicator" })
@@ -418,7 +451,7 @@ function ContributionScreen() {
   );
 }
 
-function ContributionScreen2({ sliderDragged, continueClicked }) {
+function ContributionScreen2({ sliderDragged, showSliderCursor, continueClicked }) {
   return h(motion.div, {
     className: "onboarding-page",
     initial: { x: 70, opacity: 0 },
@@ -437,7 +470,9 @@ function ContributionScreen2({ sliderDragged, continueClicked }) {
     ),
     h("div", { className: `range-track${sliderDragged ? " is-ten" : ""}` },
       h("span", { className: "range-fill" }),
-      h("span", { className: "range-thumb" })
+      h("span", { className: "range-thumb" },
+        showSliderCursor ? h(SliderCursor) : null
+      )
     ),
     h("div", { className: "chip-row" },
       h("span", null, "5%"),
@@ -476,7 +511,7 @@ function BufferScreen({ bufferClicked }) {
   );
 }
 
-function MonthlyLimitScreen() {
+function MonthlyLimitScreen({ continueClicked }) {
   return h(motion.div, {
     className: "onboarding-page",
     initial: { x: 70, opacity: 0 },
@@ -495,7 +530,45 @@ function MonthlyLimitScreen() {
       h("span", { className: "active" }, "250 €"),
       h("span", null, "400 €")
     ),
-    h("button", { className: "onboarding-next", type: "button" }, "Turpināt")
+    h(motion.button, {
+      className: "onboarding-next",
+      type: "button",
+      animate: continueClicked ? { scale: [1, 0.97, 1] } : { scale: 1 },
+      transition: { duration: 0.2, delay: 0.42 },
+    }, "Turpināt")
+  );
+}
+
+function FinalOnboardingScreen() {
+  return h(motion.div, {
+    className: "onboarding-page final-onboarding-page",
+    initial: { x: 70, opacity: 0 },
+    animate: { x: 0, opacity: 1 },
+    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+  },
+    h(ProgressDots, { active: 4 }),
+    h("div", { className: "final-check", "aria-hidden": "true" }, "✓"),
+    h("h2", null, "Dinamiskā iemaksa ir gatava"),
+    h("p", { className: "screen-subtitle final-subtitle" }, "Fluxion aprēķinās iemaksu algas dienā un nepārsniegs tavus drošības limitus."),
+    h("div", { className: "setup-summary" },
+      h("div", null,
+        h("span", null, "Mērķa iemaksa"),
+        h("strong", null, "~240 €")
+      ),
+      h("div", null,
+        h("span", null, "Minimālais atlikums"),
+        h("strong", null, "500 €")
+      ),
+      h("div", null,
+        h("span", null, "Mēneša limits"),
+        h("strong", null, "250 €")
+      )
+    ),
+    h("div", { className: "final-note" },
+      h("strong", null, "Pirmā pārbaude"),
+      h("span", null, "Nākamajā algas dienā")
+    ),
+    h("button", { className: "onboarding-next", type: "button" }, "Apstiprināt")
   );
 }
 
@@ -576,6 +649,155 @@ function GridIcon() {
   );
 }
 
+function OperatingSlide() {
+  const steps = [
+    {
+      number: "1",
+      title: "Inside the banking app",
+      text: "The pension offer appears where the user already checks salary, spending, and savings.",
+    },
+    {
+      number: "2",
+      title: "Dynamic contribution",
+      text: "Fluxion calculates the monthly amount from salary, spending, floor, ceiling, and user limits.",
+    },
+    {
+      number: "3",
+      title: "Safety controls",
+      text: "The user sets minimum balance and monthly cap before the payment rule is activated.",
+    },
+    {
+      number: "4",
+      title: "Transparent investing",
+      text: "Banks compete through visible plans, annual results, and easy switching inside one flow.",
+    },
+  ];
+
+  return h("section", { className: "slide slide-light operating-slide" },
+    h("div", { className: "post-header" },
+      h("h1", null, "What happens after onboarding?"),
+      h("p", null, "The prototype is not just signup. It is the operating model for third-pillar pension saving.")
+    ),
+    h("div", { className: "operating-grid" },
+      steps.map((step) => h("section", { className: "operating-step", key: step.number },
+        h("span", { className: "step-number" }, step.number),
+        h("h2", null, step.title),
+        h("p", null, step.text)
+      ))
+    )
+  );
+}
+
+function BankActionSlide() {
+  const actions = [
+    {
+      title: "Plan selection",
+      text: "Banks publish preferred third-pillar plans that can be selected directly in the flow.",
+    },
+    {
+      title: "Annual reports",
+      text: "Each bank provides yearly performance summaries so users understand what happened.",
+    },
+    {
+      title: "Competition layer",
+      text: "Results sit side by side, pushing banks to improve funds, fees, and communication.",
+    },
+  ];
+
+  return h("section", { className: "slide slide-light bank-slide" },
+    h("div", { className: "bank-copy" },
+      h("h1", null, "Action from the bank side"),
+      h("p", null, "Banks do not need to rebuild pension infrastructure. They need to expose the plans, reporting, and competition signals Fluxion uses in the onboarding flow."),
+      h("ul", { className: "bank-bullets" },
+        h("li", null, "Connect available third-pillar pension plans"),
+        h("li", null, "Send annual performance and fee data"),
+        h("li", null, "Let users compare and switch without leaving the bank")
+      )
+    ),
+    h("div", { className: "bank-actions" },
+      actions.map((action, index) => h("section", { className: "bank-action", key: action.title },
+        h("div", { className: "bank-icon" }, h(BankActionIcon, { type: index })),
+        h("div", null,
+          h("h2", null, action.title),
+          h("p", null, action.text)
+        )
+      ))
+    )
+  );
+}
+
+function SellingPointsSlide() {
+  const points = [
+    ["Onboard more people", "A pension flow inside the bank reaches users who would not open a separate pension product."],
+    ["Users stay active", "Dynamic payments react every month, so the product keeps proving its value."],
+    ["All pension plans in one place", "The bank becomes the pension control surface, not just the payment account."],
+    ["Clear understanding", "Users see the contribution logic before committing, including limits and safety buffers."],
+    ["Banks compete on results", "Transparent annual performance makes better funds and clearer reporting visible."],
+  ];
+
+  return h("section", { className: "slide slide-light selling-slide" },
+    h("div", { className: "post-header compact" },
+      h("h1", null, "Unique selling points")
+    ),
+    h("div", { className: "selling-grid" },
+      points.map(([title, text], index) => h("section", { className: "selling-point", key: title },
+        h("div", { className: "selling-icon" }, h(SellingIcon, { type: index })),
+        h("h2", null, title),
+        h("p", null, text)
+      ))
+    )
+  );
+}
+
+function ClosingSlide() {
+  return h("section", { className: "slide close-slide" },
+    h("div", { className: "close-copy" },
+      h("span", null, "Fix the road"),
+      h("h1", null, "Invest smart like Fluxion")
+    ),
+    h("div", { className: "road-scene", "aria-hidden": "true" },
+      h("div", { className: "road" },
+        h("span", { className: "road-line" }),
+        h("span", { className: "road-crack crack-one" }),
+        h("span", { className: "road-crack crack-two" }),
+        h("span", { className: "road-crack crack-three" })
+      )
+    )
+  );
+}
+
+function BankActionIcon({ type }) {
+  if (type === 0) {
+    return h("svg", { viewBox: "0 0 48 48", fill: "none", "aria-hidden": "true" },
+      h("circle", { cx: "24", cy: "16", r: "5", stroke: "currentColor", strokeWidth: "2" }),
+      h("path", { d: "M12 36c2-8 7-12 12-12s10 4 12 12M9 39h30", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" }),
+      h("path", { d: "M15 18 24 8l9 10", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" })
+    );
+  }
+  if (type === 1) {
+    return h("svg", { viewBox: "0 0 48 48", fill: "none", "aria-hidden": "true" },
+      h("path", { d: "M14 8h16l6 6v26H14V8Z", stroke: "currentColor", strokeWidth: "2", strokeLinejoin: "round" }),
+      h("path", { d: "M30 8v8h8M19 31l5-6 4 4 5-8M19 36h14", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" })
+    );
+  }
+  return h("svg", { viewBox: "0 0 48 48", fill: "none", "aria-hidden": "true" },
+    h("path", { d: "M10 36h28M14 32V18h6v14M22 32V12h6v20M30 32V22h6v10", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }),
+    h("path", { d: "M11 14c8 2 17 1 26-5M33 8l5 1-1 5", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" })
+  );
+}
+
+function SellingIcon({ type }) {
+  const icons = [
+    h("path", { d: "M24 8v32M8 24h32M14 14l20 20M34 14 14 34", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" }),
+    h("path", { d: "M12 32h24M16 32V20h5v12M24 32V12h5v20M32 32V18h5v14M10 14h6M8 18h8", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }),
+    h("path", { d: "M8 24h32M24 8v32", stroke: "currentColor", strokeWidth: "2.4", strokeLinecap: "round" }),
+    h("path", { d: "M10 13h28v20H10V13ZM17 39h14M24 33v6", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }),
+    h("path", { d: "M12 38h24V16L24 8 12 16v22ZM18 38V24h12v14M18 17h12", stroke: "currentColor", strokeWidth: "2", strokeLinejoin: "round" }),
+  ];
+
+  return h("svg", { viewBox: "0 0 48 48", fill: "none", "aria-hidden": "true" }, icons[type]);
+}
+
 function App() {
   const [current, setCurrent] = useState(getInitialSlideIndex);
   const [direction, setDirection] = useState(1);
@@ -593,7 +815,7 @@ function App() {
   }, []);
 
   const next = useCallback(() => {
-    if (slides[current].id === "prototype" && prototypeStep < 5) {
+    if (slides[current].id === "prototype" && prototypeStep < 6) {
       setPrototypeStep(step => step + 1);
       return;
     }
@@ -678,7 +900,7 @@ function isYellowSlide(index) {
 function getInitialPrototypeStep() {
   const params = new URLSearchParams(window.location.search);
   const requested = Number(params.get("demo") || 0);
-  return Number.isFinite(requested) ? Math.max(0, Math.min(5, requested)) : 0;
+  return Number.isFinite(requested) ? Math.max(0, Math.min(6, requested)) : 0;
 }
 
 createRoot(document.getElementById("root")).render(h(App));
