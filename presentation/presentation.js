@@ -157,7 +157,7 @@ function PrototypeSlide({ prototypeStep = 0 }) {
 
   return h("section", { className: `slide prototype-slide${centered ? " is-clicked" : ""}${showOnboarding ? " is-onboarding" : ""}${phoneLeft ? " is-left-explain" : ""}${phoneRightExplain ? " is-right-explain" : ""}` },
     h(motion.div, {
-      className: "prototype-copy",
+      className: "prototype-copy prototype-copy-card",
       initial: { x: -34 },
       animate: centered ? { x: -70, opacity: 0 } : { x: 0, opacity: 1 },
       transition: { duration: 0.48, ease: [0.22, 1, 0.36, 1] },

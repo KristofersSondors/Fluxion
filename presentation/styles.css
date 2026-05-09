@@ -1,5 +1,5 @@
 :root {
-  --indexo-yellow: #ffeb00;
+  --indexo-yellow: #f2f0ed;
   --ink: #121212;
   --muted: #60656f;
   --line: #e2e5ea;
@@ -294,6 +294,15 @@ button {
   justify-content: center;
   position: relative;
   z-index: 1;
+}
+
+.prototype-copy-card {
+  max-width: min(620px, 100%);
+  align-self: center;
+  padding: clamp(34px, 4vw, 54px);
+  border-radius: clamp(28px, 3vw, 40px);
+  background: #ffeb00;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
 }
 
 .prototype-copy h1 {
