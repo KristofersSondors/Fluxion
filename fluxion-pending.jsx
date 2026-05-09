@@ -637,4 +637,158 @@ function PendingDetailScreen({ onBack }) {
   );
 }
 
-Object.assign(window, { NotificationScreen, NotificationArrivedScreen, PendingListScreen, PendingDetailScreen });
+// ─────────────────────────────────────────────────────────────
+// SCREEN — Combined homescreen with interactive notification
+// ─────────────────────────────────────────────────────────────
+function HomescreenNotifScreen({ onOpenPending }) {
+  const [expanded, setExpanded] = React.useState(false);
+  const [dropped, setDropped] = React.useState(false);
+
+  React.useEffect(() => {
+    const t = setTimeout(() => {
+      setDropped(true);
+    }, 200);
+    return () => clearTimeout(t);
+  }, []);
+
+  const sharedGlass = {
+    backdropFilter: 'blur(28px) saturate(180%)',
+    WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+    boxShadow: '0 6px 28px rgba(0,0,0,0.16), 0 1px 4px rgba(0,0,0,0.07)',
+    border: '0.5px solid rgba(0,0,0,0.06)',
+  };
+
+  const AppIcon = ({ src, bg, blendBg, label, children }) => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, width: 72 }}>
+      <div style={{
+        width: 60, height: 60, borderRadius: 14, overflow: 'hidden',
+        background: blendBg || (src ? 'transparent' : bg),
+        display: 'grid', placeItems: 'center',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+      }}>
+        {src
+          ? <img src={src} alt={label} style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', mixBlendMode: blendBg ? 'multiply' : 'normal' }}/>
+          : children}
+      </div>
+      <span style={{ fontSize: 11, color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,0.5)', textAlign: 'center', lineHeight: '14px' }}>{label}</span>
+    </div>
+  );
+
+  const DockIcon = ({ src, bg, blendBg, children }) => (
+    <div style={{
+      width: 56, height: 56, borderRadius: 13, overflow: 'hidden',
+      background: blendBg || (src ? 'transparent' : bg),
+      display: 'grid', placeItems: 'center',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.35)',
+    }}>
+      {src ? <img src={src} alt="" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', mixBlendMode: blendBg ? 'multiply' : 'normal' }}/> : children}
+    </div>
+  );
+
+  return (
+    <IOSDevice width={402} height={874} dark={true} statusBarTime="9:41">
+      <div style={{ position: 'relative', height: '100%', overflow: 'hidden' }}>
+
+        {/* wallpaper — fully coded */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, #0d1b2a 0%, #1b2d3e 30%, #0d3d30 60%, #1a5c42 80%, #0a2a20 100%)' }}>
+          {/* blob top-right */}
+          <div style={{
+            position: 'absolute', top: -80, right: -60,
+            width: 320, height: 320, borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(30,90,180,0.55) 0%, transparent 70%)',
+          }}/>
+          {/* blob middle */}
+          <div style={{
+            position: 'absolute', top: '30%', left: '-10%',
+            width: 280, height: 280, borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(20,120,100,0.45) 0%, transparent 70%)',
+          }}/>
+          {/* blob bottom-left */}
+          <div style={{
+            position: 'absolute', bottom: 60, left: -40,
+            width: 260, height: 260, borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(40,160,120,0.4) 0%, transparent 70%)',
+          }}/>
+          {/* blob bottom-right */}
+          <div style={{
+            position: 'absolute', bottom: 0, right: -20,
+            width: 200, height: 200, borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(10,60,120,0.5) 0%, transparent 70%)',
+          }}/>
+        </div>
+
+        {/* app grid — 4 icons */}
+        <div style={{
+          position: 'absolute', top: 310, left: 0, right: 0,
+          display: 'flex', justifyContent: 'space-around', padding: '0 16px',
+        }}>
+          <AppIcon src="instagram.svg" label="Instagram"/>
+          <AppIcon src="indeoxapp.png" label="Indexo"/>
+        </div>
+
+        {/* dock */}
+        <div style={{
+          position: 'absolute', bottom: 28, left: 20, right: 20,
+          background: 'rgba(255,255,255,0.18)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderRadius: 26, padding: '12px 20px',
+          display: 'flex', justifyContent: 'space-around', alignItems: 'center',
+        }}>
+          <DockIcon src="Call.webp"/>
+          <DockIcon src="IMessage_logo.svg.png"/>
+          <DockIcon src="Chrome.png"/>
+          <DockIcon src="spotify-mobile-apps-icon-free-png.webp"/>
+        </div>
+
+        {/* interactive notification */}
+        <div
+          onMouseEnter={() => setExpanded(true)}
+          onMouseLeave={() => setExpanded(false)}
+          style={{
+            position: 'absolute', top: 58, left: 10, right: 10, zIndex: 100,
+            transform: dropped ? 'translateY(0)' : 'translateY(-160px)',
+            transition: 'transform 0.55s cubic-bezier(0.34, 1.5, 0.64, 1)',
+          }}
+        >
+          {/* banner card */}
+          <div style={{
+            ...sharedGlass,
+            background: expanded ? 'rgba(255,255,255,0.94)' : 'rgba(255,255,255,0.72)',
+            borderRadius: 20, padding: '12px 14px 14px',
+            transition: 'background 0.25s ease',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+              <img src="indexo.png" alt="Indexo" style={{ width: 36, height: 36, borderRadius: 9, flexShrink: 0, display: 'block' }}/>
+              <span style={{ flex: 1, fontSize: 13, fontWeight: 700, color: P.ink }}>Indexo</span>
+              <span style={{ fontSize: 12, color: P.mute }}>tagad</span>
+            </div>
+            <div style={{ fontSize: 14.5, color: P.ink, lineHeight: '21px' }}>
+              Šomēnes Indexo ieguldīs <strong>€46</strong> tavā trešā līmeņa pensijā.
+            </div>
+          </div>
+
+          {/* pārskatīt pill — fades in on expand */}
+          <div style={{
+            marginTop: 8,
+            opacity: expanded ? 1 : 0,
+            transform: expanded ? 'translateY(0)' : 'translateY(-6px)',
+            transition: 'opacity 0.2s ease, transform 0.2s ease',
+            pointerEvents: expanded ? 'auto' : 'none',
+          }}>
+            <button type="button" onClick={onOpenPending} style={{
+              ...sharedGlass,
+              width: '100%', border: 0, borderRadius: 16, padding: '14px',
+              background: 'rgba(210,210,216,0.82)',
+              fontSize: 16, fontWeight: 500, color: P.ink,
+              cursor: 'pointer', textAlign: 'center', fontFamily: 'inherit',
+            }}>Pārskatīt</button>
+          </div>
+        </div>
+
+      </div>
+    </IOSDevice>
+  );
+}
+
+Object.assign(window, { NotificationScreen, NotificationArrivedScreen, HomescreenNotifScreen, PendingListScreen, PendingDetailScreen });

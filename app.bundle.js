@@ -6709,9 +6709,276 @@ function PendingDetailScreen({
     }
   }, "Izlaist")))))));
 }
+function HomescreenNotifScreen({
+  onOpenPending
+}) {
+  const [expanded, setExpanded] = React.useState(false);
+  const [dropped, setDropped] = React.useState(false);
+  React.useEffect(() => {
+    const t = setTimeout(() => {
+      setDropped(true);
+    }, 200);
+    return () => clearTimeout(t);
+  }, []);
+  const sharedGlass = {
+    backdropFilter: 'blur(28px) saturate(180%)',
+    WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+    boxShadow: '0 6px 28px rgba(0,0,0,0.16), 0 1px 4px rgba(0,0,0,0.07)',
+    border: '0.5px solid rgba(0,0,0,0.06)'
+  };
+  const AppIcon = ({
+    src,
+    bg,
+    blendBg,
+    label,
+    children
+  }) => React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 5,
+      width: 72
+    }
+  }, React.createElement("div", {
+    style: {
+      width: 60,
+      height: 60,
+      borderRadius: 14,
+      overflow: 'hidden',
+      background: blendBg || (src ? 'transparent' : bg),
+      display: 'grid',
+      placeItems: 'center',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
+    }
+  }, src ? React.createElement("img", {
+    src: src,
+    alt: label,
+    style: {
+      width: '100%',
+      height: '100%',
+      display: 'block',
+      objectFit: 'cover',
+      mixBlendMode: blendBg ? 'multiply' : 'normal'
+    }
+  }) : children), React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: '#fff',
+      textShadow: '0 1px 3px rgba(0,0,0,0.5)',
+      textAlign: 'center',
+      lineHeight: '14px'
+    }
+  }, label));
+  const DockIcon = ({
+    src,
+    bg,
+    blendBg,
+    children
+  }) => React.createElement("div", {
+    style: {
+      width: 56,
+      height: 56,
+      borderRadius: 13,
+      overflow: 'hidden',
+      background: blendBg || (src ? 'transparent' : bg),
+      display: 'grid',
+      placeItems: 'center',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.35)'
+    }
+  }, src ? React.createElement("img", {
+    src: src,
+    alt: "",
+    style: {
+      width: '100%',
+      height: '100%',
+      display: 'block',
+      objectFit: 'cover',
+      mixBlendMode: blendBg ? 'multiply' : 'normal'
+    }
+  }) : children);
+  return React.createElement(IOSDevice, {
+    width: 402,
+    height: 874,
+    dark: true,
+    statusBarTime: "9:41"
+  }, React.createElement("div", {
+    style: {
+      position: 'relative',
+      height: '100%',
+      overflow: 'hidden'
+    }
+  }, React.createElement("div", {
+    style: {
+      position: 'absolute',
+      inset: 0,
+      background: 'linear-gradient(160deg, #0d1b2a 0%, #1b2d3e 30%, #0d3d30 60%, #1a5c42 80%, #0a2a20 100%)'
+    }
+  }, React.createElement("div", {
+    style: {
+      position: 'absolute',
+      top: -80,
+      right: -60,
+      width: 320,
+      height: 320,
+      borderRadius: '50%',
+      background: 'radial-gradient(circle, rgba(30,90,180,0.55) 0%, transparent 70%)'
+    }
+  }), React.createElement("div", {
+    style: {
+      position: 'absolute',
+      top: '30%',
+      left: '-10%',
+      width: 280,
+      height: 280,
+      borderRadius: '50%',
+      background: 'radial-gradient(circle, rgba(20,120,100,0.45) 0%, transparent 70%)'
+    }
+  }), React.createElement("div", {
+    style: {
+      position: 'absolute',
+      bottom: 60,
+      left: -40,
+      width: 260,
+      height: 260,
+      borderRadius: '50%',
+      background: 'radial-gradient(circle, rgba(40,160,120,0.4) 0%, transparent 70%)'
+    }
+  }), React.createElement("div", {
+    style: {
+      position: 'absolute',
+      bottom: 0,
+      right: -20,
+      width: 200,
+      height: 200,
+      borderRadius: '50%',
+      background: 'radial-gradient(circle, rgba(10,60,120,0.5) 0%, transparent 70%)'
+    }
+  })), React.createElement("div", {
+    style: {
+      position: 'absolute',
+      top: 310,
+      left: 0,
+      right: 0,
+      display: 'flex',
+      justifyContent: 'space-around',
+      padding: '0 16px'
+    }
+  }, React.createElement(AppIcon, {
+    src: "instagram.svg",
+    label: "Instagram"
+  }), React.createElement(AppIcon, {
+    src: "indeoxapp.png",
+    label: "Indexo"
+  })), React.createElement("div", {
+    style: {
+      position: 'absolute',
+      bottom: 28,
+      left: 20,
+      right: 20,
+      background: 'rgba(255,255,255,0.18)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      borderRadius: 26,
+      padding: '12px 20px',
+      display: 'flex',
+      justifyContent: 'space-around',
+      alignItems: 'center'
+    }
+  }, React.createElement(DockIcon, {
+    src: "Call.webp"
+  }), React.createElement(DockIcon, {
+    src: "IMessage_logo.svg.png"
+  }), React.createElement(DockIcon, {
+    src: "Chrome.png"
+  }), React.createElement(DockIcon, {
+    src: "spotify-mobile-apps-icon-free-png.webp"
+  })), React.createElement("div", {
+    onMouseEnter: () => setExpanded(true),
+    onMouseLeave: () => setExpanded(false),
+    style: {
+      position: 'absolute',
+      top: 58,
+      left: 10,
+      right: 10,
+      zIndex: 100,
+      transform: dropped ? 'translateY(0)' : 'translateY(-160px)',
+      transition: 'transform 0.55s cubic-bezier(0.34, 1.5, 0.64, 1)'
+    }
+  }, React.createElement("div", {
+    style: {
+      ...sharedGlass,
+      background: expanded ? 'rgba(255,255,255,0.94)' : 'rgba(255,255,255,0.72)',
+      borderRadius: 20,
+      padding: '12px 14px 14px',
+      transition: 'background 0.25s ease'
+    }
+  }, React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 5
+    }
+  }, React.createElement("img", {
+    src: "indexo.png",
+    alt: "Indexo",
+    style: {
+      width: 36,
+      height: 36,
+      borderRadius: 9,
+      flexShrink: 0,
+      display: 'block'
+    }
+  }), React.createElement("span", {
+    style: {
+      flex: 1,
+      fontSize: 13,
+      fontWeight: 700,
+      color: P.ink
+    }
+  }, "Indexo"), React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: P.mute
+    }
+  }, "tagad")), React.createElement("div", {
+    style: {
+      fontSize: 14.5,
+      color: P.ink,
+      lineHeight: '21px'
+    }
+  }, "\u0160om\u0113nes Indexo ieguld\u012Bs ", React.createElement("strong", null, "\u20AC46"), " tav\u0101 tre\u0161\u0101 l\u012Bme\u0146a pensij\u0101.")), React.createElement("div", {
+    style: {
+      marginTop: 8,
+      opacity: expanded ? 1 : 0,
+      transform: expanded ? 'translateY(0)' : 'translateY(-6px)',
+      transition: 'opacity 0.2s ease, transform 0.2s ease',
+      pointerEvents: expanded ? 'auto' : 'none'
+    }
+  }, React.createElement("button", {
+    type: "button",
+    onClick: onOpenPending,
+    style: {
+      ...sharedGlass,
+      width: '100%',
+      border: 0,
+      borderRadius: 16,
+      padding: '14px',
+      background: 'rgba(210,210,216,0.82)',
+      fontSize: 16,
+      fontWeight: 500,
+      color: P.ink,
+      cursor: 'pointer',
+      textAlign: 'center',
+      fontFamily: 'inherit'
+    }
+  }, "P\u0101rskat\u012Bt")))));
+}
 Object.assign(window, {
   NotificationScreen,
   NotificationArrivedScreen,
+  HomescreenNotifScreen,
   PendingListScreen,
   PendingDetailScreen
 });
@@ -6723,11 +6990,8 @@ const SCREEN_DEFS = [{
   key: 'home',
   label: 'Sākums'
 }, {
-  key: 'notif-arrived',
-  label: 'Paz. ieradies'
-}, {
   key: 'notif',
-  label: 'Paz. atvērts'
+  label: 'Paziņojums'
 }, {
   key: 'list',
   label: 'Iemaksas'
@@ -6737,7 +7001,7 @@ const SCREEN_DEFS = [{
 }];
 function App() {
   const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
-  const [activeScreen, setActiveScreen] = React.useState('notif-arrived');
+  const [activeScreen, setActiveScreen] = React.useState('notif');
   React.useEffect(() => {
     document.documentElement.style.setProperty('--brand-accent', tweaks.accent);
   }, [tweaks.accent]);
@@ -6833,11 +7097,10 @@ function App() {
     height: 874
   }, React.createElement(Home, {
     tweaks: tweaks
-  }))), activeScreen === 'notif-arrived' && React.createElement("div", {
-    "data-screen-label": "Notification Arrived"
-  }, React.createElement(NotificationArrivedScreen, null)), activeScreen === 'notif' && React.createElement("div", {
-    "data-screen-label": "Notification Opened"
-  }, React.createElement(NotificationScreen, {
+  }))), activeScreen === 'notif' && React.createElement("div", {
+    "data-screen-label": "Pazi\u0146ojums"
+  }, React.createElement(HomescreenNotifScreen, {
+    key: Date.now(),
     onOpenPending: () => {
       goToDetail();
     }
