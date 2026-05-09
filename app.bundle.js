@@ -6478,38 +6478,16 @@ function PendingDetailScreen({
     style: {
       marginTop: 12
     }
-  }, React.createElement("div", {
-    style: {
-      position: 'relative',
-      height: 6,
-      borderRadius: 3,
-      background: 'rgba(255,255,255,0.18)'
-    }
-  }, React.createElement("div", {
-    style: {
-      position: 'absolute',
-      left: 0,
-      width: `${Math.round((amount - FLOOR) / (CEILING - FLOOR) * 100)}%`,
-      height: '100%',
-      background: P.accent,
-      borderRadius: 3
-    }
+  }, React.createElement(RangeInput, {
+    value: amount,
+    min: FLOOR,
+    max: CEILING,
+    onChange: setAmount
   }), React.createElement("div", {
-    style: {
-      position: 'absolute',
-      left: `${Math.round((TARGET - FLOOR) / (CEILING - FLOOR) * 100)}%`,
-      top: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: 2,
-      height: 12,
-      borderRadius: 1,
-      background: 'rgba(255,255,255,0.4)'
-    }
-  })), React.createElement("div", {
     style: {
       display: 'flex',
       justifyContent: 'space-between',
-      marginTop: 4
+      marginTop: -22
     }
   }, React.createElement("span", {
     style: {
@@ -6526,42 +6504,11 @@ function PendingDetailScreen({
       fontSize: 10.5,
       color: 'rgba(255,255,255,0.45)'
     }
-  }, "Maks ", fmt(CEILING))))), React.createElement("div", {
-    style: {
-      background: P.card,
-      borderRadius: 16,
-      padding: '12px 16px 10px',
-      border: `1px solid ${P.line}`
-    }
-  }, React.createElement("div", {
-    style: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 6
-    }
-  }, React.createElement("span", {
-    style: {
-      fontSize: 14,
-      fontWeight: 700
-    }
-  }, "Piel\u0101got summu"), React.createElement("span", {
-    style: {
-      fontSize: 20,
-      fontWeight: 800,
-      color: P.promo,
-      letterSpacing: -0.5
-    }
-  }, fmt(amount))), React.createElement(RangeInput, {
-    value: amount,
-    min: FLOOR,
-    max: CEILING,
-    onChange: setAmount
-  }), React.createElement("div", {
+  }, "Maks ", fmt(CEILING))), React.createElement("div", {
     style: {
       display: 'flex',
       gap: 6,
-      marginTop: 2
+      marginTop: 10
     }
   }, [FLOOR, TARGET, CEILING].map(v => React.createElement("button", {
     key: v,
@@ -6569,22 +6516,22 @@ function PendingDetailScreen({
     onClick: () => setAmount(v),
     style: {
       flex: 1,
-      border: `1px solid ${amount === v ? P.promo : P.line}`,
+      border: `1px solid ${amount === v ? P.accent : 'rgba(255,255,255,0.2)'}`,
       borderRadius: 8,
       padding: '5px 4px',
-      background: amount === v ? '#E8F5ED' : 'transparent',
-      color: amount === v ? P.promo : P.mute,
+      background: amount === v ? P.accent : 'rgba(255,255,255,0.06)',
+      color: amount === v ? P.ink : 'rgba(255,255,255,0.65)',
       fontSize: 12,
       fontWeight: 700,
       cursor: 'pointer'
     }
-  }, v === FLOOR ? 'Minimālais' : v === TARGET ? 'Ieteikts' : 'Drosmīgais', React.createElement("div", {
+  }, v === FLOOR ? 'Min' : v === TARGET ? 'Ieteikts' : 'Maks', React.createElement("div", {
     style: {
       fontSize: 10.5,
       fontWeight: 600,
       marginTop: 1
     }
-  }, fmt(v)))))), React.createElement("div", {
+  }, fmt(v))))))), React.createElement("div", {
     style: {
       background: P.warm,
       borderRadius: 16,
@@ -6687,8 +6634,7 @@ function PendingDetailScreen({
       fontSize: 16,
       fontWeight: 800,
       cursor: 'pointer',
-      letterSpacing: 0,
-      boxShadow: '0 2px 12px rgba(242,210,58,0.35)'
+      letterSpacing: 0
     }
   }, "Ieguld\u012Bt ", fmt(amount)), !showSkipConfirm ? React.createElement("button", {
     type: "button",
