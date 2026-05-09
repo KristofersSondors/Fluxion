@@ -5638,162 +5638,82 @@ function NotificationBanner({
   onDismiss
 }) {
   const [visible, setVisible] = React.useState(true);
-  const [pressing, setPressing] = React.useState(false);
   if (!visible) return null;
-  const dismiss = e => {
-    e.stopPropagation();
-    setVisible(false);
-    if (onDismiss) onDismiss();
+  const sharedCard = {
+    backdropFilter: 'blur(28px) saturate(180%)',
+    WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+    boxShadow: '0 6px 28px rgba(0,0,0,0.16), 0 1px 4px rgba(0,0,0,0.07)',
+    border: '0.5px solid rgba(0,0,0,0.06)'
   };
-  return React.createElement("div", {
-    onPointerDown: () => setPressing(true),
-    onPointerUp: () => {
-      setPressing(false);
-      if (onTap) onTap();
-    },
-    onPointerLeave: () => setPressing(false),
+  return React.createElement(React.Fragment, null, React.createElement("div", {
     style: {
+      ...sharedCard,
       position: 'absolute',
       top: 58,
       left: 10,
       right: 10,
       zIndex: 100,
-      background: 'rgba(255,255,255,0.88)',
-      backdropFilter: 'blur(20px) saturate(180%)',
-      WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+      background: 'rgba(255,255,255,0.94)',
       borderRadius: 20,
-      boxShadow: '0 4px 24px rgba(0,0,0,0.14), 0 1px 4px rgba(0,0,0,0.08)',
-      border: '0.5px solid rgba(0,0,0,0.06)',
-      padding: '12px 14px 14px',
-      cursor: 'pointer',
-      transform: pressing ? 'scale(0.975)' : 'scale(1)',
-      transition: 'transform 0.12s ease-out'
+      padding: '12px 14px 14px'
     }
   }, React.createElement("div", {
     style: {
       display: 'flex',
       alignItems: 'center',
       gap: 8,
-      marginBottom: 8
+      marginBottom: 5
     }
-  }, PI.fluxion(24), React.createElement("span", {
+  }, React.createElement("img", {
+    src: "indexo.png",
+    alt: "Indexo",
+    style: {
+      width: 36,
+      height: 36,
+      borderRadius: 9,
+      flexShrink: 0,
+      display: 'block'
+    }
+  }), React.createElement("span", {
     style: {
       flex: 1,
       fontSize: 13,
       fontWeight: 700,
-      color: P.ink,
-      letterSpacing: 0
-    }
-  }, "Fluxion \xB7 Pensiju ieguld\u012Bjums"), React.createElement("span", {
-    style: {
-      fontSize: 12,
-      color: P.mute,
-      flexShrink: 0
-    }
-  }, "tagad"), React.createElement("button", {
-    type: "button",
-    onClick: dismiss,
-    style: {
-      background: 'rgba(120,120,128,0.18)',
-      border: 0,
-      borderRadius: '50%',
-      width: 20,
-      height: 20,
-      display: 'grid',
-      placeItems: 'center',
-      cursor: 'pointer',
-      flexShrink: 0,
-      marginLeft: 2
-    }
-  }, React.createElement("svg", {
-    width: "9",
-    height: "9",
-    viewBox: "0 0 10 10",
-    fill: "none"
-  }, React.createElement("path", {
-    d: "M1.5 1.5l7 7M8.5 1.5l-7 7",
-    stroke: P.mute,
-    strokeWidth: "1.6",
-    strokeLinecap: "round"
-  })))), React.createElement("div", {
-    style: {
-      display: 'flex',
-      alignItems: 'flex-start',
-      gap: 10
-    }
-  }, React.createElement("div", {
-    style: {
-      flex: 1
-    }
-  }, React.createElement("div", {
-    style: {
-      fontSize: 14.5,
-      fontWeight: 600,
-      color: P.ink,
-      lineHeight: '20px'
-    }
-  }, "Maija iemaksa ir gatava"), React.createElement("div", {
-    style: {
-      fontSize: 13,
-      color: P.mute,
-      lineHeight: '18px',
-      marginTop: 2
-    }
-  }, "Ieteikt\u0101 summa ", React.createElement("strong", {
-    style: {
       color: P.ink
     }
-  }, "\u20AC46"), ", p\u0101rskat\u012Bt l\u012Bdz 10. maijam")), React.createElement("div", {
+  }, "Indexo"), React.createElement("span", {
     style: {
-      flexShrink: 0,
-      background: P.accent,
-      borderRadius: 10,
-      padding: '6px 10px',
-      textAlign: 'center'
-    }
-  }, React.createElement("div", {
-    style: {
-      fontSize: 16,
-      fontWeight: 800,
-      color: P.ink,
-      letterSpacing: -0.5
-    }
-  }, "\u20AC46"), React.createElement("div", {
-    style: {
-      fontSize: 9.5,
-      color: 'rgba(26,26,26,0.7)',
-      fontWeight: 600,
-      marginTop: 1
-    }
-  }, "IETEIKTS"))), React.createElement("div", {
-    style: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: 10,
-      marginTop: 10
-    }
-  }, React.createElement("span", {
-    style: {
-      flex: 1,
       fontSize: 12,
-      color: P.mute,
-      lineHeight: '16px'
+      color: P.mute
     }
-  }, "Piel\u0101go summu vai izlaid \u0161o m\u0113nesi"), React.createElement("button", {
+  }, "tagad")), React.createElement("div", {
+    style: {
+      fontSize: 14.5,
+      color: P.ink,
+      lineHeight: '21px'
+    }
+  }, "\u0160om\u0113nes Indexo ieguld\u012Bs ", React.createElement("strong", null, "\u20AC46"), " tav\u0101 tre\u0161\u0101 l\u012Bme\u0146a pensij\u0101.")), React.createElement("button", {
     type: "button",
     onClick: onTap,
     style: {
-      flexShrink: 0,
+      ...sharedCard,
+      position: 'absolute',
+      top: 178,
+      left: 10,
+      right: 10,
+      zIndex: 100,
+      background: 'rgba(210,210,216,0.82)',
+      borderRadius: 16,
       border: 0,
-      borderRadius: 9,
-      padding: '7px 14px',
-      background: P.accent,
+      padding: '14px',
+      fontSize: 16,
+      fontWeight: 500,
       color: P.ink,
-      fontSize: 13,
-      fontWeight: 700,
-      cursor: 'pointer'
+      cursor: 'pointer',
+      textAlign: 'center',
+      fontFamily: 'inherit'
     }
-  }, "P\u0101rskat\u012Bt")));
+  }, "P\u0101rskat\u012Bt"));
 }
 function NotificationScreen({
   onOpenPending
@@ -5843,6 +5763,82 @@ function NotificationScreen({
     }
   }, "Pazi\u0146ojums noraid\u012Bts \u2014 to atrad\u012Bsi pazi\u0146ojumu centr\u0101")));
 }
+function NotificationArrivedScreen() {
+  return React.createElement(IOSDevice, {
+    width: 402,
+    height: 874,
+    dark: true,
+    statusBarTime: ""
+  }, React.createElement("div", {
+    style: {
+      position: 'relative',
+      height: '100%',
+      overflow: 'hidden'
+    }
+  }, React.createElement("img", {
+    src: "phone homescreen.png",
+    alt: "",
+    style: {
+      position: 'absolute',
+      inset: 0,
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      objectPosition: 'top center',
+      display: 'block'
+    }
+  }), React.createElement("div", {
+    style: {
+      position: 'absolute',
+      top: 58,
+      left: 10,
+      right: 10,
+      zIndex: 100,
+      background: 'rgba(255,255,255,0.72)',
+      backdropFilter: 'blur(28px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+      borderRadius: 20,
+      boxShadow: '0 6px 28px rgba(0,0,0,0.14), 0 1px 4px rgba(0,0,0,0.06)',
+      border: '0.5px solid rgba(0,0,0,0.06)',
+      padding: '12px 14px 14px'
+    }
+  }, React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 5
+    }
+  }, React.createElement("img", {
+    src: "indexo.png",
+    alt: "Indexo",
+    style: {
+      width: 36,
+      height: 36,
+      borderRadius: 9,
+      flexShrink: 0,
+      display: 'block'
+    }
+  }), React.createElement("span", {
+    style: {
+      flex: 1,
+      fontSize: 13,
+      fontWeight: 700,
+      color: P.ink
+    }
+  }, "Indexo"), React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: P.mute
+    }
+  }, "tagad")), React.createElement("div", {
+    style: {
+      fontSize: 14.5,
+      color: P.ink,
+      lineHeight: '21px'
+    }
+  }, "\u0160om\u0113nes Indexo ieguld\u012Bs ", React.createElement("strong", null, "\u20AC46"), " tav\u0101 tre\u0161\u0101 l\u012Bme\u0146a pensij\u0101."))));
+}
 const PAST_ITEMS = [{
   month: 'Aprīlis',
   amount: 60,
@@ -5850,8 +5846,8 @@ const PAST_ITEMS = [{
   date: '5. apr.'
 }, {
   month: 'Marts',
-  amount: 0,
-  status: 'skipped',
+  amount: 55,
+  status: 'invested',
   date: '5. mar.'
 }, {
   month: 'Februāris',
@@ -5860,8 +5856,8 @@ const PAST_ITEMS = [{
   date: '5. feb.'
 }, {
   month: 'Janvāris',
-  amount: 95,
-  status: 'invested',
+  amount: 0,
+  status: 'skipped',
   date: '5. jan.'
 }, {
   month: 'Decembris',
@@ -5872,41 +5868,46 @@ const PAST_ITEMS = [{
 function StatusBadge({
   status
 }) {
-  const map = {
-    pending: {
-      label: 'Gaida',
-      bg: '#FFF7D6',
-      color: '#92690A'
-    },
-    invested: {
-      label: 'Ieguldīts',
-      bg: '#E8F5ED',
-      color: P.ok
-    },
-    skipped: {
-      label: 'Izlaists',
-      bg: '#F3F4F6',
-      color: P.mute
-    }
-  };
-  const s = map[status] || map.pending;
-  return React.createElement("div", {
-    style: {
-      fontSize: 11,
-      fontWeight: 700,
-      letterSpacing: 0.3,
-      background: s.bg,
-      color: s.color,
-      borderRadius: 6,
-      padding: '3px 7px'
-    }
-  }, s.label);
+  if (status === 'invested') return React.createElement("svg", {
+    width: "18",
+    height: "18",
+    viewBox: "0 0 18 18",
+    fill: "none"
+  }, React.createElement("circle", {
+    cx: "9",
+    cy: "9",
+    r: "9",
+    fill: P.promo
+  }), React.createElement("path", {
+    d: "M5 9.5l2.5 2.5 5.5-5",
+    stroke: "#fff",
+    strokeWidth: "1.6",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }));
+  if (status === 'skipped') return React.createElement("svg", {
+    width: "18",
+    height: "18",
+    viewBox: "0 0 18 18",
+    fill: "none"
+  }, React.createElement("circle", {
+    cx: "9",
+    cy: "9",
+    r: "9",
+    fill: P.line
+  }), React.createElement("path", {
+    d: "M6 6l6 6M12 6l-6 6",
+    stroke: P.mute,
+    strokeWidth: "1.6",
+    strokeLinecap: "round"
+  }));
+  return null;
 }
 function PendingListScreen({
   onOpenDetail,
   onBack
 }) {
-  const totalSaved = PAST_ITEMS.filter(i => i.status === 'invested').reduce((s, i) => s + i.amount, 0) + 46;
+  const totalSaved = PAST_ITEMS.filter(i => i.status === 'invested').reduce((s, i) => s + i.amount, 0);
   const streak = 4;
   return React.createElement(IOSDevice, {
     width: 402,
@@ -5939,15 +5940,17 @@ function PendingListScreen({
   }, [{
     icon: PI.wallet(),
     label: 'Kopā ieguldīts',
-    value: fmt(totalSaved + 3250)
+    value: fmt(totalSaved)
   }, {
     icon: PI.trend(),
-    label: 'Streak',
-    value: `${streak} mēn.`
+    label: 'Aktīvs investors',
+    value: `${streak} mēnešus pēc kārtas`,
+    small: true
   }].map(({
     icon,
     label,
-    value
+    value,
+    small
   }) => React.createElement("div", {
     key: label,
     style: {
@@ -5974,26 +5977,18 @@ function PendingListScreen({
     }
   }, label)), React.createElement("div", {
     style: {
-      fontSize: 20,
+      fontSize: small ? 14 : 20,
       fontWeight: 700,
       marginTop: 6,
       color: P.promo,
-      letterSpacing: 0
+      letterSpacing: 0,
+      whiteSpace: 'nowrap'
     }
   }, value)))), React.createElement("div", {
     style: {
       margin: '16px 16px 0'
     }
-  }, React.createElement("div", {
-    style: {
-      fontSize: 12,
-      fontWeight: 700,
-      textTransform: 'uppercase',
-      letterSpacing: 1,
-      color: P.mute,
-      marginBottom: 8
-    }
-  }, "Gaida apstiprin\u0101jumu"), React.createElement("button", {
+  }, React.createElement("button", {
     type: "button",
     onClick: onOpenDetail,
     style: {
@@ -6038,34 +6033,24 @@ function PendingListScreen({
       color: 'rgba(255,255,255,0.7)',
       marginTop: 2
     }
-  }, "Ieteikts \xB7 10% no dro\u0161\u0101 atlikuma")), React.createElement("div", {
+  }, "Iemaks\u0101ts 5. maij\u0101 \xB7 starpkont\u0101")), React.createElement("div", {
     style: {
       background: P.accent,
-      borderRadius: 12,
+      borderRadius: 10,
       padding: '8px 12px',
-      textAlign: 'right'
+      flexShrink: 0,
+      display: 'flex',
+      alignItems: 'baseline',
+      gap: 4,
+      whiteSpace: 'nowrap'
     }
-  }, React.createElement("div", {
+  }, React.createElement("span", {
     style: {
-      fontSize: 11,
+      fontSize: 13,
       fontWeight: 700,
-      color: 'rgba(26,26,26,0.7)',
-      letterSpacing: 0.5
+      color: P.ink
     }
-  }, "ATLIKU\u0160AS"), React.createElement("div", {
-    style: {
-      fontSize: 22,
-      fontWeight: 800,
-      color: P.ink,
-      letterSpacing: -0.5
-    }
-  }, "3"), React.createElement("div", {
-    style: {
-      fontSize: 11,
-      fontWeight: 700,
-      color: 'rgba(26,26,26,0.7)'
-    }
-  }, "DIENAS"))), React.createElement("div", {
+  }, "Atliku\u0161as 3 dienas"))), React.createElement("div", {
     style: {
       marginTop: 14
     }
@@ -6085,19 +6070,6 @@ function PendingListScreen({
       background: P.accent,
       borderRadius: 3
     }
-  }), React.createElement("div", {
-    style: {
-      position: 'absolute',
-      left: '61%',
-      top: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: 14,
-      height: 14,
-      borderRadius: '50%',
-      background: '#fff',
-      border: `3px solid ${P.accent}`,
-      boxShadow: '0 1px 4px rgba(0,0,0,0.2)'
-    }
   })), React.createElement("div", {
     style: {
       display: 'flex',
@@ -6109,12 +6081,12 @@ function PendingListScreen({
       fontSize: 11,
       color: 'rgba(255,255,255,0.5)'
     }
-  }, "Min \u20AC20"), React.createElement("span", {
+  }, "Minim\u0101lais \u20AC20"), React.createElement("span", {
     style: {
       fontSize: 11,
       color: 'rgba(255,255,255,0.5)'
     }
-  }, "Maks \u20AC90"))), React.createElement("div", {
+  }, "Maksim\u0101lais \u20AC90"))), React.createElement("div", {
     style: {
       marginTop: 12,
       display: 'flex',
@@ -6155,17 +6127,6 @@ function PendingListScreen({
     }
   }, React.createElement("div", {
     style: {
-      width: 36,
-      height: 36,
-      borderRadius: 10,
-      flexShrink: 0,
-      background: item.status === 'invested' ? '#E8F5ED' : '#F3F4F6',
-      display: 'grid',
-      placeItems: 'center',
-      marginRight: 12
-    }
-  }, item.status === 'invested' ? PI.check() : PI.skip()), React.createElement("div", {
-    style: {
       flex: 1
     }
   }, React.createElement("div", {
@@ -6181,19 +6142,24 @@ function PendingListScreen({
     }
   }, item.date)), React.createElement("div", {
     style: {
-      textAlign: 'right',
       display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-end',
-      gap: 4
+      alignItems: 'center',
+      gap: 6
     }
   }, React.createElement("div", {
     style: {
-      fontSize: 15,
-      fontWeight: 700,
+      fontSize: 13,
+      fontWeight: 600,
+      color: item.status === 'invested' ? P.promo : P.mute,
+      textAlign: 'right'
+    }
+  }, item.status === 'invested' ? fmt(item.amount) : '—'), React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 600,
       color: item.status === 'invested' ? P.promo : P.mute
     }
-  }, item.status === 'invested' ? fmt(item.amount) : '—'), React.createElement(StatusBadge, {
+  }, item.status === 'invested' ? 'Ieguldīts' : 'Izlaists'), React.createElement(StatusBadge, {
     status: item.status
   })))))), React.createElement("div", {
     style: {
@@ -6278,7 +6244,7 @@ function PendingDetailScreen({
         width: 72,
         height: 72,
         borderRadius: '50%',
-        background: '#E8F5ED',
+        background: 'rgba(24,74,59,0.10)',
         display: 'grid',
         placeItems: 'center',
         marginBottom: 20
@@ -6290,7 +6256,7 @@ function PendingDetailScreen({
       fill: "none"
     }, React.createElement("path", {
       d: "M6 17l6 6 14-13",
-      stroke: P.ok,
+      stroke: P.promo,
       strokeWidth: "2.5",
       strokeLinecap: "round",
       strokeLinejoin: "round"
@@ -6799,6 +6765,7 @@ function PendingDetailScreen({
 }
 Object.assign(window, {
   NotificationScreen,
+  NotificationArrivedScreen,
   PendingListScreen,
   PendingDetailScreen
 });
@@ -6810,8 +6777,11 @@ const SCREEN_DEFS = [{
   key: 'home',
   label: 'Sākums'
 }, {
+  key: 'notif-arrived',
+  label: 'Paz. ieradies'
+}, {
   key: 'notif',
-  label: 'Paziņojums'
+  label: 'Paz. atvērts'
 }, {
   key: 'list',
   label: 'Iemaksas'
@@ -6821,7 +6791,7 @@ const SCREEN_DEFS = [{
 }];
 function App() {
   const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
-  const [activeScreen, setActiveScreen] = React.useState('notif');
+  const [activeScreen, setActiveScreen] = React.useState('notif-arrived');
   React.useEffect(() => {
     document.documentElement.style.setProperty('--brand-accent', tweaks.accent);
   }, [tweaks.accent]);
@@ -6917,8 +6887,10 @@ function App() {
     height: 874
   }, React.createElement(Home, {
     tweaks: tweaks
-  }))), activeScreen === 'notif' && React.createElement("div", {
-    "data-screen-label": "Notification"
+  }))), activeScreen === 'notif-arrived' && React.createElement("div", {
+    "data-screen-label": "Notification Arrived"
+  }, React.createElement(NotificationArrivedScreen, null)), activeScreen === 'notif' && React.createElement("div", {
+    "data-screen-label": "Notification Opened"
   }, React.createElement(NotificationScreen, {
     onOpenPending: () => {
       goToDetail();

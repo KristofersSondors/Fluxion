@@ -98,80 +98,48 @@ function PSubHeader({ title, onBack, trailing }) {
 // ─────────────────────────────────────────────────────────────
 function NotificationBanner({ onTap, onDismiss }) {
   const [visible, setVisible] = React.useState(true);
-  const [pressing, setPressing] = React.useState(false);
 
   if (!visible) return null;
 
-  const dismiss = (e) => { e.stopPropagation(); setVisible(false); if (onDismiss) onDismiss(); };
+  const sharedCard = {
+    backdropFilter: 'blur(28px) saturate(180%)',
+    WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+    boxShadow: '0 6px 28px rgba(0,0,0,0.16), 0 1px 4px rgba(0,0,0,0.07)',
+    border: '0.5px solid rgba(0,0,0,0.06)',
+  };
 
   return (
-    <div
-      onPointerDown={() => setPressing(true)}
-      onPointerUp={() => { setPressing(false); if (onTap) onTap(); }}
-      onPointerLeave={() => setPressing(false)}
-      style={{
+    <>
+      {/* notification card */}
+      <div style={{
+        ...sharedCard,
         position: 'absolute', top: 58, left: 10, right: 10, zIndex: 100,
-        background: 'rgba(255,255,255,0.88)',
-        backdropFilter: 'blur(20px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        background: 'rgba(255,255,255,0.94)',
         borderRadius: 20,
-        boxShadow: '0 4px 24px rgba(0,0,0,0.14), 0 1px 4px rgba(0,0,0,0.08)',
-        border: '0.5px solid rgba(0,0,0,0.06)',
         padding: '12px 14px 14px',
-        cursor: 'pointer',
-        transform: pressing ? 'scale(0.975)' : 'scale(1)',
-        transition: 'transform 0.12s ease-out',
-      }}
-    >
-      {/* top row: app + title + dismiss + time */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-        {PI.fluxion(24)}
-        <span style={{ flex: 1, fontSize: 13, fontWeight: 700, color: P.ink, letterSpacing: 0 }}>
-          Fluxion · Pensiju ieguldījums
-        </span>
-        <span style={{ fontSize: 12, color: P.mute, flexShrink: 0 }}>tagad</span>
-        <button type="button" onClick={dismiss} style={{
-          background: 'rgba(120,120,128,0.18)', border: 0, borderRadius: '50%',
-          width: 20, height: 20, display: 'grid', placeItems: 'center', cursor: 'pointer',
-          flexShrink: 0, marginLeft: 2,
-        }}>
-          <svg width="9" height="9" viewBox="0 0 10 10" fill="none">
-            <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" stroke={P.mute} strokeWidth="1.6" strokeLinecap="round"/>
-          </svg>
-        </button>
-      </div>
-
-      {/* body */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 14.5, fontWeight: 600, color: P.ink, lineHeight: '20px' }}>
-            Maija iemaksa ir gatava
-          </div>
-          <div style={{ fontSize: 13, color: P.mute, lineHeight: '18px', marginTop: 2 }}>
-            Ieteiktā summa <strong style={{ color: P.ink }}>€46</strong>, pārskatīt līdz 10. maijam
-          </div>
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+          <img src="indexo.png" alt="Indexo" style={{ width: 36, height: 36, borderRadius: 9, flexShrink: 0, display: 'block' }}/>
+          <span style={{ flex: 1, fontSize: 13, fontWeight: 700, color: P.ink }}>Indexo</span>
+          <span style={{ fontSize: 12, color: P.mute }}>tagad</span>
         </div>
-        {/* amount pill */}
-        <div style={{
-          flexShrink: 0, background: P.accent, borderRadius: 10,
-          padding: '6px 10px', textAlign: 'center',
-        }}>
-          <div style={{ fontSize: 16, fontWeight: 800, color: P.ink, letterSpacing: -0.5 }}>€46</div>
-          <div style={{ fontSize: 9.5, color: 'rgba(26,26,26,0.7)', fontWeight: 600, marginTop: 1 }}>IETEIKTS</div>
+        <div style={{ fontSize: 14.5, color: P.ink, lineHeight: '21px' }}>
+          Šomēnes Indexo ieguldīs <strong>€46</strong> tavā trešā līmeņa pensijā.
         </div>
       </div>
 
-      {/* helper text + single CTA */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 10 }}>
-        <span style={{ flex: 1, fontSize: 12, color: P.mute, lineHeight: '16px' }}>
-          Pielāgo summu vai izlaid šo mēnesi
-        </span>
-        <button type="button" onClick={onTap} style={{
-          flexShrink: 0, border: 0, borderRadius: 9, padding: '7px 14px',
-          background: P.accent, color: P.ink, fontSize: 13, fontWeight: 700, cursor: 'pointer',
-        }}>Pārskatīt</button>
-      </div>
-    </div>
+      {/* separate action pill below */}
+      <button type="button" onClick={onTap} style={{
+        ...sharedCard,
+        position: 'absolute', top: 178, left: 10, right: 10, zIndex: 100,
+        background: 'rgba(210,210,216,0.82)',
+        borderRadius: 16,
+        border: 0, padding: '14px',
+        fontSize: 16, fontWeight: 500, color: P.ink,
+        cursor: 'pointer', textAlign: 'center',
+        fontFamily: 'inherit',
+      }}>Pārskatīt</button>
+    </>
   );
 }
 
@@ -216,35 +184,74 @@ function NotificationScreen({ onOpenPending }) {
   );
 }
 
+function NotificationArrivedScreen() {
+  return (
+    <IOSDevice width={402} height={874} dark={true} statusBarTime="">
+      <div style={{ position: 'relative', height: '100%', overflow: 'hidden' }}>
+        <img
+          src="phone homescreen.png"
+          alt=""
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'top center',
+            display: 'block',
+          }}
+        />
+        {/* arrived banner — transparent, no action button */}
+        <div style={{
+          position: 'absolute', top: 58, left: 10, right: 10, zIndex: 100,
+          background: 'rgba(255,255,255,0.72)',
+          backdropFilter: 'blur(28px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+          borderRadius: 20,
+          boxShadow: '0 6px 28px rgba(0,0,0,0.14), 0 1px 4px rgba(0,0,0,0.06)',
+          border: '0.5px solid rgba(0,0,0,0.06)',
+          padding: '12px 14px 14px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+            <img src="indexo.png" alt="Indexo" style={{ width: 36, height: 36, borderRadius: 9, flexShrink: 0, display: 'block' }}/>
+            <span style={{ flex: 1, fontSize: 13, fontWeight: 700, color: P.ink }}>Indexo</span>
+            <span style={{ fontSize: 12, color: P.mute }}>tagad</span>
+          </div>
+          <div style={{ fontSize: 14.5, color: P.ink, lineHeight: '21px' }}>
+            Šomēnes Indexo ieguldīs <strong>€46</strong> tavā trešā līmeņa pensijā.
+          </div>
+        </div>
+      </div>
+    </IOSDevice>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────
 // SCREEN 2 — Pending investments list
 // ─────────────────────────────────────────────────────────────
 const PAST_ITEMS = [
   { month: 'Aprīlis', amount: 60, status: 'invested', date: '5. apr.' },
-  { month: 'Marts', amount: 0, status: 'skipped', date: '5. mar.' },
+  { month: 'Marts', amount: 55, status: 'invested', date: '5. mar.' },
   { month: 'Februāris', amount: 110, status: 'invested', date: '5. feb.' },
-  { month: 'Janvāris', amount: 95, status: 'invested', date: '5. jan.' },
+  { month: 'Janvāris', amount: 0, status: 'skipped', date: '5. jan.' },
   { month: 'Decembris', amount: 80, status: 'invested', date: '5. dec.' },
 ];
 
 function StatusBadge({ status }) {
-  const map = {
-    pending:  { label: 'Gaida', bg: '#FFF7D6', color: '#92690A' },
-    invested: { label: 'Ieguldīts', bg: '#E8F5ED', color: P.ok },
-    skipped:  { label: 'Izlaists', bg: '#F3F4F6', color: P.mute },
-  };
-  const s = map[status] || map.pending;
-  return (
-    <div style={{
-      fontSize: 11, fontWeight: 700, letterSpacing: 0.3,
-      background: s.bg, color: s.color,
-      borderRadius: 6, padding: '3px 7px',
-    }}>{s.label}</div>
+  if (status === 'invested') return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <circle cx="9" cy="9" r="9" fill={P.promo}/>
+      <path d="M5 9.5l2.5 2.5 5.5-5" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
   );
+  if (status === 'skipped') return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <circle cx="9" cy="9" r="9" fill={P.line}/>
+      <path d="M6 6l6 6M12 6l-6 6" stroke={P.mute} strokeWidth="1.6" strokeLinecap="round"/>
+    </svg>
+  );
+  return null;
 }
 
 function PendingListScreen({ onOpenDetail, onBack }) {
-  const totalSaved = PAST_ITEMS.filter(i => i.status === 'invested').reduce((s, i) => s + i.amount, 0) + 46;
+  const totalSaved = PAST_ITEMS.filter(i => i.status === 'invested').reduce((s, i) => s + i.amount, 0);
   const streak = 4;
 
   return (
@@ -259,9 +266,9 @@ function PendingListScreen({ onOpenDetail, onBack }) {
           {/* summary strip */}
           <div style={{ display: 'flex', gap: 10, margin: '8px 16px 0' }}>
             {[
-              { icon: PI.wallet(), label: 'Kopā ieguldīts', value: fmt(totalSaved + 3250) },
-              { icon: PI.trend(), label: 'Streak', value: `${streak} mēn.` },
-            ].map(({ icon, label, value }) => (
+              { icon: PI.wallet(), label: 'Kopā ieguldīts', value: fmt(totalSaved) },
+              { icon: PI.trend(), label: 'Aktīvs investors', value: `${streak} mēnešus pēc kārtas`, small: true },
+            ].map(({ icon, label, value, small }) => (
               <div key={label} style={{
                 flex: 1, background: P.card, borderRadius: 14, padding: '12px 14px',
                 border: `1px solid ${P.line}`,
@@ -271,16 +278,13 @@ function PendingListScreen({ onOpenDetail, onBack }) {
                   {icon}
                   <span style={{ fontSize: 11, color: P.mute, textTransform: 'uppercase', letterSpacing: 0.8, fontWeight: 600 }}>{label}</span>
                 </div>
-                <div style={{ fontSize: 20, fontWeight: 700, marginTop: 6, color: P.promo, letterSpacing: 0 }}>{value}</div>
+                <div style={{ fontSize: small ? 14 : 20, fontWeight: 700, marginTop: 6, color: P.promo, letterSpacing: 0, whiteSpace: 'nowrap' }}>{value}</div>
               </div>
             ))}
           </div>
 
           {/* pending card */}
           <div style={{ margin: '16px 16px 0' }}>
-            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: P.mute, marginBottom: 8 }}>
-              Gaida apstiprinājumu
-            </div>
             <button type="button" onClick={onOpenDetail} style={{
               width: '100%', border: 0, borderRadius: 16, padding: 0, cursor: 'pointer', textAlign: 'left',
               background: P.promo,
@@ -296,36 +300,28 @@ function PendingListScreen({ onOpenDetail, onBack }) {
                       €46
                     </div>
                     <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 2 }}>
-                      Ieteikts · 10% no drošā atlikuma
+                      Iemaksāts 5. maijā · starpkontā
                     </div>
                   </div>
                   <div style={{
-                    background: P.accent, borderRadius: 12, padding: '8px 12px', textAlign: 'right',
+                    background: P.accent, borderRadius: 10, padding: '8px 12px', flexShrink: 0,
+                    display: 'flex', alignItems: 'baseline', gap: 4, whiteSpace: 'nowrap',
                   }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(26,26,26,0.7)', letterSpacing: 0.5 }}>ATLIKUŠAS</div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: P.ink, letterSpacing: -0.5 }}>3</div>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(26,26,26,0.7)' }}>DIENAS</div>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: P.ink }}>Atlikušas 3 dienas</span>
                   </div>
                 </div>
 
-                {/* range bar */}
+                {/* range bar — static, no thumb */}
                 <div style={{ marginTop: 14 }}>
                   <div style={{ position: 'relative', height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.18)' }}>
                     <div style={{
                       position: 'absolute', left: 0, width: '61%', height: '100%',
                       background: P.accent, borderRadius: 3,
                     }}/>
-                    <div style={{
-                      position: 'absolute', left: '61%', top: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      width: 14, height: 14, borderRadius: '50%',
-                      background: '#fff', border: `3px solid ${P.accent}`,
-                      boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
-                    }}/>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
-                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>Min €20</span>
-                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>Maks €90</span>
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>Minimālais €20</span>
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>Maksimālais €90</span>
                   </div>
                 </div>
 
@@ -350,20 +346,16 @@ function PendingListScreen({ onOpenDetail, onBack }) {
                   display: 'flex', alignItems: 'center', padding: '13px 16px',
                   borderBottom: i < PAST_ITEMS.length - 1 ? `1px solid ${P.line}` : 'none',
                 }}>
-                  <div style={{
-                    width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                    background: item.status === 'invested' ? '#E8F5ED' : '#F3F4F6',
-                    display: 'grid', placeItems: 'center', marginRight: 12,
-                  }}>
-                    {item.status === 'invested' ? PI.check() : PI.skip()}
-                  </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 15, fontWeight: 600 }}>{item.month}</div>
                     <div style={{ fontSize: 12, color: P.mute, marginTop: 1 }}>{item.date}</div>
                   </div>
-                  <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: item.status === 'invested' ? P.promo : P.mute }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: item.status === 'invested' ? P.promo : P.mute, textAlign: 'right' }}>
                       {item.status === 'invested' ? fmt(item.amount) : '—'}
+                    </div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: item.status === 'invested' ? P.promo : P.mute }}>
+                      {item.status === 'invested' ? 'Ieguldīts' : 'Izlaists'}
                     </div>
                     <StatusBadge status={item.status}/>
                   </div>
@@ -423,11 +415,11 @@ function PendingDetailScreen({ onBack }) {
           alignItems: 'center', justifyContent: 'center', padding: '0 32px',
         }}>
           <div style={{
-            width: 72, height: 72, borderRadius: '50%', background: '#E8F5ED',
+            width: 72, height: 72, borderRadius: '50%', background: 'rgba(24,74,59,0.10)',
             display: 'grid', placeItems: 'center', marginBottom: 20,
           }}>
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <path d="M6 17l6 6 14-13" stroke={P.ok} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M6 17l6 6 14-13" stroke={P.promo} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
           <div style={{ fontSize: 26, fontWeight: 800, color: P.ink, textAlign: 'center', letterSpacing: -0.5 }}>
@@ -667,4 +659,4 @@ function PendingDetailScreen({ onBack }) {
   );
 }
 
-Object.assign(window, { NotificationScreen, PendingListScreen, PendingDetailScreen });
+Object.assign(window, { NotificationScreen, NotificationArrivedScreen, PendingListScreen, PendingDetailScreen });

@@ -4,15 +4,16 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 }/*EDITMODE-END*/;
 
 const SCREEN_DEFS = [
-  { key: 'home',   label: 'Sākums' },
-  { key: 'notif',  label: 'Paziņojums' },
-  { key: 'list',   label: 'Iemaksas' },
-  { key: 'detail', label: 'Detaļas' },
+  { key: 'home',          label: 'Sākums' },
+  { key: 'notif-arrived', label: 'Paz. ieradies' },
+  { key: 'notif',         label: 'Paz. atvērts' },
+  { key: 'list',          label: 'Iemaksas' },
+  { key: 'detail',        label: 'Detaļas' },
 ];
 
 function App() {
   const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
-  const [activeScreen, setActiveScreen] = React.useState('notif');
+  const [activeScreen, setActiveScreen] = React.useState('notif-arrived');
 
   React.useEffect(() => {
     document.documentElement.style.setProperty('--brand-accent', tweaks.accent);
@@ -82,8 +83,14 @@ function App() {
         </div>
       )}
 
+      {activeScreen === 'notif-arrived' && (
+        <div data-screen-label="Notification Arrived">
+          <NotificationArrivedScreen/>
+        </div>
+      )}
+
       {activeScreen === 'notif' && (
-        <div data-screen-label="Notification">
+        <div data-screen-label="Notification Opened">
           <NotificationScreen onOpenPending={() => { goToDetail(); }}/>
         </div>
       )}
