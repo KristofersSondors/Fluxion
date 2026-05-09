@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="utf-8"/>
+<title>Fluxion — Notification Export</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0E0E10;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, "SF Pro Display", "Gibson", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Phone shell ── */
+  .phone {
+    position: relative;
+    width: 393px;
+    height: 852px;
+    border-radius: 52px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 10px #1a1a1a,
+      0 0 0 11px #2e2e2e,
+      0 40px 100px rgba(0,0,0,0.65),
+      0 8px 30px rgba(0,0,0,0.45);
+  }
+
+  .homescreen {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+
+  /* ── Dynamic Island ── */
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 122px;
+    height: 36px;
+    border-radius: 20px;
+    background: #000;
+    z-index: 50;
+  }
+
+  /* ── Notification banner ── */
+  .notif {
+    position: absolute;
+    top: 62px;
+    left: 10px;
+    right: 10px;
+    z-index: 100;
+    background: rgba(255,255,255,0.90);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border-radius: 20px;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.08);
+    border: 0.5px solid rgba(0,0,0,0.06);
+    padding: 12px 14px 14px;
+  }
+
+  /* top row */
+  .notif-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 9px;
+  }
+
+  .app-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background: #184A3B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .app-icon svg { display: block; }
+
+  .notif-app-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1A1A1A;
+    letter-spacing: 0;
+  }
+
+  .notif-time {
+    font-size: 12px;
+    color: #6B7280;
+    flex-shrink: 0;
+  }
+
+  /* body row */
+  .notif-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .notif-text { flex: 1; }
+
+  .notif-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #1A1A1A;
+    line-height: 20px;
+  }
+
+  .notif-sub {
+    font-size: 13px;
+    color: #6B7280;
+    line-height: 18px;
+    margin-top: 2px;
+  }
+
+  .notif-sub strong { color: #1A1A1A; }
+
+  .amount-pill {
+    flex-shrink: 0;
+    background: #FBEA3B;
+    border-radius: 10px;
+    padding: 6px 10px;
+    text-align: center;
+  }
+
+  .amount-pill-num {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1A1A1A;
+    letter-spacing: -0.5px;
+  }
+
+  .amount-pill-label {
+    font-size: 9.5px;
+    color: rgba(26,26,26,0.65);
+    font-weight: 700;
+    margin-top: 1px;
+    letter-spacing: 0.3px;
+  }
+
+  /* action row */
+  .notif-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .notif-hint {
+    flex: 1;
+    font-size: 12px;
+    color: #6B7280;
+    line-height: 16px;
+  }
+
+  .notif-btn {
+    flex-shrink: 0;
+    background: #FBEA3B;
+    border: none;
+    border-radius: 9px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1A1A1A;
+    font-family: inherit;
+    cursor: default;
+  }
+
+  /* ── Export hint (hidden when printing / screenshotting) ── */
+  .hint {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.45);
+    font-family: system-ui, sans-serif;
+    font-size: 12px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  @media print {
+    body { background: white; }
+    .hint { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <!-- real homescreen -->
+  <img class="homescreen" src="phone homescreen.png" alt=""/>
+
+  <!-- dynamic island -->
+  <div class="dynamic-island"></div>
+
+  <!-- notification banner -->
+  <div class="notif">
+
+    <div class="notif-header">
+      <div class="app-icon">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8c0-2.76 2.24-5 5-5s5 2.24 5 5-2.24 5-5 5" stroke="#FBEA3B" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="8" cy="8" r="1.8" fill="#FBEA3B"/>
+        </svg>
+      </div>
+      <span class="notif-app-name">Fluxion · Pensiju ieguldījums</span>
+      <span class="notif-time">tagad</span>
+    </div>
+
+    <div class="notif-body">
+      <div class="notif-text">
+        <div class="notif-title">Maija iemaksa ir gatava</div>
+        <div class="notif-sub">
+          Ieteiktā summa <strong>€46</strong>, pārskatīt līdz 10. maijam
+        </div>
+      </div>
+      <div class="amount-pill">
+        <div class="amount-pill-num">€46</div>
+        <div class="amount-pill-label">IETEIKTS</div>
+      </div>
+    </div>
+
+    <div class="notif-actions">
+      <span class="notif-hint">Pielāgo summu vai izlaid šo mēnesi</span>
+      <div class="notif-btn">Pārskatīt</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="hint">Open in Chrome → right-click the phone → Inspect → screenshot, or just crop a screenshot</div>
+
+</body>
+</html>

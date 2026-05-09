@@ -339,7 +339,8 @@ function IOSDevice({
   height = 874,
   dark = false,
   title,
-  keyboard = false
+  keyboard = false,
+  statusBarTime = '9:41'
 }) {
   return React.createElement("div", {
     style: {
@@ -375,7 +376,8 @@ function IOSDevice({
       zIndex: 10
     }
   }, React.createElement(IOSStatusBar, {
-    dark: dark
+    dark: dark,
+    time: statusBarTime
   })), React.createElement("div", {
     style: {
       height: '100%',
@@ -5437,12 +5439,1389 @@ function Home({
   })))));
 }
 window.Home = Home;
+const P = {
+  bg: '#F4F5F0',
+  card: '#FFFFFF',
+  ink: '#1A1A1A',
+  mute: '#6B7280',
+  line: '#E5E7EB',
+  accent: '#FBEA3B',
+  promo: '#184A3B',
+  ok: '#29A745',
+  danger: '#D32F2F',
+  warm: '#F7F2E6',
+  pill: '#EFECE5'
+};
+function fmt(n) {
+  return '€' + n.toLocaleString('lv-LV', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
+}
+const PI = {
+  fluxion: (size = 28) => React.createElement("div", {
+    style: {
+      width: size,
+      height: size,
+      borderRadius: size * 0.28,
+      background: P.promo,
+      display: 'grid',
+      placeItems: 'center',
+      flexShrink: 0
+    }
+  }, React.createElement("svg", {
+    width: size * 0.55,
+    height: size * 0.55,
+    viewBox: "0 0 16 16",
+    fill: "none"
+  }, React.createElement("path", {
+    d: "M3 8c0-2.76 2.24-5 5-5s5 2.24 5 5-2.24 5-5 5",
+    stroke: P.accent,
+    strokeWidth: "2",
+    strokeLinecap: "round"
+  }), React.createElement("circle", {
+    cx: "8",
+    cy: "8",
+    r: "1.8",
+    fill: P.accent
+  }))),
+  chevLeft: (c = P.promo) => React.createElement("svg", {
+    width: "20",
+    height: "20",
+    viewBox: "0 0 20 20",
+    fill: "none"
+  }, React.createElement("path", {
+    d: "M12 5l-5 5 5 5",
+    stroke: c,
+    strokeWidth: "1.8",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  })),
+  chevRight: (c = P.mute) => React.createElement("svg", {
+    width: "14",
+    height: "14",
+    viewBox: "0 0 14 14",
+    fill: "none"
+  }, React.createElement("path", {
+    d: "M5 2.5l4.5 4.5-4.5 4.5",
+    stroke: c,
+    strokeWidth: "1.8",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  })),
+  clock: (c = P.mute) => React.createElement("svg", {
+    width: "14",
+    height: "14",
+    viewBox: "0 0 16 16",
+    fill: "none"
+  }, React.createElement("circle", {
+    cx: "8",
+    cy: "8",
+    r: "6",
+    stroke: c,
+    strokeWidth: "1.4"
+  }), React.createElement("path", {
+    d: "M8 5v3.5l2 1.5",
+    stroke: c,
+    strokeWidth: "1.4",
+    strokeLinecap: "round"
+  })),
+  check: (c = P.ok) => React.createElement("svg", {
+    width: "14",
+    height: "14",
+    viewBox: "0 0 16 16",
+    fill: "none"
+  }, React.createElement("path", {
+    d: "M3 8.5l3.5 3.5 6.5-7",
+    stroke: c,
+    strokeWidth: "1.8",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  })),
+  skip: (c = P.mute) => React.createElement("svg", {
+    width: "14",
+    height: "14",
+    viewBox: "0 0 16 16",
+    fill: "none"
+  }, React.createElement("path", {
+    d: "M4 4l8 8M12 4l-8 8",
+    stroke: c,
+    strokeWidth: "1.5",
+    strokeLinecap: "round"
+  })),
+  trend: (c = P.promo) => React.createElement("svg", {
+    width: "16",
+    height: "16",
+    viewBox: "0 0 16 16",
+    fill: "none"
+  }, React.createElement("path", {
+    d: "M2 11l4-4 2.5 2.5L13 4",
+    stroke: c,
+    strokeWidth: "1.5",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }), React.createElement("path", {
+    d: "M9.5 4H13v3.5",
+    stroke: c,
+    strokeWidth: "1.5",
+    strokeLinecap: "round"
+  })),
+  wallet: (c = P.promo) => React.createElement("svg", {
+    width: "16",
+    height: "16",
+    viewBox: "0 0 16 16",
+    fill: "none"
+  }, React.createElement("rect", {
+    x: "1.5",
+    y: "4",
+    width: "13",
+    height: "9",
+    rx: "2",
+    stroke: c,
+    strokeWidth: "1.3"
+  }), React.createElement("path", {
+    d: "M1.5 7h13",
+    stroke: c,
+    strokeWidth: "1.3"
+  }), React.createElement("circle", {
+    cx: "11.5",
+    cy: "10",
+    r: "1",
+    fill: c
+  }))
+};
+function PSubHeader({
+  title,
+  onBack,
+  trailing
+}) {
+  return React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      padding: '16px 16px 8px',
+      gap: 4
+    }
+  }, React.createElement("button", {
+    type: "button",
+    onClick: onBack,
+    style: {
+      background: 'transparent',
+      border: 0,
+      padding: '4px 6px 4px 0',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      color: P.promo,
+      fontSize: 14,
+      fontWeight: 500,
+      gap: 2,
+      flexShrink: 0
+    }
+  }, PI.chevLeft(), "Atpaka\u013C"), React.createElement("div", {
+    style: {
+      flex: 1,
+      fontSize: 16,
+      fontWeight: 700,
+      textAlign: 'center',
+      color: P.ink,
+      paddingRight: trailing ? 0 : 60
+    }
+  }, title), trailing && React.createElement("div", {
+    style: {
+      flexShrink: 0
+    }
+  }, trailing));
+}
+function NotificationBanner({
+  onTap,
+  onDismiss
+}) {
+  const [visible, setVisible] = React.useState(true);
+  const [pressing, setPressing] = React.useState(false);
+  if (!visible) return null;
+  const dismiss = e => {
+    e.stopPropagation();
+    setVisible(false);
+    if (onDismiss) onDismiss();
+  };
+  return React.createElement("div", {
+    onPointerDown: () => setPressing(true),
+    onPointerUp: () => {
+      setPressing(false);
+      if (onTap) onTap();
+    },
+    onPointerLeave: () => setPressing(false),
+    style: {
+      position: 'absolute',
+      top: 58,
+      left: 10,
+      right: 10,
+      zIndex: 100,
+      background: 'rgba(255,255,255,0.88)',
+      backdropFilter: 'blur(20px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+      borderRadius: 20,
+      boxShadow: '0 4px 24px rgba(0,0,0,0.14), 0 1px 4px rgba(0,0,0,0.08)',
+      border: '0.5px solid rgba(0,0,0,0.06)',
+      padding: '12px 14px 14px',
+      cursor: 'pointer',
+      transform: pressing ? 'scale(0.975)' : 'scale(1)',
+      transition: 'transform 0.12s ease-out'
+    }
+  }, React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 8
+    }
+  }, PI.fluxion(24), React.createElement("span", {
+    style: {
+      flex: 1,
+      fontSize: 13,
+      fontWeight: 700,
+      color: P.ink,
+      letterSpacing: 0
+    }
+  }, "Fluxion \xB7 Pensiju ieguld\u012Bjums"), React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: P.mute,
+      flexShrink: 0
+    }
+  }, "tagad"), React.createElement("button", {
+    type: "button",
+    onClick: dismiss,
+    style: {
+      background: 'rgba(120,120,128,0.18)',
+      border: 0,
+      borderRadius: '50%',
+      width: 20,
+      height: 20,
+      display: 'grid',
+      placeItems: 'center',
+      cursor: 'pointer',
+      flexShrink: 0,
+      marginLeft: 2
+    }
+  }, React.createElement("svg", {
+    width: "9",
+    height: "9",
+    viewBox: "0 0 10 10",
+    fill: "none"
+  }, React.createElement("path", {
+    d: "M1.5 1.5l7 7M8.5 1.5l-7 7",
+    stroke: P.mute,
+    strokeWidth: "1.6",
+    strokeLinecap: "round"
+  })))), React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: 10
+    }
+  }, React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 14.5,
+      fontWeight: 600,
+      color: P.ink,
+      lineHeight: '20px'
+    }
+  }, "Maija iemaksa ir gatava"), React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: P.mute,
+      lineHeight: '18px',
+      marginTop: 2
+    }
+  }, "Ieteikt\u0101 summa ", React.createElement("strong", {
+    style: {
+      color: P.ink
+    }
+  }, "\u20AC46"), ", p\u0101rskat\u012Bt l\u012Bdz 10. maijam")), React.createElement("div", {
+    style: {
+      flexShrink: 0,
+      background: P.accent,
+      borderRadius: 10,
+      padding: '6px 10px',
+      textAlign: 'center'
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 16,
+      fontWeight: 800,
+      color: P.ink,
+      letterSpacing: -0.5
+    }
+  }, "\u20AC46"), React.createElement("div", {
+    style: {
+      fontSize: 9.5,
+      color: 'rgba(26,26,26,0.7)',
+      fontWeight: 600,
+      marginTop: 1
+    }
+  }, "IETEIKTS"))), React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+      marginTop: 10
+    }
+  }, React.createElement("span", {
+    style: {
+      flex: 1,
+      fontSize: 12,
+      color: P.mute,
+      lineHeight: '16px'
+    }
+  }, "Piel\u0101go summu vai izlaid \u0161o m\u0113nesi"), React.createElement("button", {
+    type: "button",
+    onClick: onTap,
+    style: {
+      flexShrink: 0,
+      border: 0,
+      borderRadius: 9,
+      padding: '7px 14px',
+      background: P.accent,
+      color: P.ink,
+      fontSize: 13,
+      fontWeight: 700,
+      cursor: 'pointer'
+    }
+  }, "P\u0101rskat\u012Bt")));
+}
+function NotificationScreen({
+  onOpenPending
+}) {
+  const [showBanner, setShowBanner] = React.useState(true);
+  return React.createElement(IOSDevice, {
+    width: 402,
+    height: 874,
+    dark: true,
+    statusBarTime: ""
+  }, React.createElement("div", {
+    style: {
+      position: 'relative',
+      height: '100%',
+      overflow: 'hidden'
+    }
+  }, React.createElement("img", {
+    src: "phone homescreen.png",
+    alt: "",
+    style: {
+      position: 'absolute',
+      inset: 0,
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      objectPosition: 'top center',
+      display: 'block'
+    }
+  }), showBanner ? React.createElement(NotificationBanner, {
+    onTap: onOpenPending,
+    onDismiss: () => setShowBanner(false)
+  }) : React.createElement("div", {
+    style: {
+      position: 'absolute',
+      top: 58,
+      left: 10,
+      right: 10,
+      zIndex: 100,
+      background: 'rgba(255,255,255,0.45)',
+      backdropFilter: 'blur(14px)',
+      WebkitBackdropFilter: 'blur(14px)',
+      borderRadius: 16,
+      padding: '10px 16px',
+      textAlign: 'center',
+      fontSize: 12.5,
+      color: 'rgba(0,0,0,0.6)'
+    }
+  }, "Pazi\u0146ojums noraid\u012Bts \u2014 to atrad\u012Bsi pazi\u0146ojumu centr\u0101")));
+}
+const PAST_ITEMS = [{
+  month: 'Aprīlis',
+  amount: 60,
+  status: 'invested',
+  date: '5. apr.'
+}, {
+  month: 'Marts',
+  amount: 0,
+  status: 'skipped',
+  date: '5. mar.'
+}, {
+  month: 'Februāris',
+  amount: 110,
+  status: 'invested',
+  date: '5. feb.'
+}, {
+  month: 'Janvāris',
+  amount: 95,
+  status: 'invested',
+  date: '5. jan.'
+}, {
+  month: 'Decembris',
+  amount: 80,
+  status: 'invested',
+  date: '5. dec.'
+}];
+function StatusBadge({
+  status
+}) {
+  const map = {
+    pending: {
+      label: 'Gaida',
+      bg: '#FFF7D6',
+      color: '#92690A'
+    },
+    invested: {
+      label: 'Ieguldīts',
+      bg: '#E8F5ED',
+      color: P.ok
+    },
+    skipped: {
+      label: 'Izlaists',
+      bg: '#F3F4F6',
+      color: P.mute
+    }
+  };
+  const s = map[status] || map.pending;
+  return React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: 0.3,
+      background: s.bg,
+      color: s.color,
+      borderRadius: 6,
+      padding: '3px 7px'
+    }
+  }, s.label);
+}
+function PendingListScreen({
+  onOpenDetail,
+  onBack
+}) {
+  const totalSaved = PAST_ITEMS.filter(i => i.status === 'invested').reduce((s, i) => s + i.amount, 0) + 46;
+  const streak = 4;
+  return React.createElement(IOSDevice, {
+    width: 402,
+    height: 874
+  }, React.createElement("div", {
+    style: {
+      background: P.bg,
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      fontFamily: '"Gibson","IBM Plex Sans","Aptos",system-ui,sans-serif',
+      color: P.ink,
+      overflow: 'hidden'
+    }
+  }, React.createElement("div", {
+    style: {
+      flex: 1,
+      overflowY: 'auto',
+      paddingTop: 56
+    }
+  }, React.createElement(PSubHeader, {
+    title: "Iemaksas",
+    onBack: onBack
+  }), React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 10,
+      margin: '8px 16px 0'
+    }
+  }, [{
+    icon: PI.wallet(),
+    label: 'Kopā ieguldīts',
+    value: fmt(totalSaved + 3250)
+  }, {
+    icon: PI.trend(),
+    label: 'Streak',
+    value: `${streak} mēn.`
+  }].map(({
+    icon,
+    label,
+    value
+  }) => React.createElement("div", {
+    key: label,
+    style: {
+      flex: 1,
+      background: P.card,
+      borderRadius: 14,
+      padding: '12px 14px',
+      border: `1px solid ${P.line}`,
+      boxShadow: '0 1px 2px rgba(30,25,10,0.04)'
+    }
+  }, React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6
+    }
+  }, icon, React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: P.mute,
+      textTransform: 'uppercase',
+      letterSpacing: 0.8,
+      fontWeight: 600
+    }
+  }, label)), React.createElement("div", {
+    style: {
+      fontSize: 20,
+      fontWeight: 700,
+      marginTop: 6,
+      color: P.promo,
+      letterSpacing: 0
+    }
+  }, value)))), React.createElement("div", {
+    style: {
+      margin: '16px 16px 0'
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 700,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      color: P.mute,
+      marginBottom: 8
+    }
+  }, "Gaida apstiprin\u0101jumu"), React.createElement("button", {
+    type: "button",
+    onClick: onOpenDetail,
+    style: {
+      width: '100%',
+      border: 0,
+      borderRadius: 16,
+      padding: 0,
+      cursor: 'pointer',
+      textAlign: 'left',
+      background: P.promo,
+      boxShadow: '0 4px 20px rgba(24,74,59,0.25)'
+    }
+  }, React.createElement("div", {
+    style: {
+      padding: '18px 18px 16px'
+    }
+  }, React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start'
+    }
+  }, React.createElement("div", null, React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 700,
+      letterSpacing: 1.2,
+      color: 'rgba(255,255,255,0.6)',
+      textTransform: 'uppercase'
+    }
+  }, "Maijs 2026"), React.createElement("div", {
+    style: {
+      fontSize: 38,
+      fontWeight: 800,
+      color: '#fff',
+      letterSpacing: -1,
+      marginTop: 4
+    }
+  }, "\u20AC46"), React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: 'rgba(255,255,255,0.7)',
+      marginTop: 2
+    }
+  }, "Ieteikts \xB7 10% no dro\u0161\u0101 atlikuma")), React.createElement("div", {
+    style: {
+      background: P.accent,
+      borderRadius: 12,
+      padding: '8px 12px',
+      textAlign: 'right'
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      color: 'rgba(26,26,26,0.7)',
+      letterSpacing: 0.5
+    }
+  }, "ATLIKU\u0160AS"), React.createElement("div", {
+    style: {
+      fontSize: 22,
+      fontWeight: 800,
+      color: P.ink,
+      letterSpacing: -0.5
+    }
+  }, "3"), React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      color: 'rgba(26,26,26,0.7)'
+    }
+  }, "DIENAS"))), React.createElement("div", {
+    style: {
+      marginTop: 14
+    }
+  }, React.createElement("div", {
+    style: {
+      position: 'relative',
+      height: 6,
+      borderRadius: 3,
+      background: 'rgba(255,255,255,0.18)'
+    }
+  }, React.createElement("div", {
+    style: {
+      position: 'absolute',
+      left: 0,
+      width: '61%',
+      height: '100%',
+      background: P.accent,
+      borderRadius: 3
+    }
+  }), React.createElement("div", {
+    style: {
+      position: 'absolute',
+      left: '61%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: 14,
+      height: 14,
+      borderRadius: '50%',
+      background: '#fff',
+      border: `3px solid ${P.accent}`,
+      boxShadow: '0 1px 4px rgba(0,0,0,0.2)'
+    }
+  })), React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginTop: 6
+    }
+  }, React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: 'rgba(255,255,255,0.5)'
+    }
+  }, "Min \u20AC20"), React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: 'rgba(255,255,255,0.5)'
+    }
+  }, "Maks \u20AC90"))), React.createElement("div", {
+    style: {
+      marginTop: 12,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      gap: 4,
+      color: P.accent,
+      fontSize: 13,
+      fontWeight: 700
+    }
+  }, "P\u0101rskat\u012Bt un piel\u0101got ", PI.chevRight(P.accent))))), React.createElement("div", {
+    style: {
+      margin: '24px 16px 0'
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 700,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      color: P.mute,
+      marginBottom: 8
+    }
+  }, "V\u0113sture"), React.createElement("div", {
+    style: {
+      background: P.card,
+      borderRadius: 16,
+      border: `1px solid ${P.line}`,
+      overflow: 'hidden'
+    }
+  }, PAST_ITEMS.map((item, i) => React.createElement("div", {
+    key: item.month,
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      padding: '13px 16px',
+      borderBottom: i < PAST_ITEMS.length - 1 ? `1px solid ${P.line}` : 'none'
+    }
+  }, React.createElement("div", {
+    style: {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      flexShrink: 0,
+      background: item.status === 'invested' ? '#E8F5ED' : '#F3F4F6',
+      display: 'grid',
+      placeItems: 'center',
+      marginRight: 12
+    }
+  }, item.status === 'invested' ? PI.check() : PI.skip()), React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 15,
+      fontWeight: 600
+    }
+  }, item.month), React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: P.mute,
+      marginTop: 1
+    }
+  }, item.date)), React.createElement("div", {
+    style: {
+      textAlign: 'right',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-end',
+      gap: 4
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 15,
+      fontWeight: 700,
+      color: item.status === 'invested' ? P.promo : P.mute
+    }
+  }, item.status === 'invested' ? fmt(item.amount) : '—'), React.createElement(StatusBadge, {
+    status: item.status
+  })))))), React.createElement("div", {
+    style: {
+      height: 32
+    }
+  }))));
+}
+function RangeInput({
+  value,
+  min,
+  max,
+  onChange,
+  accent = P.accent
+}) {
+  const pct = Math.round((value - min) / (max - min) * 100);
+  return React.createElement("input", {
+    type: "range",
+    min: min,
+    max: max,
+    step: 5,
+    value: value,
+    onChange: e => onChange(Number(e.target.value)),
+    className: "fluxion-range",
+    style: {
+      '--range-fill': `${pct}%`
+    }
+  });
+}
+function BreakdownRow({
+  label,
+  value,
+  highlight
+}) {
+  return React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '4px 0'
+    }
+  }, React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: P.mute
+    }
+  }, label), React.createElement("span", {
+    style: {
+      fontSize: 12.5,
+      fontWeight: highlight ? 700 : 600,
+      color: P.ink
+    }
+  }, value));
+}
+function PendingDetailScreen({
+  onBack
+}) {
+  const FLOOR = 20,
+    TARGET = 46,
+    CEILING = 90;
+  const [amount, setAmount] = React.useState(TARGET);
+  const [action, setAction] = React.useState(null);
+  const [showSkipConfirm, setShowSkipConfirm] = React.useState(false);
+  const safeToInvest = 460;
+  const afterContrib = safeToInvest - amount;
+  if (action === 'confirmed') {
+    return React.createElement(IOSDevice, {
+      width: 402,
+      height: 874
+    }, React.createElement("div", {
+      style: {
+        background: P.bg,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily: '"Gibson","IBM Plex Sans","Aptos",system-ui,sans-serif',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0 32px'
+      }
+    }, React.createElement("div", {
+      style: {
+        width: 72,
+        height: 72,
+        borderRadius: '50%',
+        background: '#E8F5ED',
+        display: 'grid',
+        placeItems: 'center',
+        marginBottom: 20
+      }
+    }, React.createElement("svg", {
+      width: "32",
+      height: "32",
+      viewBox: "0 0 32 32",
+      fill: "none"
+    }, React.createElement("path", {
+      d: "M6 17l6 6 14-13",
+      stroke: P.ok,
+      strokeWidth: "2.5",
+      strokeLinecap: "round",
+      strokeLinejoin: "round"
+    }))), React.createElement("div", {
+      style: {
+        fontSize: 26,
+        fontWeight: 800,
+        color: P.ink,
+        textAlign: 'center',
+        letterSpacing: -0.5
+      }
+    }, fmt(amount), " ieguld\u012Bts!"), React.createElement("div", {
+      style: {
+        fontSize: 14,
+        color: P.mute,
+        textAlign: 'center',
+        marginTop: 8,
+        lineHeight: '20px'
+      }
+    }, "Nauda tiek p\u0101rskait\u012Bta uz 3. pensiju l\u012Bme\u0146a kontu. P\u0101rskait\u012Bjums pabeigts 1\u20132 darba dienu laik\u0101."), React.createElement("div", {
+      style: {
+        marginTop: 28,
+        background: P.warm,
+        borderRadius: 16,
+        padding: '16px 18px',
+        width: '100%'
+      }
+    }, React.createElement("div", {
+      style: {
+        fontSize: 12,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+        color: P.mute,
+        fontWeight: 700
+      }
+    }, "\u0160\u012B m\u0113ne\u0161a iemaksa"), React.createElement("div", {
+      style: {
+        fontSize: 32,
+        fontWeight: 800,
+        color: P.promo,
+        marginTop: 4
+      }
+    }, fmt(amount)), React.createElement("div", {
+      style: {
+        fontSize: 13,
+        color: P.mute,
+        marginTop: 4
+      }
+    }, "INDEXO Akcijas \xB7 Maijs 2026")), React.createElement("button", {
+      type: "button",
+      onClick: onBack,
+      style: {
+        marginTop: 24,
+        width: '100%',
+        border: 0,
+        borderRadius: 14,
+        padding: '15px',
+        background: P.promo,
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 700,
+        cursor: 'pointer'
+      }
+    }, "Atpaka\u013C uz pensij\u0101m")));
+  }
+  if (action === 'skipped') {
+    return React.createElement(IOSDevice, {
+      width: 402,
+      height: 874
+    }, React.createElement("div", {
+      style: {
+        background: P.bg,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily: '"Gibson","IBM Plex Sans","Aptos",system-ui,sans-serif',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0 32px'
+      }
+    }, React.createElement("div", {
+      style: {
+        width: 72,
+        height: 72,
+        borderRadius: '50%',
+        background: '#F3F4F6',
+        display: 'grid',
+        placeItems: 'center',
+        marginBottom: 20
+      }
+    }, React.createElement("svg", {
+      width: "28",
+      height: "28",
+      viewBox: "0 0 28 28",
+      fill: "none"
+    }, React.createElement("path", {
+      d: "M8 14h12M14 8v12",
+      stroke: P.mute,
+      strokeWidth: "2",
+      strokeLinecap: "round",
+      transform: "rotate(45 14 14)"
+    }))), React.createElement("div", {
+      style: {
+        fontSize: 24,
+        fontWeight: 800,
+        color: P.ink,
+        textAlign: 'center',
+        letterSpacing: -0.5
+      }
+    }, "Maijs izlaists"), React.createElement("div", {
+      style: {
+        fontSize: 14,
+        color: P.mute,
+        textAlign: 'center',
+        marginTop: 8,
+        lineHeight: '20px'
+      }
+    }, "Tu paliec pl\u0101n\u0101. J\u016Bnij\u0101 sa\u0146emsi jaunu ieteikumu, kad ien\u0101ks alga."), React.createElement("button", {
+      type: "button",
+      onClick: onBack,
+      style: {
+        marginTop: 28,
+        width: '100%',
+        border: 0,
+        borderRadius: 14,
+        padding: '15px',
+        background: P.pill,
+        color: P.ink,
+        fontSize: 15,
+        fontWeight: 700,
+        cursor: 'pointer'
+      }
+    }, "Atpaka\u013C uz pensij\u0101m")));
+  }
+  const diffFromTarget = amount - TARGET;
+  return React.createElement(IOSDevice, {
+    width: 402,
+    height: 874
+  }, React.createElement("div", {
+    style: {
+      background: P.bg,
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      fontFamily: '"Gibson","IBM Plex Sans","Aptos",system-ui,sans-serif',
+      color: P.ink,
+      overflow: 'hidden'
+    }
+  }, React.createElement("div", {
+    style: {
+      flex: 1,
+      overflowY: 'auto',
+      paddingTop: 56
+    }
+  }, React.createElement(PSubHeader, {
+    title: "Maija iemaksa",
+    onBack: onBack,
+    trailing: React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 4,
+        color: '#92690A',
+        fontSize: 12,
+        fontWeight: 700
+      }
+    }, PI.clock('#92690A'), React.createElement("span", null, "3 dienas"))
+  }), React.createElement("div", {
+    style: {
+      padding: '4px 16px 10px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10
+    }
+  }, React.createElement("div", {
+    style: {
+      background: P.promo,
+      borderRadius: 18,
+      padding: '14px 18px 12px',
+      boxShadow: '0 4px 20px rgba(24,74,59,0.22)'
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: 1.2,
+      color: 'rgba(255,255,255,0.6)',
+      textTransform: 'uppercase'
+    }
+  }, "Iemaksa \xB7 Maijs 2026"), React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'flex-end',
+      gap: 10,
+      marginTop: 4
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 40,
+      fontWeight: 800,
+      color: '#fff',
+      letterSpacing: -1.5,
+      lineHeight: 1
+    }
+  }, fmt(amount)), diffFromTarget !== 0 && React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      marginBottom: 4,
+      color: diffFromTarget > 0 ? P.accent : 'rgba(255,255,255,0.6)'
+    }
+  }, diffFromTarget > 0 ? '+' : '', fmt(diffFromTarget), " no ieteikuma")), React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: 'rgba(255,255,255,0.65)',
+      marginTop: 3
+    }
+  }, "INDEXO Akcijas \xB7 Augsts risks"), React.createElement("div", {
+    style: {
+      marginTop: 12
+    }
+  }, React.createElement("div", {
+    style: {
+      position: 'relative',
+      height: 6,
+      borderRadius: 3,
+      background: 'rgba(255,255,255,0.18)'
+    }
+  }, React.createElement("div", {
+    style: {
+      position: 'absolute',
+      left: 0,
+      width: `${Math.round((amount - FLOOR) / (CEILING - FLOOR) * 100)}%`,
+      height: '100%',
+      background: P.accent,
+      borderRadius: 3
+    }
+  }), React.createElement("div", {
+    style: {
+      position: 'absolute',
+      left: `${Math.round((TARGET - FLOOR) / (CEILING - FLOOR) * 100)}%`,
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: 2,
+      height: 12,
+      borderRadius: 1,
+      background: 'rgba(255,255,255,0.4)'
+    }
+  })), React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginTop: 4
+    }
+  }, React.createElement("span", {
+    style: {
+      fontSize: 10.5,
+      color: 'rgba(255,255,255,0.45)'
+    }
+  }, "Min ", fmt(FLOOR)), React.createElement("span", {
+    style: {
+      fontSize: 10.5,
+      color: 'rgba(255,255,255,0.45)'
+    }
+  }, "Ieteikts ", fmt(TARGET)), React.createElement("span", {
+    style: {
+      fontSize: 10.5,
+      color: 'rgba(255,255,255,0.45)'
+    }
+  }, "Maks ", fmt(CEILING))))), React.createElement("div", {
+    style: {
+      background: P.card,
+      borderRadius: 16,
+      padding: '12px 16px 10px',
+      border: `1px solid ${P.line}`
+    }
+  }, React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 6
+    }
+  }, React.createElement("span", {
+    style: {
+      fontSize: 14,
+      fontWeight: 700
+    }
+  }, "Piel\u0101got summu"), React.createElement("span", {
+    style: {
+      fontSize: 20,
+      fontWeight: 800,
+      color: P.promo,
+      letterSpacing: -0.5
+    }
+  }, fmt(amount))), React.createElement(RangeInput, {
+    value: amount,
+    min: FLOOR,
+    max: CEILING,
+    onChange: setAmount
+  }), React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 6,
+      marginTop: 2
+    }
+  }, [FLOOR, TARGET, CEILING].map(v => React.createElement("button", {
+    key: v,
+    type: "button",
+    onClick: () => setAmount(v),
+    style: {
+      flex: 1,
+      border: `1px solid ${amount === v ? P.promo : P.line}`,
+      borderRadius: 8,
+      padding: '5px 4px',
+      background: amount === v ? '#E8F5ED' : 'transparent',
+      color: amount === v ? P.promo : P.mute,
+      fontSize: 12,
+      fontWeight: 700,
+      cursor: 'pointer'
+    }
+  }, v === FLOOR ? 'Minimālais' : v === TARGET ? 'Ieteikts' : 'Drosmīgais', React.createElement("div", {
+    style: {
+      fontSize: 10.5,
+      fontWeight: 600,
+      marginTop: 1
+    }
+  }, fmt(v)))))), React.createElement("div", {
+    style: {
+      background: P.warm,
+      borderRadius: 16,
+      padding: '10px 14px'
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      fontWeight: 700,
+      marginBottom: 2
+    }
+  }, "K\u0101 tika apr\u0113\u0137in\u0101ts"), React.createElement("div", {
+    style: {
+      borderBottom: `1px solid ${P.line}`
+    }
+  }, React.createElement(BreakdownRow, {
+    label: "Algas sa\u0146emta",
+    value: "\u20AC2,140"
+  }), React.createElement(BreakdownRow, {
+    label: "T\u0113ri\u0146i (p\u0113d\u0113jais m\u0113n.)",
+    value: "\u20AC1,680"
+  }), React.createElement(BreakdownRow, {
+    label: "Dro\u0161ais atlikums",
+    value: fmt(safeToInvest)
+  }), React.createElement(BreakdownRow, {
+    label: "M\u0113r\u0137is 10%",
+    value: fmt(TARGET)
+  })), React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingTop: 10
+    }
+  }, React.createElement("span", {
+    style: {
+      fontSize: 13.5,
+      fontWeight: 700,
+      color: P.ink
+    }
+  }, "P\u0113c iemaksas atlikums"), React.createElement("span", {
+    style: {
+      fontSize: 13,
+      fontWeight: 800,
+      color: afterContrib < 100 ? P.danger : P.promo
+    }
+  }, fmt(afterContrib))), afterContrib < 100 && React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: P.danger,
+      marginTop: 6,
+      lineHeight: '16px'
+    }
+  }, "Maz\u0101k par \u20AC100 rezerv\u0113 \u2014 apsveri samazin\u0101t iemaksu.")), React.createElement("div", {
+    style: {
+      background: '#F0F4FF',
+      borderRadius: 10,
+      padding: '7px 10px',
+      display: 'flex',
+      gap: 7,
+      alignItems: 'flex-start',
+      border: '1px solid rgba(79,107,209,0.15)'
+    }
+  }, React.createElement("svg", {
+    width: "16",
+    height: "16",
+    viewBox: "0 0 16 16",
+    fill: "none",
+    style: {
+      flexShrink: 0,
+      marginTop: 1
+    }
+  }, React.createElement("circle", {
+    cx: "8",
+    cy: "8",
+    r: "6.5",
+    stroke: "#4F6BD1",
+    strokeWidth: "1.3"
+  }), React.createElement("path", {
+    d: "M8 7v4M8 5v.01",
+    stroke: "#4F6BD1",
+    strokeWidth: "1.5",
+    strokeLinecap: "round"
+  })), React.createElement("div", {
+    style: {
+      fontSize: 11.5,
+      color: '#3A4E9E',
+      lineHeight: '15px'
+    }
+  }, "Ieguldot ", React.createElement("strong", null, fmt(amount)), ", tu vari atg\u016Bt l\u012Bdz ", React.createElement("strong", null, fmt(Math.round(amount * 0.2))), " nodok\u013Cu atmaks\u0101 (IIN 20%).")), React.createElement("button", {
+    type: "button",
+    onClick: () => setAction('confirmed'),
+    style: {
+      width: '100%',
+      border: 0,
+      borderRadius: 14,
+      padding: '15px',
+      background: P.accent,
+      color: P.ink,
+      fontSize: 16,
+      fontWeight: 800,
+      cursor: 'pointer',
+      letterSpacing: 0,
+      boxShadow: '0 2px 12px rgba(242,210,58,0.35)'
+    }
+  }, "Ieguld\u012Bt ", fmt(amount)), !showSkipConfirm ? React.createElement("button", {
+    type: "button",
+    onClick: () => setShowSkipConfirm(true),
+    style: {
+      width: '100%',
+      border: `1px solid ${P.line}`,
+      borderRadius: 14,
+      padding: '13px',
+      background: 'transparent',
+      color: P.mute,
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: 'pointer'
+    }
+  }, "Izlaist \u0161o m\u0113nesi") : React.createElement("div", {
+    style: {
+      background: P.card,
+      borderRadius: 14,
+      padding: '12px 14px',
+      border: `1px solid ${P.line}`,
+      boxShadow: '0 2px 8px rgba(0,0,0,0.07)'
+    }
+  }, React.createElement("div", {
+    style: {
+      fontSize: 14,
+      fontWeight: 700
+    }
+  }, "Izlaist maiju?"), React.createElement("div", {
+    style: {
+      fontSize: 12.5,
+      color: P.mute,
+      marginTop: 4,
+      lineHeight: '17px'
+    }
+  }, "Tu paliec pl\u0101n\u0101. N\u0101kam\u0101 iemaksa tiks apr\u0113\u0137in\u0101ta j\u016Bnij\u0101 p\u0113c algas sa\u0146em\u0161anas."), React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8,
+      marginTop: 10
+    }
+  }, React.createElement("button", {
+    type: "button",
+    onClick: () => setShowSkipConfirm(false),
+    style: {
+      flex: 1,
+      border: `1px solid ${P.line}`,
+      borderRadius: 9,
+      padding: '9px',
+      background: 'transparent',
+      color: P.ink,
+      fontSize: 13.5,
+      fontWeight: 700,
+      cursor: 'pointer'
+    }
+  }, "Atcelt"), React.createElement("button", {
+    type: "button",
+    onClick: () => {
+      setShowSkipConfirm(false);
+      setAction('skipped');
+    },
+    style: {
+      flex: 1,
+      border: 0,
+      borderRadius: 9,
+      padding: '9px',
+      background: '#F3F4F6',
+      color: P.mute,
+      fontSize: 13.5,
+      fontWeight: 700,
+      cursor: 'pointer'
+    }
+  }, "Izlaist")))))));
+}
+Object.assign(window, {
+  NotificationScreen,
+  PendingListScreen,
+  PendingDetailScreen
+});
 const TWEAK_DEFAULTS = {
   "promo": "auto",
   "accent": "#F2D23A"
 };
+const SCREEN_DEFS = [{
+  key: 'home',
+  label: 'Sākums'
+}, {
+  key: 'notif',
+  label: 'Paziņojums'
+}, {
+  key: 'list',
+  label: 'Iemaksas'
+}, {
+  key: 'detail',
+  label: 'Detaļas'
+}];
 function App() {
   const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
+  const [activeScreen, setActiveScreen] = React.useState('notif');
   React.useEffect(() => {
     document.documentElement.style.setProperty('--brand-accent', tweaks.accent);
   }, [tweaks.accent]);
@@ -5495,16 +6874,64 @@ function App() {
       accentIn.removeEventListener('change', onAccent);
     };
   }, []);
+  const goToDetail = () => setActiveScreen('detail');
+  const goToList = () => setActiveScreen('list');
   return React.createElement("div", {
-    "data-screen-label": "Home",
     style: {
-      '--brand-accent': tweaks.accent
+      '--brand-accent': tweaks.accent,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 32
     }
+  }, React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 6,
+      background: 'rgba(255,255,255,0.08)',
+      borderRadius: 12,
+      padding: 4
+    }
+  }, SCREEN_DEFS.map(({
+    key,
+    label
+  }) => React.createElement("button", {
+    key: key,
+    type: "button",
+    onClick: () => setActiveScreen(key),
+    style: {
+      border: 0,
+      borderRadius: 9,
+      padding: '7px 16px',
+      background: activeScreen === key ? '#fff' : 'transparent',
+      color: activeScreen === key ? '#1A1A1A' : 'rgba(255,255,255,0.65)',
+      fontSize: 13,
+      fontWeight: activeScreen === key ? 700 : 500,
+      cursor: 'pointer',
+      boxShadow: activeScreen === key ? '0 1px 4px rgba(0,0,0,0.12)' : 'none'
+    }
+  }, label))), activeScreen === 'home' && React.createElement("div", {
+    "data-screen-label": "Home"
   }, React.createElement(IOSDevice, {
     width: 402,
     height: 874
   }, React.createElement(Home, {
     tweaks: tweaks
+  }))), activeScreen === 'notif' && React.createElement("div", {
+    "data-screen-label": "Notification"
+  }, React.createElement(NotificationScreen, {
+    onOpenPending: () => {
+      goToDetail();
+    }
+  })), activeScreen === 'list' && React.createElement("div", {
+    "data-screen-label": "Pending List"
+  }, React.createElement(PendingListScreen, {
+    onOpenDetail: goToDetail,
+    onBack: () => setActiveScreen('home')
+  })), activeScreen === 'detail' && React.createElement("div", {
+    "data-screen-label": "Pending Detail"
+  }, React.createElement(PendingDetailScreen, {
+    onBack: goToList
   })));
 }
 ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App, null));

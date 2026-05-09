@@ -17,6 +17,7 @@ vm.runInContext(fs.readFileSync(babelPath, 'utf8'), context);
 const source = [
   fs.readFileSync('ios-frame.jsx', 'utf8'),
   fs.readFileSync('home.jsx', 'utf8'),
+  fs.readFileSync('fluxion-pending.jsx', 'utf8'),
   fs.readFileSync('app-entry.jsx', 'utf8'),
 ].join('\n\n');
 
