@@ -42,7 +42,7 @@ function IssueSlide() {
       )
     ),
     h("div", { className: "issue-visual", "aria-hidden": "true" },
-      h("img", { src: "../Roper.png", alt: "" })
+      h("img", { src: "./Roper.png", alt: "" })
     )
   );
 }
