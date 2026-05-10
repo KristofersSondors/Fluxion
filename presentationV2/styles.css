@@ -132,9 +132,9 @@ body {
   z-index: 2;
   left: 4.35%;
   top: 9.95%;
-  width: 55.75%;
+  width: 54%;
   height: 79.9%;
-  padding: 6.55% 2.8% 4.8% 3.75%;
+  padding: 7.05% 2.6% 5.2% 3.75%;
   border-radius: 18px;
   background: var(--fluxion-yellow);
   color: var(--ink);
@@ -142,7 +142,7 @@ body {
 
 .problem-card h2 {
   margin: 0;
-  font-size: 52px;
+  font-size: 54px;
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.045em;
@@ -157,13 +157,13 @@ body {
 
 .problem-card ul {
   display: grid;
-  gap: 8px;
-  margin: 34px 0 0;
-  padding-left: 48px;
-  font-size: 34px;
+  gap: 12px;
+  margin: 44px 0 0;
+  padding-left: 57px;
+  font-size: 40px;
   font-weight: 400;
-  line-height: 1.22;
-  letter-spacing: -0.03em;
+  line-height: 1.42;
+  letter-spacing: -0.035em;
 }
 
 .problem-card li::marker {

@@ -82,6 +82,12 @@ window.addEventListener("click", (event) => {
   if (event.button !== 0) {
     return;
   }
+  event.preventDefault();
+  showSlide(currentSlide - 1);
+});
+
+window.addEventListener("contextmenu", (event) => {
+  event.preventDefault();
   showSlide(currentSlide + 1, { animate: true });
 });
 
