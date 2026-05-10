@@ -11,16 +11,49 @@ function fitSlide() {
   document.documentElement.style.setProperty("--scale", scale.toFixed(4));
 }
 
-function syncSlideVideos(activeSlide) {
+function preloadSlideVideos() {
+  document.querySelectorAll("video").forEach((video) => {
+    video.load();
+  });
+}
+
+function prepareSlideVideos(activeSlide) {
   document.querySelectorAll("video").forEach((video) => {
     if (activeSlide.contains(video)) {
-      video.load();
-      video.currentTime = 0;
-      video.play().catch(() => {});
+      video.pause();
+      if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+        video.currentTime = 0;
+      } else {
+        video.addEventListener(
+          "loadedmetadata",
+          () => {
+            video.currentTime = 0;
+          },
+          { once: true }
+        );
+      }
       return;
     }
 
     video.pause();
+  });
+}
+
+function playSlideVideos(activeSlide) {
+  activeSlide.querySelectorAll("video").forEach((video) => {
+    const playWhenReady = () => {
+      if (!activeSlide.classList.contains("is-active")) {
+        return;
+      }
+      video.play().catch(() => {});
+    };
+
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      playWhenReady();
+      return;
+    }
+
+    video.addEventListener("loadeddata", playWhenReady, { once: true });
   });
 }
 
@@ -33,6 +66,8 @@ function showSlide(index, options = {}) {
   const currentSlideNumber = slides[currentSlide]?.dataset.slide || String(currentSlide + 1);
   const shouldExpandViabilityBackground =
     isForwardNavigation && currentSlideNumber === "11" && slideNumber === "12";
+
+  prepareSlideVideos(slides[nextSlide]);
 
   slides.forEach((slide, slideIndex) => {
     slide.classList.remove("is-forward");
@@ -51,7 +86,7 @@ function showSlide(index, options = {}) {
   currentSlide = nextSlide;
   hasShownInitialSlide = true;
   window.history.replaceState(null, "", `#slide-${slideNumber}`);
-  syncSlideVideos(slides[nextSlide]);
+  playSlideVideos(slides[nextSlide]);
 }
 
 function showFromHash() {
@@ -92,4 +127,5 @@ window.addEventListener("contextmenu", (event) => {
 });
 
 fitSlide();
+preloadSlideVideos();
 showFromHash();
