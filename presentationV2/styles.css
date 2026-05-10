@@ -589,15 +589,15 @@ body {
 .viability-arrow-line {
   fill: none;
   stroke: var(--fluxion-yellow);
-  stroke-width: 4px;
+  stroke-width: 3.5px;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .viability-arrowhead {
-  fill: none;
+  fill: var(--fluxion-yellow);
   stroke: var(--fluxion-yellow);
-  stroke-width: 2px;
+  stroke-width: 0.75px;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
