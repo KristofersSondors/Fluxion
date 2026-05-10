@@ -11,6 +11,19 @@ function fitSlide() {
   document.documentElement.style.setProperty("--scale", scale.toFixed(4));
 }
 
+function syncSlideVideos(activeSlide) {
+  document.querySelectorAll("video").forEach((video) => {
+    if (activeSlide.contains(video)) {
+      video.load();
+      video.currentTime = 0;
+      video.play().catch(() => {});
+      return;
+    }
+
+    video.pause();
+  });
+}
+
 function showSlide(index, options = {}) {
   fitSlide();
 
@@ -19,7 +32,7 @@ function showSlide(index, options = {}) {
   const slideNumber = slides[nextSlide].dataset.slide || String(nextSlide + 1);
   const currentSlideNumber = slides[currentSlide]?.dataset.slide || String(currentSlide + 1);
   const shouldExpandViabilityBackground =
-    isForwardNavigation && currentSlideNumber === "10" && slideNumber === "11";
+    isForwardNavigation && currentSlideNumber === "11" && slideNumber === "12";
 
   slides.forEach((slide, slideIndex) => {
     slide.classList.remove("is-forward");
@@ -38,6 +51,7 @@ function showSlide(index, options = {}) {
   currentSlide = nextSlide;
   hasShownInitialSlide = true;
   window.history.replaceState(null, "", `#slide-${slideNumber}`);
+  syncSlideVideos(slides[nextSlide]);
 }
 
 function showFromHash() {
